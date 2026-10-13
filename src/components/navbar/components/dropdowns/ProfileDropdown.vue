@@ -2,32 +2,99 @@
   <div class="profile-dropdown-wrapper">
     <VaDropdown v-model="isShown" :offset="[9, 0]" class="profile-dropdown" stick-to-edges>
       <template #anchor>
-        <VaButton preset="secondary" color="textPrimary">
-          <span class="profile-dropdown__anchor min-w-max">
-            <slot />
-            <VaAvatar :size="32" color="warning"> 😍 </VaAvatar>
-          </span>
-        </VaButton>
-      </template>
-      <VaDropdownContent
-        class="profile-dropdown__content md:w-60 px-0 py-4 w-full"
-        :style="{ '--hover-color': hoverColor }"
-      >
-        <VaList v-for="group in options" :key="group.name">
-          <header v-if="group.name" class="uppercase text-[var(--va-secondary)] opacity-80 font-bold text-xs px-4">
-            {{ t(`user.${group.name}`) }}
-          </header>
-          <VaListItem
-            v-for="item in group.list"
-            :key="item.name"
-            class="menu-item px-4 text-base cursor-pointer h-8"
-            v-bind="resolveLinkAttribute(item)"
+        <button
+          type="button"
+          class="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-gray-400/40 focus:outline-none transition-all"
+        >
+          <div
+            class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm flex items-center justify-center uppercase overflow-hidden"
           >
-            <VaIcon :name="item.icon" class="pr-1" color="secondary" />
-            {{ t(`user.${item.name}`) }}
-          </VaListItem>
-          <VaListSeparator v-if="group.separator" class="mx-3 my-2" />
-        </VaList>
+            <img v-if="user?.avatar" :src="user.avatar" alt="Avatar" class="w-full h-full object-cover" />
+            <span v-else>{{ userInitial }}</span>
+          </div>
+        </button>
+      </template>
+
+      <VaDropdownContent
+        class="profile-dropdown__content w-60 p-2 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl"
+      >
+        <!-- User Info Header -->
+        <div class="px-3 py-2 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2.5">
+          <div
+            class="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm flex items-center justify-center uppercase shrink-0"
+          >
+            <img v-if="user?.avatar" :src="user.avatar" class="w-full h-full rounded-full object-cover" />
+            <span v-else>{{ userInitial }}</span>
+          </div>
+          <div class="overflow-hidden">
+            <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">
+              {{ user?.display_name || 'Mtumiaji wa Kicheko' }}
+            </p>
+            <p class="text-xs text-gray-500 truncate">
+              {{ user?.email || user?.username }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Links List -->
+        <div class="py-1 text-sm text-gray-700 dark:text-gray-300">
+          <RouterLink
+            :to="{ name: 'home' }"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            @click="isShown = false"
+          >
+            <span class="material-icons text-base text-gray-500 dark:text-gray-400">smart_display</span>
+            <span>Jukwaa Kuu la Video</span>
+          </RouterLink>
+
+          <RouterLink
+            :to="{ name: 'admin-dashboard' }"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            @click="isShown = false"
+          >
+            <span class="material-icons text-base text-gray-500 dark:text-gray-400">dashboard</span>
+            <span>Studio ya Kicheko</span>
+          </RouterLink>
+
+          <RouterLink
+            :to="{ name: 'admin-videos' }"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            @click="isShown = false"
+          >
+            <span class="material-icons text-base text-gray-500 dark:text-gray-400">video_settings</span>
+            <span>Pakia &amp; Simamia Video</span>
+          </RouterLink>
+
+          <RouterLink
+            :to="{ name: 'preferences' }"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            @click="isShown = false"
+          >
+            <span class="material-icons text-base text-gray-500 dark:text-gray-400">person</span>
+            <span>Wasifu Wangu</span>
+          </RouterLink>
+
+          <RouterLink
+            :to="{ name: 'settings' }"
+            class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            @click="isShown = false"
+          >
+            <span class="material-icons text-base text-gray-500 dark:text-gray-400">settings</span>
+            <span>Mipangilio</span>
+          </RouterLink>
+        </div>
+
+        <!-- Logout Action -->
+        <div class="pt-1 border-t border-gray-100 dark:border-gray-800">
+          <button
+            type="button"
+            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium transition-colors text-left"
+            @click="handleLogout"
+          >
+            <span class="material-icons text-base text-gray-500 dark:text-gray-400">logout</span>
+            <span>Ondoka (Logout)</span>
+          </button>
+        </div>
       </VaDropdownContent>
     </VaDropdown>
   </div>
@@ -35,109 +102,30 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useColors } from 'vuestic-ui'
-
-const { colors, setHSLAColor } = useColors()
-const hoverColor = computed(() => setHSLAColor(colors.focus, { a: 0.1 }))
-
-const { t } = useI18n()
-
-type ProfileListItem = {
-  name: string
-  to?: string
-  href?: string
-  icon: string
-}
-
-type ProfileOptions = {
-  name: string
-  separator: boolean
-  list: ProfileListItem[]
-}
-
-withDefaults(
-  defineProps<{
-    options?: ProfileOptions[]
-  }>(),
-  {
-    options: () => [
-      {
-        name: 'account',
-        separator: true,
-        list: [
-          {
-            name: 'profile',
-            to: 'preferences',
-            icon: 'mso-account_circle',
-          },
-          {
-            name: 'settings',
-            to: 'settings',
-            icon: 'mso-settings',
-          },
-          {
-            name: 'billing',
-            to: 'billing',
-            icon: 'mso-receipt_long',
-          },
-          {
-            name: 'projects',
-            to: 'projects',
-            icon: 'mso-favorite',
-          },
-        ],
-      },
-      {
-        name: 'explore',
-        separator: true,
-        list: [
-          {
-            name: 'faq',
-            to: 'faq',
-            icon: 'mso-quiz',
-          },
-          {
-            name: 'helpAndSupport',
-            href: 'https://discord.gg/u7fQdqQt8c',
-            icon: 'mso-error',
-          },
-        ],
-      },
-      {
-        name: '',
-        separator: false,
-        list: [
-          {
-            name: 'logout',
-            to: 'login',
-            icon: 'mso-logout',
-          },
-        ],
-      },
-    ],
-  },
-)
+import { useRouter } from 'vue-router'
+import { useToast } from 'vuestic-ui'
+import { useAuth } from '../../../../composables/useAuth'
 
 const isShown = ref(false)
+const router = useRouter()
+const { user, logout } = useAuth()
+const { init: toast } = useToast()
 
-const resolveLinkAttribute = (item: ProfileListItem) => {
-  return item.to ? { to: { name: item.to } } : item.href ? { href: item.href, target: '_blank' } : {}
+const userInitial = computed(() => {
+  const name = user.value?.display_name || user.value?.username || 'U'
+  return name.charAt(0).toUpperCase()
+})
+
+const handleLogout = async () => {
+  isShown.value = false
+  await logout()
+  toast({ message: 'Umetoka kwenye akaunti.', color: 'info' })
+  router.push({ name: 'login' })
 }
 </script>
 
 <style lang="scss">
 .profile-dropdown {
   cursor: pointer;
-
-  &__content {
-    .menu-item:hover {
-      background: var(--hover-color);
-    }
-  }
-
-  &__anchor {
-    display: inline-block;
-  }
 }
 </style>

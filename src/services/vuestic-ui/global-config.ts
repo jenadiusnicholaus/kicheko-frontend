@@ -2,8 +2,20 @@ import iconsConfig from './icons-config/icons-config'
 import colors from './themes'
 import { defineVuesticConfig } from 'vuestic-ui'
 
+// Determine initial theme preset from localStorage or system preference
+const getInitialPreset = (): 'light' | 'dark' => {
+  const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('kicheko-theme') : null
+  if (saved === 'dark' || saved === 'light') return saved
+  if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
+  return 'light'
+}
+
 export default defineVuesticConfig({
-  colors,
+  colors: {
+    ...colors,
+    currentPresetName: getInitialPreset(),
+  },
+
   icons: iconsConfig,
   breakpoint: {
     enabled: true,

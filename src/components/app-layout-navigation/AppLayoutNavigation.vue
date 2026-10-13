@@ -9,7 +9,7 @@
 
     <nav class="flex items-center">
       <VaBreadcrumbs>
-        <VaBreadcrumbsItem label="Home" :to="{ name: 'dashboard' }" />
+        <VaBreadcrumbsItem label="Home" :to="{ name: 'admin-dashboard' }" />
         <VaBreadcrumbsItem
           v-for="item in items"
           :key="item.label"
@@ -35,7 +35,7 @@ const { isSidebarMinimized } = storeToRefs(useGlobalStore())
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { t, te } = useI18n()
 
 type BreadcrumbNavigationItem = {
   label: string
@@ -70,9 +70,9 @@ const items = computed(() => {
       return
     }
     result.push({
-      label: t(labelKey),
+      label: te(labelKey) ? t(labelKey) : labelKey,
       to: route.path,
-      hasChildren: route.children && route.children.length > 0,
+      hasChildren: Boolean(route.children && route.children.length > 0),
     })
   })
   return result

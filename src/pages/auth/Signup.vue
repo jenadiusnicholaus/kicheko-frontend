@@ -1,26 +1,41 @@
 <template>
-  <VaForm ref="form" @submit.prevent="submit">
-    <h1 class="font-semibold text-4xl mb-4">Sign up</h1>
-    <p class="text-base mb-4 leading-5">
-      Have an account?
-      <RouterLink :to="{ name: 'login' }" class="font-semibold text-primary">Login</RouterLink>
+  <VaForm ref="signupForm" @submit.prevent="submit">
+    <h1 class="font-bold text-2xl mb-1 text-slate-900 dark:text-white">Jisajili Kicheko</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-5">
+      Tayari una akaunti?
+      <RouterLink :to="{ name: 'login' }" class="font-semibold text-primary hover:underline">Ingia hapa</RouterLink>
     </p>
+
+    <VaAlert v-if="errorMessage" color="danger" class="mb-4 text-sm" outline>
+      {{ errorMessage }}
+    </VaAlert>
+
     <VaInput
-      v-model="formData.email"
-      :rules="[(v) => !!v || 'Email field is required', (v) => /.+@.+\..+/.test(v) || 'Email should be valid']"
+      v-model="form.display_name"
+      :rules="[validators.required]"
+      :error-messages="fieldErrors.display_name"
       class="mb-4"
-      label="Email"
+      label="Jina lako kamili au la Sanaa"
+      placeholder="e.g. Joti Mchekeshaji"
+    />
+    <VaInput
+      v-model="form.email"
+      :rules="[validators.required, validators.email]"
+      :error-messages="fieldErrors.email"
+      class="mb-4"
+      label="Barua pepe (Email)"
       type="email"
+      placeholder="wewe@example.com"
     />
     <VaValue v-slot="isPasswordVisible" :default-value="false">
       <VaInput
-        ref="password1"
-        v-model="formData.password"
+        v-model="form.password"
         :rules="passwordRules"
+        :error-messages="fieldErrors.password"
         :type="isPasswordVisible.value ? 'text' : 'password'"
         class="mb-4"
-        label="Password"
-        messages="Password should be 8+ characters: letters, numbers, and special characters."
+        label="Nenosiri (Password)"
+        messages="Inatakiwa herufi 8+, namba, na alama maalum."
         @clickAppendInner.stop="isPasswordVisible.value = !isPasswordVisible.value"
       >
         <template #appendInner>
@@ -32,15 +47,12 @@
         </template>
       </VaInput>
       <VaInput
-        ref="password2"
-        v-model="formData.repeatPassword"
-        :rules="[
-          (v) => !!v || 'Repeat Password field is required',
-          (v) => v === formData.password || 'Passwords don\'t match',
-        ]"
+        v-model="form.password_confirm"
+        :rules="[(v) => !!v || 'Tafadhali thibitisha nenosiri', (v) => v === form.password || 'Nenosiri halilingani']"
+        :error-messages="fieldErrors.password_confirm"
         :type="isPasswordVisible.value ? 'text' : 'password'"
         class="mb-4"
-        label="Repeat Password"
+        label="Thibitisha Nenosiri"
         @clickAppendInner.stop="isPasswordVisible.value = !isPasswordVisible.value"
       >
         <template #appendInner>
@@ -53,42 +65,25 @@
       </VaInput>
     </VaValue>
 
-    <div class="flex justify-center mt-4">
-      <VaButton class="w-full" @click="submit"> Create account</VaButton>
+    <VaCheckbox
+      v-model="form.accept_terms"
+      :rules="[(v) => v === true || 'Lazima ukubali vigezo na masharti']"
+      :error-messages="fieldErrors.accept_terms"
+      class="mb-4 text-sm"
+      label="Ninakubali Vigezo vya Huduma na Sera ya Faragha"
+    />
+
+    <div class="flex justify-center mt-6">
+      <VaButton :loading="isSubmitting" size="large" class="w-full font-semibold" @click="submit">
+        Tengeneza Akaunti (Sign Up)
+      </VaButton>
     </div>
   </VaForm>
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useForm, useToast } from 'vuestic-ui'
+import { validators } from '../../services/utils'
+import { useSignup } from './composables/useSignup'
 
-const { validate } = useForm('form')
-const { push } = useRouter()
-const { init } = useToast()
-
-const formData = reactive({
-  email: '',
-  password: '',
-  repeatPassword: '',
-})
-
-const submit = () => {
-  if (validate()) {
-    init({
-      message: "You've successfully signed up",
-      color: 'success',
-    })
-    push({ name: 'dashboard' })
-  }
-}
-
-const passwordRules: ((v: string) => boolean | string)[] = [
-  (v) => !!v || 'Password field is required',
-  (v) => (v && v.length >= 8) || 'Password must be at least 8 characters long',
-  (v) => (v && /[A-Za-z]/.test(v)) || 'Password must contain at least one letter',
-  (v) => (v && /\d/.test(v)) || 'Password must contain at least one number',
-  (v) => (v && /[!@#$%^&*(),.?":{}|<>]/.test(v)) || 'Password must contain at least one special character',
-]
+const { form, fieldErrors, errorMessage, isSubmitting, submit, passwordRules } = useSignup()
 </script>

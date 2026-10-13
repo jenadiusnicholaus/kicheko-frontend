@@ -1,0 +1,392 @@
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-gray-800"
+    >
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <span class="material-icons text-red-600">video_call</span>
+          <span>Usimamizi na Upakiaji wa Video za Kicheko</span>
+        </h1>
+        <p class="text-xs sm:text-sm text-gray-500 mt-1">
+          Pakia video mpya za vichekesho, tengeneza preview fupi za Shorts, weka bei na dhibiti maudhui.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-md flex items-center gap-2 transition-all self-start sm:self-auto"
+        @click="openUploadModal"
+      >
+        <span class="material-icons text-lg">cloud_upload</span>
+        <span>Pakia Video Mpya</span>
+      </button>
+    </div>
+
+    <!-- Stats Summary Row -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <span class="text-xs text-gray-500 font-medium">Jumla ya Video</span>
+        <p class="text-2xl font-extrabold text-gray-900 dark:text-white mt-1">{{ videos.length }}</p>
+      </div>
+      <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <span class="text-xs text-gray-500 font-medium">Video za Kulipia</span>
+        <p class="text-2xl font-extrabold text-amber-500 mt-1">{{ paidCount }}</p>
+      </div>
+      <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <span class="text-xs text-gray-500 font-medium">Shorts / Previews</span>
+        <p class="text-2xl font-extrabold text-red-500 mt-1">{{ shortsCount }}</p>
+      </div>
+      <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+        <span class="text-xs text-gray-500 font-medium">Jumla ya Views</span>
+        <p class="text-2xl font-extrabold text-emerald-500 mt-1">{{ totalViewsFormatted }}</p>
+      </div>
+    </div>
+
+    <!-- Video List Table -->
+    <div
+      class="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm"
+    >
+      <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+        <h2 class="font-bold text-base text-gray-900 dark:text-white">Orodha ya Video zilizopo Kwenye Mfumo</h2>
+        <span class="text-xs text-gray-500">{{ videos.length }} video</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+          <thead
+            class="bg-gray-50 dark:bg-gray-800/60 text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider"
+          >
+            <tr>
+              <th class="py-3 px-4">Video / Kichwa</th>
+              <th class="py-3 px-4">Msanii</th>
+              <th class="py-3 px-4">Kitengo</th>
+              <th class="py-3 px-4">Aina ya Upatikanaji</th>
+              <th class="py-3 px-4">Views</th>
+              <th class="py-3 px-4 text-right">Vitendo</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+            <tr v-for="v in videos" :key="v.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+              <!-- Video / Title -->
+              <td class="py-3 px-4">
+                <div class="flex items-center gap-3">
+                  <img
+                    :src="v.thumbnail"
+                    :alt="v.title"
+                    class="w-16 h-10 rounded-lg object-cover bg-gray-900 flex-shrink-0"
+                  />
+                  <div class="min-w-0 max-w-xs">
+                    <p class="font-bold text-gray-900 dark:text-white text-xs truncate" :title="v.title">
+                      {{ v.title }}
+                    </p>
+                    <span
+                      v-if="v.is_short"
+                      class="text-[10px] px-1.5 py-0.2 rounded bg-red-100 text-red-600 font-bold dark:bg-red-950 dark:text-red-400"
+                    >
+                      Short
+                    </span>
+                    <span v-else class="text-[10px] text-gray-400"> Muda: {{ v.duration_formatted }} </span>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Comedian -->
+              <td class="py-3 px-4 text-xs font-semibold text-gray-800 dark:text-gray-200">
+                <div class="flex items-center gap-1.5">
+                  <img :src="v.comedian.avatar" class="w-5 h-5 rounded-full object-cover" />
+                  <span>{{ v.comedian.stage_name }}</span>
+                </div>
+              </td>
+
+              <!-- Category -->
+              <td class="py-3 px-4 text-xs">
+                <span
+                  class="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-medium"
+                >
+                  {{ v.category }}
+                </span>
+              </td>
+
+              <!-- Access Type -->
+              <td class="py-3 px-4 text-xs font-bold">
+                <span
+                  v-if="v.access_type === 'paid'"
+                  class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
+                >
+                  Kulipia: Tsh {{ v.price_amount.toLocaleString() }}
+                </span>
+                <span
+                  v-else
+                  class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                >
+                  Bure
+                </span>
+              </td>
+
+              <!-- Views -->
+              <td class="py-3 px-4 text-xs font-medium">
+                {{ v.views_count.toLocaleString() }}
+              </td>
+
+              <!-- Actions -->
+              <td class="py-3 px-4 text-right">
+                <RouterLink
+                  :to="{ name: v.is_short ? 'short-detail' : 'watch', params: { id: v.id } }"
+                  class="text-xs font-bold text-red-600 hover:text-red-700 underline"
+                  target="_blank"
+                >
+                  Tazama
+                </RouterLink>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Video Upload Modal (Workflow as defined in docs/youtube_ui.md Phase 5) -->
+    <VaModal v-model="showModal" hide-default-actions max-width="650px">
+      <div class="p-4 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
+          <div class="flex items-center gap-2">
+            <span class="material-icons text-red-600 text-2xl">video_call</span>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Pakia Video Mpya ya Kicheko</h3>
+          </div>
+          <button type="button" class="text-gray-400 hover:text-gray-600 text-lg" @click="showModal = false">✕</button>
+        </div>
+
+        <form class="space-y-4" @submit.prevent="submitUpload">
+          <!-- Title -->
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+              Kichwa cha Video (Title) *
+            </label>
+            <input
+              v-model="form.title"
+              type="text"
+              required
+              placeholder="Mfano: Cheka Tu Live: Vituko vya Dar es Salaam..."
+              class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+            />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+              Maelezo ya Video (Description)
+            </label>
+            <textarea
+              v-model="form.description"
+              rows="3"
+              placeholder="Eleza kwa ufupi maudhui ya onyesho hili la vichekesho..."
+              class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+            />
+          </div>
+
+          <!-- Comedian and Category Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                Msanii / Mchekeshaji (Comedian) *
+              </label>
+              <select
+                v-model="form.comedian_id"
+                required
+                class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+              >
+                <option v-for="c in comedians" :key="c.id" :value="c.id">{{ c.stage_name }} ({{ c.name }})</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                Kitengo (Category) *
+              </label>
+              <select
+                v-model="form.category"
+                required
+                class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+              >
+                <option value="Stand-up Comedy">Stand-up Comedy</option>
+                <option value="Skits">Skits</option>
+                <option value="Short Comedy">Short Comedy</option>
+                <option value="Parody">Parody</option>
+                <option value="Vichekesho vya Mitaani">Vichekesho vya Mitaani</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Access Type & Price -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl border border-gray-200 dark:border-gray-700"
+          >
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                Upatikanaji (Access Type)
+              </label>
+              <div class="flex gap-4 mt-2">
+                <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+                  <input v-model="form.access_type" type="radio" value="free" />
+                  <span>Bure (Free)</span>
+                </label>
+                <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
+                  <input v-model="form.access_type" type="radio" value="paid" />
+                  <span class="text-amber-600 font-bold">Kulipia (Paid)</span>
+                </label>
+              </div>
+            </div>
+
+            <div v-if="form.access_type === 'paid'">
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                Bei ya Video (TZS) *
+              </label>
+              <input
+                v-model.number="form.price_amount"
+                type="number"
+                min="500"
+                step="500"
+                placeholder="2500"
+                class="w-full px-3 py-1.5 text-sm bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+              />
+            </div>
+          </div>
+
+          <!-- Video File / URL -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                URL ya Faili la Video (mp4 / webm)
+              </label>
+              <input
+                v-model="form.video_url"
+                type="url"
+                placeholder="https://.../video.mp4"
+                class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                URL ya Picha ya Jalada (Thumbnail)
+              </label>
+              <input
+                v-model="form.thumbnail_url"
+                type="url"
+                placeholder="https://images.unsplash.com/..."
+                class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+              />
+            </div>
+          </div>
+
+          <!-- Checkbox: Is Short / Preview -->
+          <div class="flex items-center gap-2">
+            <input id="isShortCheck" v-model="form.is_short" type="checkbox" class="rounded text-red-600" />
+            <label for="isShortCheck" class="text-xs font-bold text-gray-700 dark:text-gray-300">
+              Hii ni Short Preview (Video fupi ya 9:16 ya kuunganisha na video kuu)
+            </label>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex gap-3 pt-3 border-t border-gray-200 dark:border-gray-800">
+            <button
+              type="button"
+              class="flex-1 py-2 text-xs font-bold border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              @click="showModal = false"
+            >
+              Ghairi (Cancel)
+            </button>
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="flex-1 py-2 text-xs font-bold bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <span v-if="isSubmitting" class="material-icons animate-spin text-sm">refresh</span>
+              <span>{{ isSubmitting ? 'Inapakia...' : 'Chapisha Video Sasa' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </VaModal>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useToast } from 'vuestic-ui'
+import {
+  videoApi,
+  INITIAL_COMEDIANS,
+  type Video,
+  type Comedian,
+  type VideoUploadPayload,
+} from '../../services/api/video.api'
+
+const { init: toast } = useToast()
+
+const videos = ref<Video[]>([])
+const comedians = ref<Comedian[]>(INITIAL_COMEDIANS)
+const showModal = ref(false)
+const isSubmitting = ref(false)
+
+const form = ref<VideoUploadPayload>({
+  title: '',
+  description: '',
+  comedian_id: INITIAL_COMEDIANS[0].id,
+  category: 'Stand-up Comedy',
+  access_type: 'free',
+  price_amount: 2500,
+  video_url: '',
+  thumbnail_url: '',
+  is_short: false,
+})
+
+const loadVideos = async () => {
+  const all = await videoApi.getVideos()
+  const shorts = await videoApi.getShorts()
+  videos.value = [...all, ...shorts]
+}
+
+const paidCount = computed(() => videos.value.filter((v) => v.access_type === 'paid').length)
+const shortsCount = computed(() => videos.value.filter((v) => v.is_short).length)
+
+const totalViewsFormatted = computed(() => {
+  const total = videos.value.reduce((acc, v) => acc + v.views_count, 0)
+  if (total >= 1000000) return (total / 1000000).toFixed(1) + 'M'
+  if (total >= 1000) return (total / 1000).toFixed(1) + 'K'
+  return total.toString()
+})
+
+const openUploadModal = () => {
+  form.value = {
+    title: '',
+    description: '',
+    comedian_id: INITIAL_COMEDIANS[0].id,
+    category: 'Stand-up Comedy',
+    access_type: 'free',
+    price_amount: 2500,
+    video_url: '',
+    thumbnail_url: '',
+    is_short: false,
+  }
+  showModal.value = true
+}
+
+const submitUpload = async () => {
+  if (!form.value.title.trim()) return
+  isSubmitting.value = true
+  try {
+    await videoApi.createVideo(form.value)
+    toast({ message: 'Video imepakiwa na kuchapishwa kikamilifu!', color: 'success' })
+    showModal.value = false
+    await loadVideos()
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+onMounted(() => {
+  loadVideos()
+})
+</script>

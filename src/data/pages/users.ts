@@ -1,5 +1,5 @@
 import { User } from '../../pages/users/types'
-import api from '../../services/api'
+import { urls as api } from '../../services/api'
 
 export type Pagination = {
   page: number

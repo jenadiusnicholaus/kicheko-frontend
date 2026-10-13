@@ -1,5 +1,13 @@
 <template>
-  <VaSidebar v-model="writableVisible" :width="sidebarWidth" :color="color" minimized-width="0">
+  <VaSidebar
+    v-model="writableVisible"
+    :width="sidebarWidth"
+    :minimized="minimized"
+    :minimized-width="minimizedWidth"
+    :animated="animated"
+    :color="color"
+    class="kicheko-admin-sidebar border-r border-gray-200 dark:border-gray-800"
+  >
     <VaAccordion v-model="value" multiple>
       <VaCollapse v-for="(route, index) in navigationRoutes.routes" :key="index">
         <template #header="{ value: isCollapsed }">
@@ -8,11 +16,12 @@
             :active="routeHasActiveChild(route)"
             :active-color="activeColor"
             :text-color="textColor(route)"
-            :aria-label="`${route.children ? 'Open category ' : 'Visit'} ${t(route.displayName)}`"
+            :aria-label="`Nenda kwenye ${getDisplayName(route)}`"
             role="button"
-            hover-opacity="0.10"
+            hover-opacity="0.08"
+            class="my-0.5 rounded-lg mx-1"
           >
-            <VaSidebarItemContent class="py-3 pr-2 pl-4">
+            <VaSidebarItemContent class="py-2.5 pr-2 pl-3">
               <VaIcon
                 v-if="route.meta.icon"
                 aria-hidden="true"
@@ -20,13 +29,17 @@
                 size="20px"
                 :color="iconColor(route)"
               />
-              <VaSidebarItemTitle class="flex justify-between items-center leading-5 font-semibold">
-                {{ t(route.displayName) }}
-                <VaIcon v-if="route.children" :name="arrowDirection(isCollapsed)" size="20px" />
+              <VaSidebarItemTitle
+                v-if="!minimized"
+                class="flex justify-between items-center leading-5 text-sm font-medium"
+              >
+                {{ getDisplayName(route) }}
+                <VaIcon v-if="route.children" :name="arrowDirection(isCollapsed)" size="16px" />
               </VaSidebarItemTitle>
             </VaSidebarItemContent>
           </VaSidebarItem>
         </template>
+
         <template #body>
           <div v-for="(childRoute, index2) in route.children" :key="index2">
             <VaSidebarItem
@@ -34,12 +47,13 @@
               :active="isActiveChildRoute(childRoute)"
               :active-color="activeColor"
               :text-color="textColor(childRoute)"
-              :aria-label="`Visit ${t(route.displayName)}`"
-              hover-opacity="0.10"
+              :aria-label="`Nenda kwenye ${getDisplayName(childRoute)}`"
+              hover-opacity="0.08"
+              class="my-0.5 rounded-lg mx-1"
             >
-              <VaSidebarItemContent class="py-3 pr-2 pl-11">
-                <VaSidebarItemTitle class="leading-5 font-semibold">
-                  {{ t(childRoute.displayName) }}
+              <VaSidebarItemContent class="py-2 pr-2 pl-9">
+                <VaSidebarItemTitle class="leading-5 text-xs font-normal">
+                  {{ getDisplayName(childRoute) }}
                 </VaSidebarItemTitle>
               </VaSidebarItemContent>
             </VaSidebarItem>
@@ -47,21 +61,31 @@
         </template>
       </VaCollapse>
     </VaAccordion>
+
+    <!-- Footer -->
+    <template #bottom>
+      <div v-if="!minimized" class="p-3 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-400">
+        <p class="font-medium text-gray-500 dark:text-gray-400">Kicheko Studio v1.0</p>
+        <p class="text-[10px] mt-0.5">Cheka • Tazama • Piga Kura</p>
+      </div>
+    </template>
   </VaSidebar>
 </template>
+
 <script lang="ts">
 import { defineComponent, watch, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-
 import { useI18n } from 'vue-i18n'
 import { useColors } from 'vuestic-ui'
 
 import navigationRoutes, { type INavigationRoute } from './NavigationRoutes'
 
 export default defineComponent({
-  name: 'Sidebar',
+  name: 'AppSidebar',
   props: {
     visible: { type: Boolean, default: true },
+    minimized: { type: Boolean, default: false },
+    animated: { type: Boolean, default: true },
     mobile: { type: Boolean, default: false },
   },
   emits: ['update:visible'],
@@ -69,7 +93,7 @@ export default defineComponent({
   setup: (props, { emit }) => {
     const { getColor, colorToRgba } = useColors()
     const route = useRoute()
-    const { t } = useI18n()
+    const { t, te } = useI18n()
 
     const value = ref<boolean[]>([])
 
@@ -78,25 +102,34 @@ export default defineComponent({
       set: (v: boolean) => emit('update:visible', v),
     })
 
-    const isActiveChildRoute = (child: INavigationRoute) => route.name === child.name
+    const getDisplayName = (r: INavigationRoute | { displayName: string }) => {
+      if (te(r.displayName)) return t(r.displayName)
+      return r.displayName
+    }
+
+    const isActiveChildRoute = (child: { name: string }) => route.name === child.name
 
     const routeHasActiveChild = (section: INavigationRoute) => {
+      if (route.name === section.name) return true
       if (!section.children) {
         return route.path.endsWith(`${section.name}`)
       }
-
-      return section.children.some(({ name }) => route.path.endsWith(`${name}`))
+      return section.children.some(({ name }) => route.name === name || route.path.endsWith(`${name}`))
     }
 
     const setActiveExpand = () =>
-      (value.value = navigationRoutes.routes.map((route: INavigationRoute) => routeHasActiveChild(route)))
+      (value.value = navigationRoutes.routes.map((r: INavigationRoute) => routeHasActiveChild(r)))
 
-    const sidebarWidth = computed(() => (props.mobile ? '100vw' : '280px'))
+    const sidebarWidth = computed(() => (props.mobile ? '100vw' : '256px'))
+    const minimizedWidth = computed(() => '4rem')
     const color = computed(() => getColor('background-secondary'))
-    const activeColor = computed(() => colorToRgba(getColor('focus'), 0.1))
 
-    const iconColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'secondary')
-    const textColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'textPrimary')
+    // Neutral active highlight — subtle gray, no red
+    const activeColor = computed(() => colorToRgba(getColor('textPrimary') || '#111111', 0.08))
+
+    // Icons: active gets text-primary color, inactive gets secondary/muted
+    const iconColor = (r: INavigationRoute) => (routeHasActiveChild(r) ? 'textPrimary' : 'secondary')
+    const textColor = (r: INavigationRoute) => (routeHasActiveChild(r) ? 'textPrimary' : 'textPrimary')
     const arrowDirection = (state: boolean) => (state ? 'va-arrow-up' : 'va-arrow-down')
 
     watch(() => route.fullPath, setActiveExpand, { immediate: true })
@@ -104,13 +137,14 @@ export default defineComponent({
     return {
       writableVisible,
       sidebarWidth,
+      minimizedWidth,
       value,
       color,
       activeColor,
       navigationRoutes,
       routeHasActiveChild,
       isActiveChildRoute,
-      t,
+      getDisplayName,
       iconColor,
       textColor,
       arrowDirection,
@@ -118,3 +152,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="scss" scoped>
+.kicheko-admin-sidebar {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>

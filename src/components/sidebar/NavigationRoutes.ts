@@ -12,95 +12,73 @@ export default {
   },
   routes: [
     {
-      name: 'dashboard',
-      displayName: 'menu.dashboard',
+      name: 'home',
+      displayName: 'Jukwaa la Video (Public)',
       meta: {
-        icon: 'vuestic-iconset-dashboard',
+        icon: 'smart_display',
+      },
+    },
+    {
+      name: 'admin-dashboard',
+      displayName: 'Studio ya Kicheko',
+      meta: {
+        icon: 'dashboard',
+      },
+    },
+    {
+      name: 'admin-videos',
+      displayName: 'Pakia & Simamia Video',
+      meta: {
+        icon: 'video_call',
       },
     },
     {
       name: 'users',
-      displayName: 'menu.users',
+      displayName: 'Wasanii & Watumiaji',
       meta: {
         icon: 'group',
       },
     },
     {
-      name: 'projects',
-      displayName: 'menu.projects',
-      meta: {
-        icon: 'folder_shared',
-      },
-    },
-    {
       name: 'payments',
-      displayName: 'menu.payments',
+      displayName: 'Malipo & Mauzo',
       meta: {
-        icon: 'credit_card',
+        icon: 'payments',
       },
       children: [
         {
+          name: 'billing',
+          displayName: 'Miamala ya Mauzo',
+        },
+        {
           name: 'payment-methods',
-          displayName: 'menu.payment-methods',
+          displayName: 'Njia za Malipo',
         },
         {
           name: 'pricing-plans',
-          displayName: 'menu.pricing-plans',
-        },
-        {
-          name: 'billing',
-          displayName: 'menu.billing',
+          displayName: 'Gharama za Video',
         },
       ],
-    },
-    {
-      name: 'auth',
-      displayName: 'menu.auth',
-      meta: {
-        icon: 'login',
-      },
-      children: [
-        {
-          name: 'login',
-          displayName: 'menu.login',
-        },
-        {
-          name: 'signup',
-          displayName: 'menu.signup',
-        },
-        {
-          name: 'recover-password',
-          displayName: 'menu.recover-password',
-        },
-      ],
-    },
-
-    {
-      name: 'faq',
-      displayName: 'menu.faq',
-      meta: {
-        icon: 'quiz',
-      },
-    },
-    {
-      name: '404',
-      displayName: 'menu.404',
-      meta: {
-        icon: 'vuestic-iconset-files',
-      },
     },
     {
       name: 'preferences',
-      displayName: 'menu.preferences',
+      displayName: 'Wasifu wa Msanii',
       meta: {
-        icon: 'manage_accounts',
+        icon: 'badge',
       },
     },
     {
       name: 'settings',
-      displayName: 'menu.settings',
+      displayName: 'Mipangilio ya Mfumo',
       meta: {
         icon: 'settings',
+      },
+    },
+    {
+      name: 'faq',
+      displayName: 'Msaada & Maswali',
+      meta: {
+        icon: 'help_outline',
       },
     },
   ] as INavigationRoute[],

@@ -1,19 +1,24 @@
 <template>
-  <div class="flex flex-col p-4 bg-backgroundSecondary rounded-lg">
-    <h3 class="h3 mb-6">Notifications you receive</h3>
+  <div class="flex flex-col p-5 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-icons text-xl text-red-600 dark:text-red-400">tune</span>
+      <h3 class="text-base font-bold text-gray-900 dark:text-white">Aina za Taarifa Unazopokea</h3>
+    </div>
     <div v-for="notification in notifications" :key="notification.name" class="group">
-      <div class="flex items-center justify-between overflow-x-hidden">
-        <p class="text-regularLarge">
+      <div class="flex items-center justify-between py-2.5">
+        <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
           {{ notification.name }}
-        </p>
-        <VaSwitch v-model="notification.isEnabled" size="small" />
+        </span>
+        <VaSwitch v-model="notification.isEnabled" size="small" color="danger" />
       </div>
-      <VaDivider class="py-4 group-last:hidden" />
+      <div class="border-b border-gray-100 dark:border-gray-800 group-last:border-0" />
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { useNotificationsStore } from '../../../stores/notifications'
 
-const { notifications } = useNotificationsStore()
+const notificationsStore = useNotificationsStore()
+const { notifications } = notificationsStore
 </script>

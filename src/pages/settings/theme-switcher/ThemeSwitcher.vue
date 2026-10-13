@@ -10,12 +10,20 @@ import { useColors } from 'vuestic-ui'
 
 const { applyPreset, currentPresetName } = useColors()
 
+const THEME_KEY = 'kicheko-theme'
+
 const theme = computed({
   get() {
     return currentPresetName.value
   },
-  set(value) {
+  set(value: string) {
     applyPreset(value)
+    localStorage.setItem(THEME_KEY, value)
+    if (value === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
   },
 })
 

@@ -1,41 +1,43 @@
 <template>
-  <VaLayout v-if="breakpoint.lgUp" class="h-screen bg-[var(--va-background-secondary)]">
-    <template #left>
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md text-center px-4">
+      <!-- Kicheko Branding -->
       <RouterLink
-        class="bg-primary h-full flex items-center justify-center"
-        style="width: 35vw"
         to="/"
-        aria-label="Visit homepage"
+        class="inline-flex items-center justify-center mb-4 transition-transform hover:scale-105"
+        aria-label="Kicheko Home"
       >
-        <VuesticLogo :height="28" start="#FFF" />
+        <KichekoLogo size="lg" :with-tagline="true" />
       </RouterLink>
-    </template>
-    <template #content>
-      <main class="h-full flex items-center justify-center mx-auto max-w-[420px]">
-        <RouterView />
-      </main>
-    </template>
-  </VaLayout>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Jukwaa la Video za Vichekesho Tanzania</p>
+    </div>
 
-  <VaLayout v-else class="h-screen bg-[var(--va-background-secondary)]">
-    <template #content>
-      <div class="p-4">
-        <main class="h-full flex flex-row items-center justify-start mx-auto max-w-[420px]">
-          <div class="flex flex-col items-start">
-            <RouterLink class="py-4" to="/" aria-label="Visit homepage">
-              <VuesticLogo class="mb-2" start="#0E41C9" />
-            </RouterLink>
-            <RouterView />
-          </div>
-        </main>
+    <!-- Plain, Clean Auth Card Container -->
+    <div class="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4">
+      <div
+        class="bg-white dark:bg-slate-800 py-8 px-6 shadow-sm border border-slate-200 dark:border-slate-700 rounded-2xl sm:px-10"
+      >
+        <RouterView />
       </div>
-    </template>
-  </VaLayout>
+
+      <!-- Quick Footer navigation -->
+      <div class="mt-6 text-center">
+        <RouterLink
+          to="/"
+          class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 inline-flex items-center gap-1.5 transition-colors"
+        >
+          <span class="material-icons text-base">arrow_back</span>
+          Rudi kwenye video (Back to Videos)
+        </RouterLink>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { useBreakpoint } from 'vuestic-ui'
-import VuesticLogo from '../components/VuesticLogo.vue'
-
-const breakpoint = useBreakpoint()
+import KichekoLogo from '../components/KichekoLogo.vue'
 </script>
+
+<style scoped>
+/* Plain, clean auth styling */
+</style>

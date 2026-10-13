@@ -2,24 +2,123 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 import AuthLayout from '../layouts/AuthLayout.vue'
 import AppLayout from '../layouts/AppLayout.vue'
-
+import YouTubeLayout from '../layouts/YouTubeLayout.vue'
 import RouteViewComponent from '../layouts/RouterBypass.vue'
+import { useAuthStore } from '../stores/auth-store'
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    /** Area requires an authenticated session — bounced to login otherwise. */
+    requiresAuth?: boolean
+    /** Area is for guests only — authenticated users go to the app. */
+    guestOnly?: boolean
+  }
+}
 
 const routes: Array<RouteRecordRaw> = [
+  // 1. Public Video Platform (YouTube-Like Experience)
   {
-    path: '/:pathMatch(.*)*',
-    redirect: { name: 'dashboard' },
-  },
-  {
-    name: 'admin',
     path: '/',
-    component: AppLayout,
-    redirect: { name: 'dashboard' },
+    component: YouTubeLayout,
     children: [
       {
-        name: 'dashboard',
+        name: 'home',
+        path: '',
+        component: () => import('../pages/public/HomePage.vue'),
+      },
+      {
+        name: 'watch',
+        path: 'watch/:id',
+        component: () => import('../pages/public/WatchPage.vue'),
+      },
+      {
+        name: 'shorts',
+        path: 'shorts',
+        component: () => import('../pages/public/ShortsPage.vue'),
+      },
+      {
+        name: 'short-detail',
+        path: 'shorts/:id',
+        component: () => import('../pages/public/ShortsPage.vue'),
+      },
+      {
+        name: 'comedians',
+        path: 'comedians',
+        component: () => import('../pages/public/ComediansPage.vue'),
+      },
+      {
+        name: 'comedian-profile',
+        path: 'comedians/:id',
+        component: () => import('../pages/public/ComedianProfilePage.vue'),
+      },
+      {
+        name: 'search',
+        path: 'search',
+        component: () => import('../pages/public/SearchPage.vue'),
+      },
+      {
+        name: 'library',
+        path: 'library',
+        component: () => import('../pages/public/LibraryPage.vue'),
+        meta: { requiresAuth: true },
+      },
+    ],
+  },
+
+  // 2. Auth Pages (Clean, Plain, No Dashboard Layout)
+  {
+    path: '/auth',
+    component: AuthLayout,
+    meta: { guestOnly: true },
+    children: [
+      {
+        name: 'login',
+        path: 'login',
+        component: () => import('../pages/auth/Login.vue'),
+      },
+      {
+        name: 'signup',
+        path: 'signup',
+        component: () => import('../pages/auth/Signup.vue'),
+      },
+      {
+        name: 'recover-password',
+        path: 'recover-password',
+        component: () => import('../pages/auth/RecoverPassword.vue'),
+      },
+      {
+        path: '',
+        redirect: { name: 'login' },
+      },
+    ],
+  },
+
+  // 3. Admin & Creator Studio Area
+  {
+    path: '/admin',
+    component: AppLayout,
+    meta: { requiresAuth: true },
+    redirect: { name: 'admin-dashboard' },
+    children: [
+      {
+        name: 'admin-dashboard',
         path: 'dashboard',
         component: () => import('../pages/admin/dashboard/Dashboard.vue'),
+      },
+      {
+        name: 'dashboard',
+        path: 'dashboard-alias',
+        redirect: { name: 'admin-dashboard' },
+      },
+      {
+        name: 'admin-videos',
+        path: 'videos',
+        component: () => import('../pages/admin/VideoManagementPage.vue'),
+      },
+      {
+        name: 'users',
+        path: 'users',
+        component: () => import('../pages/users/UsersPage.vue'),
       },
       {
         name: 'settings',
@@ -32,18 +131,13 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../pages/preferences/Preferences.vue'),
       },
       {
-        name: 'users',
-        path: 'users',
-        component: () => import('../pages/users/UsersPage.vue'),
-      },
-      {
         name: 'projects',
         path: 'projects',
         component: () => import('../pages/projects/ProjectsPage.vue'),
       },
       {
         name: 'payments',
-        path: '/payments',
+        path: 'payments',
         component: RouteViewComponent,
         children: [
           {
@@ -65,45 +159,27 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         name: 'faq',
-        path: '/faq',
+        path: 'faq',
         component: () => import('../pages/faq/FaqPage.vue'),
       },
     ],
   },
+
+  // Direct settings route redirect
   {
-    path: '/auth',
-    component: AuthLayout,
-    children: [
-      {
-        name: 'login',
-        path: 'login',
-        component: () => import('../pages/auth/Login.vue'),
-      },
-      {
-        name: 'signup',
-        path: 'signup',
-        component: () => import('../pages/auth/Signup.vue'),
-      },
-      {
-        name: 'recover-password',
-        path: 'recover-password',
-        component: () => import('../pages/auth/RecoverPassword.vue'),
-      },
-      {
-        name: 'recover-password-email',
-        path: 'recover-password-email',
-        component: () => import('../pages/auth/CheckTheEmail.vue'),
-      },
-      {
-        path: '',
-        redirect: { name: 'login' },
-      },
-    ],
+    path: '/settings',
+    redirect: { name: 'settings' },
   },
+
+  // 4. 404 & Wildcard fallback
   {
     name: '404',
     path: '/404',
     component: () => import('../pages/404.vue'),
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: { name: 'home' },
   },
 ]
 
@@ -113,7 +189,6 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition
     }
-    // For some reason using documentation example doesn't scroll on page navigation.
     if (to.hash) {
       return { el: to.hash, behavior: 'smooth' }
     } else {
@@ -121,6 +196,29 @@ const router = createRouter({
     }
   },
   routes,
+})
+
+router.beforeEach(async (to) => {
+  const auth = useAuthStore()
+
+  // Refresh profile once per page load if token exists but user profile is missing
+  if (auth.isAuthenticated && !auth.user) {
+    try {
+      await auth.fetchMe()
+    } catch {
+      auth.logout()
+    }
+  }
+
+  // Protected routes bounce to login with redirect param
+  if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  }
+
+  // Guest-only routes (login, signup) redirect to home if already authenticated
+  if (to.matched.some((record) => record.meta.guestOnly) && auth.isAuthenticated) {
+    return { name: 'home' }
+  }
 })
 
 export default router

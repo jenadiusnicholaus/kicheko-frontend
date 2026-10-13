@@ -37,10 +37,10 @@ const options = Object.values(languageCodes)
 
 const model = computed({
   get() {
-    return languageCodes[locale.value]
+    return languageCodes[locale.value] || 'English'
   },
-  set(value) {
-    locale.value = languageName[value]
+  set(value: string) {
+    locale.value = languageName[value] || 'gb'
   },
 })
 </script>

@@ -1,4 +1,4 @@
-import api from '../../services/api'
+import { urls as api } from '../../services/api'
 import { Project } from '../../pages/projects/types'
 
 export type Pagination = {
