@@ -22,7 +22,9 @@
       <!-- Top Overlay Controls -->
       <div class="relative z-20 p-4 flex items-center justify-between bg-gradient-to-b from-black/70 to-transparent">
         <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded-md bg-red-600 text-white text-[11px] font-bold tracking-wider uppercase">
+          <span
+            class="px-2 py-0.5 rounded-md bg-amber-400 text-gray-950 text-[11px] font-black tracking-wider uppercase"
+          >
             Short
           </span>
           <span class="text-xs text-white/80 font-medium"> {{ currentIndex + 1 }} ya {{ shorts.length }} </span>
@@ -52,7 +54,7 @@
         <button type="button" class="flex flex-col items-center gap-1 group" @click="handleLike">
           <div
             class="w-11 h-11 rounded-full flex items-center justify-center backdrop-blur-md transition-all"
-            :class="[isLiked ? 'bg-red-600 text-white' : 'bg-black/50 text-white hover:bg-black/70']"
+            :class="[isLiked ? 'bg-amber-400 text-gray-950 font-bold' : 'bg-black/50 text-white hover:bg-black/70']"
           >
             <span class="material-icons text-2xl">{{ isLiked ? 'thumb_up' : 'thumb_up_off_alt' }}</span>
           </div>
@@ -93,7 +95,7 @@
             <img
               :src="currentShort.comedian.avatar"
               :alt="currentShort.comedian.stage_name"
-              class="w-10 h-10 rounded-full object-cover border-2 border-red-500 shadow-md"
+              class="w-10 h-10 rounded-full object-cover border-2 border-amber-400 shadow-md"
             />
           </RouterLink>
           <div class="overflow-hidden">
@@ -118,7 +120,7 @@
         <div v-if="currentShort.full_video_id" class="pt-1">
           <RouterLink
             :to="{ name: 'watch', params: { id: currentShort.full_video_id } }"
-            class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
+            class="w-full py-2.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
           >
             <span class="material-icons text-base">smart_display</span>
             <span>Tazama Onyesho Lote (Watch Full Video)</span>
@@ -129,7 +131,7 @@
 
       <!-- Bottom Progress Bar -->
       <div class="absolute bottom-0 inset-x-0 h-1 bg-white/20 z-30 pointer-events-none">
-        <div class="h-full bg-red-600 transition-all duration-100" :style="{ width: `${shortProgress}%` }" />
+        <div class="h-full bg-amber-400 transition-all duration-100" :style="{ width: `${shortProgress}%` }" />
       </div>
     </div>
 

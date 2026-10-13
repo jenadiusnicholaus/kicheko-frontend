@@ -1,37 +1,41 @@
 <template>
-  <div class="kicheko-logo flex items-center gap-2 select-none" :class="{ 'cursor-pointer': clickable }">
-    <!-- Brand Icon -->
+  <div class="kicheko-logo inline-flex items-center gap-2 select-none" :class="{ 'cursor-pointer': clickable }">
+    <!-- Brand Icon from /image -->
     <div
-      class="logo-badge flex items-center justify-center rounded-xl bg-gradient-to-tr from-[#E50914] to-[#FF4D4D] text-white shadow-sm"
+      class="logo-badge relative flex items-center justify-center shrink-0 transition-transform duration-200"
       :style="{ width: `${badgeSize}px`, height: `${badgeSize}px` }"
     >
-      <svg
-        :width="iconSize"
-        :height="iconSize"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <!-- Comedy Play Icon: Play triangle + joyful smile curve -->
-        <path d="M9 7.5V16.5L16.5 12L9 7.5Z" />
-        <path d="M6 19C8.5 21 15.5 21 18 19" stroke="white" stroke-width="2" stroke-linecap="round" fill="none" />
-      </svg>
+      <!-- Light mode emblem -->
+      <img
+        src="/image/kicheko-icon.png"
+        alt="Kicheko"
+        class="w-full h-full object-contain block dark:hidden drop-shadow-sm"
+      />
+      <!-- Dark mode emblem -->
+      <img
+        src="/image/kicheko-icon-dark.png"
+        alt="Kicheko"
+        class="w-full h-full object-contain hidden dark:block drop-shadow-sm"
+      />
     </div>
 
     <!-- Wordmark -->
     <div v-if="!iconOnly" class="flex flex-col leading-none">
-      <div class="flex items-center gap-1">
-        <span class="font-extrabold tracking-tight text-xl text-gray-900 dark:text-white uppercase font-sans">
+      <div class="flex items-center gap-1.5">
+        <span
+          class="font-black tracking-tight text-gray-900 dark:text-white uppercase font-sans"
+          :class="textSizeClass"
+        >
           Kicheko
         </span>
         <span
-          class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-100 text-[#E50914] dark:bg-red-950 dark:text-red-400"
+          class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-400 text-gray-950 shadow-sm"
         >
           TZ
         </span>
       </div>
-      <span v-if="withTagline" class="text-[10px] text-gray-500 font-medium tracking-normal mt-0.5">
-        Cheka • Tazama • Piga Kura
+      <span v-if="withTagline" class="text-[11px] text-amber-600 dark:text-amber-400 font-bold tracking-tight mt-0.5">
+        Jiandae Kucheka
       </span>
     </div>
   </div>
@@ -42,7 +46,7 @@ import { computed } from 'vue'
 
 const props = withDefaults(
   defineProps<{
-    size?: 'sm' | 'md' | 'lg'
+    size?: 'sm' | 'md' | 'lg' | 'xl'
     iconOnly?: boolean
     withTagline?: boolean
     clickable?: boolean
@@ -56,24 +60,22 @@ const props = withDefaults(
 )
 
 const badgeSize = computed(() => {
-  if (props.size === 'sm') return 28
-  if (props.size === 'lg') return 44
-  return 34
+  if (props.size === 'sm') return 30
+  if (props.size === 'lg') return 48
+  if (props.size === 'xl') return 64
+  return 38
 })
 
-const iconSize = computed(() => {
-  if (props.size === 'sm') return 18
-  if (props.size === 'lg') return 28
-  return 22
+const textSizeClass = computed(() => {
+  if (props.size === 'sm') return 'text-lg'
+  if (props.size === 'lg') return 'text-2xl'
+  if (props.size === 'xl') return 'text-3xl'
+  return 'text-xl'
 })
 </script>
 
 <style scoped>
-.kicheko-logo {
-  display: inline-flex;
-}
 .logo-badge {
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(229, 9, 20, 0.25);
+  filter: drop-shadow(0 2px 6px rgba(254, 191, 1, 0.25));
 }
 </style>

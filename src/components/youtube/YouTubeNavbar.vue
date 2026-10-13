@@ -26,7 +26,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Tafuta video za vichekesho, wasanii, skits..."
-            class="w-full pl-4 pr-10 py-1.5 text-sm bg-gray-50 dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded-l-full focus:outline-none focus:border-red-600 dark:focus:border-red-500 text-gray-900 dark:text-white transition-all shadow-inner"
+            class="w-full pl-4 pr-10 py-1.5 text-sm bg-gray-50 dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded-l-full focus:outline-none focus:border-amber-400 dark:focus:border-amber-400 text-gray-900 dark:text-white transition-all shadow-inner"
           />
           <button
             v-if="searchQuery"
@@ -85,7 +85,7 @@
           <template #anchor>
             <button
               type="button"
-              class="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-red-500/50 focus:outline-none transition-all"
+              class="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-amber-400/50 focus:outline-none transition-all"
             >
               <div
                 class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm flex items-center justify-center uppercase overflow-hidden"

@@ -6,15 +6,15 @@
     <!-- Featured Spotlight Banner (Shown on All) -->
     <div
       v-if="featuredVideo && selectedCategory === 'All'"
-      class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-red-950 via-slate-900 to-black text-white p-6 sm:p-8 shadow-xl border border-red-900/40"
+      class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-amber-950/80 via-slate-900 to-black text-white p-6 sm:p-8 shadow-xl border border-amber-900/50"
     >
-      <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
       <div class="relative z-10 max-w-2xl space-y-3">
         <div
-          class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-red-600/80 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider"
+          class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-400 text-gray-950 text-xs font-black uppercase tracking-wider"
         >
           <span class="material-icons text-xs">local_fire_department</span>
-          <span>Inayovuma Zaidi Leo</span>
+          <span>{{ t('kicheko.home.hotBadge') }}</span>
         </div>
         <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
           {{ featuredVideo.title }}
@@ -25,10 +25,10 @@
         <div class="flex flex-wrap items-center gap-3 pt-2">
           <RouterLink
             :to="{ name: 'watch', params: { id: featuredVideo.id } }"
-            class="px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-sm inline-flex items-center gap-2 shadow-lg hover:shadow-red-600/40 transition-all"
+            class="px-5 py-2.5 rounded-full bg-amber-400 hover:bg-amber-500 text-gray-950 font-black text-sm inline-flex items-center gap-2 shadow-lg hover:shadow-amber-400/30 transition-all"
           >
             <span class="material-icons text-xl">play_arrow</span>
-            <span>Tazama Sasa</span>
+            <span>{{ t('kicheko.home.watchNow') }}</span>
           </RouterLink>
           <div class="flex items-center gap-2 text-xs text-gray-400">
             <span class="font-semibold text-white">{{ featuredVideo.comedian.stage_name }}</span>
@@ -38,7 +38,7 @@
             <span v-if="featuredVideo.access_type === 'paid'" class="text-amber-400 font-bold">
               Tsh {{ featuredVideo.price_amount.toLocaleString() }}
             </span>
-            <span v-else class="text-emerald-400 font-bold">Bure</span>
+            <span v-else class="text-emerald-400 font-bold">{{ t('kicheko.home.free') }}</span>
           </div>
         </div>
       </div>
@@ -48,10 +48,12 @@
     <div>
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span class="material-icons text-red-600 text-xl">movie</span>
+          <span class="material-icons text-amber-500 text-xl">movie</span>
           <span>{{ feedHeading }}</span>
         </h2>
-        <span class="text-xs text-gray-500">{{ filteredVideos.length }} video zinapatikana</span>
+        <span class="text-xs text-gray-500"
+          >{{ filteredVideos.length }} {{ t('kicheko.home.videosAvailable').replace('{n}', '') }}</span
+        >
       </div>
 
       <!-- Loading skeleton -->
@@ -74,16 +76,16 @@
         class="text-center py-16 bg-gray-50 dark:bg-[#18181b] rounded-2xl border border-gray-200 dark:border-gray-800 p-8"
       >
         <span class="material-icons text-5xl text-gray-400 mb-2">sentiment_dissatisfied</span>
-        <h3 class="text-base font-bold text-gray-800 dark:text-gray-200">Hakuna video zilizopatikana</h3>
+        <h3 class="text-base font-bold text-gray-800 dark:text-gray-200">{{ t('kicheko.home.noVideos') }}</h3>
         <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
-          Hakuna video kwa kitengo hiki kwa sasa. Jaribu kuchagua "All" au tembelea kitengo kingine.
+          {{ t('kicheko.home.noVideosDesc') }}
         </p>
         <button
           type="button"
-          class="mt-4 px-4 py-2 bg-red-600 text-white rounded-full text-xs font-semibold"
+          class="mt-4 px-4 py-2 bg-amber-400 hover:bg-amber-500 text-gray-950 rounded-full text-xs font-bold"
           @click="handleCategorySelect('All')"
         >
-          Onyesha Video Zote
+          {{ t('kicheko.home.showAll') }}
         </button>
       </div>
 
@@ -100,16 +102,16 @@
     >
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg bg-red-600 text-white flex items-center justify-center">
+          <div class="w-7 h-7 rounded-lg bg-amber-400 text-gray-950 flex items-center justify-center font-bold">
             <span class="material-icons text-lg">bolt</span>
           </div>
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white">Shorts za Kicheko</h2>
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ t('kicheko.home.shortsShelf') }}</h2>
         </div>
         <RouterLink
           :to="{ name: 'shorts' }"
-          class="text-xs font-semibold text-red-600 hover:underline flex items-center gap-1"
+          class="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
         >
-          <span>Tazama zote</span>
+          <span>{{ t('kicheko.home.seeAll') }}</span>
           <span class="material-icons text-sm">chevron_right</span>
         </RouterLink>
       </div>
@@ -123,6 +125,7 @@
           class="group relative aspect-[9/16] rounded-xl overflow-hidden bg-gray-900 shadow-md block border border-gray-800 hover:scale-[1.02] transition-transform"
         >
           <img
+            :short="short"
             :src="short.thumbnail"
             :alt="short.title"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -131,7 +134,9 @@
             class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 p-2.5 flex flex-col justify-between"
           >
             <div class="flex justify-end">
-              <span class="px-1.5 py-0.5 rounded bg-red-600 text-[10px] font-bold text-white uppercase">Short</span>
+              <span class="px-1.5 py-0.5 rounded bg-amber-400 text-[10px] font-black text-gray-950 uppercase"
+                >Short</span
+              >
             </div>
             <div>
               <p class="text-xs font-bold text-white line-clamp-2 leading-snug">
@@ -151,7 +156,7 @@
       v-if="secondaryVideoList.length > 0 && selectedCategory === 'All'"
       class="pt-6 border-t border-gray-200 dark:border-gray-800"
     >
-      <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Video Nyingine</h2>
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ t('kicheko.home.moreVideos') }}</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-7">
         <VideoCard v-for="video in secondaryVideoList" :key="video.id" :video="video" />
       </div>
@@ -162,9 +167,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import CategoryChips from '../../components/youtube/CategoryChips.vue'
 import VideoCard from '../../components/youtube/VideoCard.vue'
 import { videoApi, type Video } from '../../services/api/video.api'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -230,11 +238,11 @@ const secondaryVideoList = computed(() => {
 })
 
 const feedHeading = computed(() => {
-  if (selectedCategory.value === 'All') return 'Video Zinazopendekezwa'
-  if (selectedCategory.value === 'Free') return 'Video za Bure'
-  if (selectedCategory.value === 'Premium') return 'Video Maalum za Kulipia'
-  if (selectedCategory.value === 'Trending') return 'Zinazotazamwa Zaidi Tanzania'
-  return `Vichekesho: ${selectedCategory.value}`
+  if (selectedCategory.value === 'All') return t('kicheko.home.recommended')
+  if (selectedCategory.value === 'Free') return t('kicheko.home.freeVideos')
+  if (selectedCategory.value === 'Premium') return t('kicheko.home.premiumVideos')
+  if (selectedCategory.value === 'Trending') return t('kicheko.home.trending')
+  return `${t('kicheko.home.comedy').replace('{cat}', selectedCategory.value)}`
 })
 
 const formatViews = (views: number): string => {

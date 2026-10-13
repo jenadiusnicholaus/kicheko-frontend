@@ -115,13 +115,16 @@ onMounted(() => {
 }
 
 .chip-button.active {
-  background-color: #111827;
-  color: #ffffff;
-  font-weight: 600;
+  background-color: #febf01;
+  color: #0f172a;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(254, 191, 1, 0.35);
 }
 
 :global(.dark) .chip-button.active {
-  background-color: #f4f4f5;
+  background-color: #febf01;
   color: #09090b;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(254, 191, 1, 0.45);
 }
 </style>

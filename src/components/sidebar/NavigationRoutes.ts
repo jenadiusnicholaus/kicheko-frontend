@@ -13,70 +13,70 @@ export default {
   routes: [
     {
       name: 'home',
-      displayName: 'Jukwaa la Video (Public)',
+      displayName: 'kicheko.admin.nav.public',
       meta: {
         icon: 'smart_display',
       },
     },
     {
       name: 'admin-dashboard',
-      displayName: 'Studio ya Kicheko',
+      displayName: 'kicheko.admin.nav.studio',
       meta: {
         icon: 'dashboard',
       },
     },
     {
       name: 'admin-videos',
-      displayName: 'Pakia & Simamia Video',
+      displayName: 'kicheko.admin.nav.videos',
       meta: {
         icon: 'video_call',
       },
     },
     {
       name: 'users',
-      displayName: 'Wasanii & Watumiaji',
+      displayName: 'kicheko.admin.nav.users',
       meta: {
         icon: 'group',
       },
     },
     {
       name: 'payments',
-      displayName: 'Malipo & Mauzo',
+      displayName: 'kicheko.admin.nav.payments',
       meta: {
         icon: 'payments',
       },
       children: [
         {
           name: 'billing',
-          displayName: 'Miamala ya Mauzo',
+          displayName: 'kicheko.admin.nav.billing',
         },
         {
           name: 'payment-methods',
-          displayName: 'Njia za Malipo',
+          displayName: 'kicheko.admin.nav.paymentMethods',
         },
         {
           name: 'pricing-plans',
-          displayName: 'Gharama za Video',
+          displayName: 'kicheko.admin.nav.pricingPlans',
         },
       ],
     },
     {
       name: 'preferences',
-      displayName: 'Wasifu wa Msanii',
+      displayName: 'kicheko.admin.nav.profile',
       meta: {
         icon: 'badge',
       },
     },
     {
       name: 'settings',
-      displayName: 'Mipangilio ya Mfumo',
+      displayName: 'kicheko.admin.nav.settings',
       meta: {
         icon: 'settings',
       },
     },
     {
       name: 'faq',
-      displayName: 'Msaada & Maswali',
+      displayName: 'kicheko.admin.nav.faq',
       meta: {
         icon: 'help_outline',
       },

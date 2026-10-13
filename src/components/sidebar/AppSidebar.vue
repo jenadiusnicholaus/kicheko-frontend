@@ -66,7 +66,7 @@
     <template #bottom>
       <div v-if="!minimized" class="p-3 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-400">
         <p class="font-medium text-gray-500 dark:text-gray-400">Kicheko Studio v1.0</p>
-        <p class="text-[10px] mt-0.5">Cheka • Tazama • Piga Kura</p>
+        <p class="text-[10px] mt-0.5">{{ t('kicheko.tagline') }}</p>
       </div>
     </template>
   </VaSidebar>
@@ -124,12 +124,12 @@ export default defineComponent({
     const minimizedWidth = computed(() => '4rem')
     const color = computed(() => getColor('background-secondary'))
 
-    // Neutral active highlight — subtle gray, no red
-    const activeColor = computed(() => colorToRgba(getColor('textPrimary') || '#111111', 0.08))
+    // Active highlight — warm amber highlight matching brand logo
+    const activeColor = computed(() => colorToRgba(getColor('primary') || '#FEBF01', 0.12))
 
-    // Icons: active gets text-primary color, inactive gets secondary/muted
-    const iconColor = (r: INavigationRoute) => (routeHasActiveChild(r) ? 'textPrimary' : 'secondary')
-    const textColor = (r: INavigationRoute) => (routeHasActiveChild(r) ? 'textPrimary' : 'textPrimary')
+    // Icons: active gets amber brand primary, inactive gets secondary/muted
+    const iconColor = (r: INavigationRoute) => (routeHasActiveChild(r) ? 'primary' : 'secondary')
+    const textColor = (r: INavigationRoute) => (routeHasActiveChild(r) ? 'primary' : 'textPrimary')
     const arrowDirection = (state: boolean) => (state ? 'va-arrow-up' : 'va-arrow-down')
 
     watch(() => route.fullPath, setActiveExpand, { immediate: true })
@@ -148,6 +148,7 @@ export default defineComponent({
       iconColor,
       textColor,
       arrowDirection,
+      t,
     }
   },
 })

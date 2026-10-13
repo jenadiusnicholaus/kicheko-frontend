@@ -37,12 +37,12 @@
         <RouterLink
           to="/"
           :class="getItemClass(route.name === 'home' && !route.query.category)"
-          :title="minimized ? 'Nyumbani' : undefined"
+          :title="minimized ? $t('kicheko.nav.home') : undefined"
           @click="handleNavClick"
         >
           <span :class="getIconClass(route.name === 'home' && !route.query.category)">home</span>
-          <span v-if="!minimized || isMobile" class="nav-label">Nyumbani</span>
-          <span v-else class="mini-label">Nyumbani</span>
+          <span v-if="!minimized || isMobile" class="nav-label">{{ $t('kicheko.nav.home') }}</span>
+          <span v-else class="mini-label">{{ $t('kicheko.nav.home') }}</span>
         </RouterLink>
 
         <RouterLink
@@ -59,25 +59,25 @@
         <RouterLink
           :to="{ name: 'comedians' }"
           :class="getItemClass(route.name === 'comedians' || route.name === 'comedian-profile')"
-          :title="minimized ? 'Wasanii' : undefined"
+          :title="minimized ? $t('kicheko.nav.comedians') : undefined"
           @click="handleNavClick"
         >
           <span :class="getIconClass(route.name === 'comedians' || route.name === 'comedian-profile')"
             >theater_comedy</span
           >
-          <span v-if="!minimized || isMobile" class="nav-label">Wasanii</span>
-          <span v-else class="mini-label">Wasanii</span>
+          <span v-if="!minimized || isMobile" class="nav-label">{{ $t('kicheko.nav.comedians') }}</span>
+          <span v-else class="mini-label">{{ $t('kicheko.nav.comedians') }}</span>
         </RouterLink>
 
         <RouterLink
           :to="{ name: 'home', query: { category: 'Trending' } }"
           :class="getItemClass(route.query.category === 'Trending')"
-          :title="minimized ? 'Inayovuma' : undefined"
+          :title="minimized ? $t('kicheko.nav.trending') : undefined"
           @click="handleNavClick"
         >
           <span :class="getIconClass(route.query.category === 'Trending')">whatshot</span>
-          <span v-if="!minimized || isMobile" class="nav-label">Inayovuma</span>
-          <span v-else class="mini-label">Trending</span>
+          <span v-if="!minimized || isMobile" class="nav-label">{{ $t('kicheko.nav.trending') }}</span>
+          <span v-else class="mini-label">{{ $t('kicheko.nav.trending') }}</span>
         </RouterLink>
       </div>
 
@@ -90,29 +90,29 @@
           v-if="!minimized || isMobile"
           class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >
-          Wewe (You)
+          {{ $t('kicheko.nav.you') }}
         </div>
         <div class="space-y-1">
           <RouterLink
             :to="{ name: 'library' }"
             :class="getItemClass(route.name === 'library' && route.query.tab !== 'liked')"
-            :title="minimized ? 'Maktaba Yangu' : undefined"
+            :title="minimized ? $t('kicheko.nav.library') : undefined"
             @click="handleNavClick"
           >
             <span :class="getIconClass(route.name === 'library' && route.query.tab !== 'liked')">video_library</span>
-            <span v-if="!minimized || isMobile" class="nav-label">Maktaba Yangu</span>
-            <span v-else class="mini-label">Maktaba</span>
+            <span v-if="!minimized || isMobile" class="nav-label">{{ $t('kicheko.nav.library') }}</span>
+            <span v-else class="mini-label">{{ $t('kicheko.nav.library') }}</span>
           </RouterLink>
 
           <RouterLink
             :to="{ name: 'library', query: { tab: 'liked' } }"
             :class="getItemClass(route.query.tab === 'liked')"
-            :title="minimized ? 'Zilizopendwa' : undefined"
+            :title="minimized ? $t('kicheko.nav.liked') : undefined"
             @click="handleNavClick"
           >
             <span :class="getIconClass(route.query.tab === 'liked')">thumb_up</span>
-            <span v-if="!minimized || isMobile" class="nav-label">Zilizopendwa</span>
-            <span v-else class="mini-label">Likes</span>
+            <span v-if="!minimized || isMobile" class="nav-label">{{ $t('kicheko.nav.liked') }}</span>
+            <span v-else class="mini-label">{{ $t('kicheko.nav.liked') }}</span>
           </RouterLink>
         </div>
       </div>
@@ -126,29 +126,29 @@
           v-if="!minimized || isMobile"
           class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
         >
-          Studio ya Wasanii
+          {{ $t('kicheko.nav.studioGroup') }}
         </div>
         <div class="space-y-1">
           <RouterLink
             :to="{ name: 'admin-videos' }"
             :class="getItemClass(route.name === 'admin-videos')"
-            :title="minimized ? 'Pakia Video' : undefined"
+            :title="minimized ? $t('kicheko.nav.upload') : undefined"
             @click="handleNavClick"
           >
             <span :class="getIconClass(route.name === 'admin-videos')">video_call</span>
-            <span v-if="!minimized || isMobile" class="nav-label">Pakia & Simamia</span>
-            <span v-else class="mini-label">Pakia</span>
+            <span v-if="!minimized || isMobile" class="nav-label">{{ $t('kicheko.nav.upload') }}</span>
+            <span v-else class="mini-label">{{ $t('kicheko.nav.upload') }}</span>
           </RouterLink>
 
           <RouterLink
             :to="{ name: 'admin-dashboard' }"
             :class="getItemClass(route.name === 'admin-dashboard')"
-            :title="minimized ? 'Dashibodi' : undefined"
+            :title="minimized ? $t('kicheko.nav.studio') : undefined"
             @click="handleNavClick"
           >
             <span :class="getIconClass(route.name === 'admin-dashboard')">analytics</span>
-            <span v-if="!minimized || isMobile" class="nav-label">Dashibodi (Studio)</span>
-            <span v-else class="mini-label">Studio</span>
+            <span v-if="!minimized || isMobile" class="nav-label">{{ $t('kicheko.nav.studio') }}</span>
+            <span v-else class="mini-label">{{ $t('kicheko.nav.studio') }}</span>
           </RouterLink>
         </div>
       </div>
@@ -158,16 +158,18 @@
         v-if="(!minimized || isMobile) && !authStore.isAuthenticated"
         class="mt-4 p-3 bg-gray-50 dark:bg-zinc-800/70 rounded-xl border border-gray-200 dark:border-zinc-700 text-xs"
       >
-        <p class="font-semibold text-gray-900 dark:text-gray-100 mb-1">Je, wewe ni Mchekeshaji?</p>
+        <p class="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          {{ $t('kicheko.sidebar.creatorPromo.question') }}
+        </p>
         <p class="text-gray-600 dark:text-gray-300 mb-2 leading-relaxed">
-          Jiunge na Kicheko, pakia vichekesho vyako na upate mapato ya kazi zako.
+          {{ $t('kicheko.sidebar.creatorPromo.pitch') }}
         </p>
         <RouterLink
           :to="{ name: 'signup' }"
           class="inline-block px-3 py-1.5 bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-zinc-900 font-semibold rounded-lg text-xs transition-colors"
           @click="handleNavClick"
         >
-          Anza Leo
+          {{ $t('kicheko.sidebar.creatorPromo.cta') }}
         </RouterLink>
       </div>
     </div>
@@ -178,11 +180,15 @@
       class="p-3 border-t border-gray-200 dark:border-gray-800 text-[11px] text-gray-500 dark:text-gray-400 space-y-1"
     >
       <div class="flex flex-wrap gap-x-2 gap-y-0.5">
-        <RouterLink to="/faq" class="hover:text-gray-900 dark:hover:text-gray-100 hover:underline"
-          >Kuhusu Sisi</RouterLink
-        >
-        <RouterLink to="/faq" class="hover:text-gray-900 dark:hover:text-gray-100 hover:underline">Vigezo</RouterLink>
-        <RouterLink to="/faq" class="hover:text-gray-900 dark:hover:text-gray-100 hover:underline">Faragha</RouterLink>
+        <RouterLink to="/faq" class="hover:text-gray-900 dark:hover:text-gray-100 hover:underline">{{
+          $t('kicheko.sidebar.footer.about')
+        }}</RouterLink>
+        <RouterLink to="/faq" class="hover:text-gray-900 dark:hover:text-gray-100 hover:underline">{{
+          $t('kicheko.sidebar.footer.terms')
+        }}</RouterLink>
+        <RouterLink to="/faq" class="hover:text-gray-900 dark:hover:text-gray-100 hover:underline">{{
+          $t('kicheko.sidebar.footer.privacy')
+        }}</RouterLink>
       </div>
       <p class="text-gray-400 dark:text-gray-500">© 2026 Kicheko Entertainment</p>
     </div>
@@ -191,8 +197,11 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import KichekoLogo from '../KichekoLogo.vue'
 import { useAuthStore } from '../../stores/auth-store'
+
+const { t: $t } = useI18n()
 
 const props = defineProps<{
   minimized: boolean
@@ -218,14 +227,14 @@ const getItemClass = (isActive: boolean) => [
     ? 'flex-col gap-1 px-1 py-2.5 justify-center items-center text-center'
     : 'flex-row gap-4 px-3 py-2.5',
   isActive
-    ? 'bg-red-50 text-red-600 font-semibold dark:bg-zinc-800 dark:text-white'
+    ? 'bg-amber-50 text-amber-700 font-bold dark:bg-amber-950/40 dark:text-amber-400'
     : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-gray-900 dark:hover:text-white font-medium',
 ]
 
 const getIconClass = (isActive: boolean) => [
   'material-icons text-xl leading-none transition-colors',
   isActive
-    ? 'text-red-600 dark:text-red-400'
+    ? 'text-amber-500 dark:text-amber-400 font-bold'
     : 'text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white',
 ]
 </script>

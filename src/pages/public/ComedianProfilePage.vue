@@ -40,7 +40,7 @@
         :class="[
           isFollowed
             ? 'bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
-            : 'bg-red-600 hover:bg-red-700 text-white',
+            : 'bg-amber-400 hover:bg-amber-500 text-gray-950 font-black',
         ]"
         @click="toggleFollow"
       >
@@ -52,10 +52,10 @@
     <div class="border-b border-gray-200 dark:border-gray-800 flex gap-6 text-sm font-semibold">
       <button
         type="button"
-        class="pb-3 border-b-2 transition-colors"
+        class="pb-3 border-b-2 transition-colors font-bold"
         :class="[
           activeTab === 'videos'
-            ? 'border-red-600 text-red-600'
+            ? 'border-amber-400 text-amber-600 dark:text-amber-400'
             : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white',
         ]"
         @click="activeTab = 'videos'"
@@ -64,10 +64,10 @@
       </button>
       <button
         type="button"
-        class="pb-3 border-b-2 transition-colors"
+        class="pb-3 border-b-2 transition-colors font-bold"
         :class="[
           activeTab === 'shorts'
-            ? 'border-red-600 text-red-600'
+            ? 'border-amber-400 text-amber-600 dark:text-amber-400'
             : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white',
         ]"
         @click="activeTab = 'shorts'"

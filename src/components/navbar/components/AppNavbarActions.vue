@@ -4,20 +4,20 @@
     <RouterLink
       to="/"
       class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors border border-gray-200 dark:border-gray-700"
-      title="Rudi kwenye jukwaa la video"
+      :title="$t('kicheko.navbar.watchPlatform')"
     >
       <span class="material-icons text-base">smart_display</span>
-      <span>Tazama Jukwaa</span>
+      <span>{{ $t('kicheko.navbar.watchPlatform') }}</span>
     </RouterLink>
 
     <!-- Quick Upload Video Action -->
     <RouterLink
       :to="{ name: 'admin-videos' }"
       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors"
-      title="Pakia video mpya ya vichekesho"
+      :title="$t('kicheko.nav.upload')"
     >
       <span class="material-icons text-base">video_call</span>
-      <span class="hidden md:inline">Pakia Video</span>
+      <span class="hidden md:inline">{{ $t('kicheko.nav.upload') }}</span>
     </RouterLink>
 
     <!-- Theme Switcher -->
@@ -40,9 +40,12 @@
 
 <script lang="ts" setup>
 import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useColors } from 'vuestic-ui'
 import ProfileDropdown from './dropdowns/ProfileDropdown.vue'
 import NotificationDropdown from './dropdowns/NotificationDropdown.vue'
+
+const { t: $t } = useI18n()
 
 defineProps({
   isMobile: { type: Boolean, default: false },

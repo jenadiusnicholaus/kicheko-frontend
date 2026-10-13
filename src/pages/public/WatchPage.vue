@@ -57,7 +57,7 @@
             <div>
               <RouterLink
                 :to="{ name: 'comedian-profile', params: { id: video.comedian_id } }"
-                class="font-bold text-sm sm:text-base text-gray-900 dark:text-white hover:text-red-600 flex items-center gap-1"
+                class="font-bold text-sm sm:text-base text-gray-900 dark:text-white hover:text-amber-500 flex items-center gap-1"
               >
                 <span>{{ video.comedian.stage_name }}</span>
                 <span v-if="video.comedian.verified" class="material-icons text-xs text-blue-500">check_circle</span>
@@ -72,7 +72,7 @@
               :class="[
                 isFollowed
                   ? 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300'
-                  : 'bg-red-600 hover:bg-red-700 text-white shadow-sm',
+                  : 'bg-amber-400 hover:bg-amber-500 text-gray-950 font-bold shadow-sm',
               ]"
               @click="toggleFollow"
             >
@@ -88,7 +88,7 @@
               class="px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-colors border"
               :class="[
                 isLiked
-                  ? 'bg-red-50 text-red-600 border-red-200 dark:bg-red-950/60 dark:text-red-400 dark:border-red-900/40'
+                  ? 'bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-900/40'
                   : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 border-transparent',
               ]"
               @click="handleLike"
@@ -111,7 +111,7 @@
             <button
               v-if="video.access_type === 'paid' && isPaidAndLocked"
               type="button"
-              class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-red-600 to-amber-500 text-white shadow-sm flex items-center gap-1.5"
+              class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-400 hover:bg-amber-500 text-gray-950 shadow-sm flex items-center gap-1.5"
               @click="showCheckoutModal = true"
             >
               <span class="material-icons text-base">shopping_bag</span>
@@ -127,7 +127,7 @@
             <span>•</span>
             <span>{{ new Date(video.published_at).toLocaleDateString('sw-TZ', { dateStyle: 'long' }) }}</span>
             <span>•</span>
-            <span class="text-red-600 dark:text-red-400"
+            <span class="text-amber-600 dark:text-amber-400 font-semibold"
               >#Kicheko #ComedyTZ #{{ video.category.replace(/\s+/g, '') }}</span
             >
           </div>
@@ -150,7 +150,7 @@
       <!-- Right Column: Related Videos (YouTube style sidebar) -->
       <div class="space-y-4">
         <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span class="material-icons text-red-600 text-lg">playlist_play</span>
+          <span class="material-icons text-amber-500 text-lg">playlist_play</span>
           <span>Inayofuata (Up Next)</span>
         </h2>
 
@@ -186,7 +186,7 @@
             <!-- Details -->
             <div class="flex-1 min-w-0">
               <h3
-                class="text-xs font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug group-hover:text-red-600 transition-colors"
+                class="text-xs font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug group-hover:text-amber-500 transition-colors"
               >
                 {{ rel.title }}
               </h3>
@@ -205,7 +205,7 @@
       <div class="p-4 space-y-4">
         <div class="text-center space-y-1">
           <div
-            class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950 text-red-600 mx-auto flex items-center justify-center"
+            class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-600 mx-auto flex items-center justify-center"
           >
             <span class="material-icons text-2xl">account_balance_wallet</span>
           </div>
@@ -216,10 +216,10 @@
         </div>
 
         <div
-          class="p-3 bg-red-50 dark:bg-red-950/40 rounded-xl border border-red-100 dark:border-red-900/40 flex justify-between items-center text-sm"
+          class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200 dark:border-amber-900/40 flex justify-between items-center text-sm"
         >
           <span class="text-gray-600 dark:text-gray-300">Kiasi cha Kulipa:</span>
-          <span class="text-lg font-extrabold text-red-600 dark:text-red-400">
+          <span class="text-lg font-extrabold text-amber-600 dark:text-amber-400">
             Tsh {{ video.price_amount.toLocaleString() }}
           </span>
         </div>
@@ -235,7 +235,7 @@
               class="py-2 px-3 text-xs font-bold rounded-lg border text-center transition-all"
               :class="[
                 selectedProvider === provider
-                  ? 'border-red-600 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300 ring-2 ring-red-500/20'
+                  ? 'border-amber-500 bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-300 ring-2 ring-amber-400/20'
                   : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300',
               ]"
               @click="selectedProvider = provider"
@@ -254,7 +254,7 @@
             v-model="phoneInput"
             type="tel"
             placeholder="07XXXXXXXX au +255..."
-            class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
+            class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-amber-400"
           />
         </div>
 
@@ -269,7 +269,7 @@
           <button
             type="button"
             :disabled="isProcessingPayment || !phoneInput.trim()"
-            class="flex-1 py-2 rounded-lg text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-md disabled:opacity-50 flex items-center justify-center gap-1.5"
+            class="flex-1 py-2 rounded-lg text-xs font-bold bg-amber-400 hover:bg-amber-500 text-gray-950 shadow-md disabled:opacity-50 flex items-center justify-center gap-1.5"
             @click="processPurchase"
           >
             <span v-if="isProcessingPayment" class="material-icons animate-spin text-sm">refresh</span>

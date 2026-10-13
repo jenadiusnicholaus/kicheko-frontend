@@ -241,5 +241,84 @@
     "inputField": "Input field",
     "fileTypeIncorrect": "File type is incorrect",
     "select": "Select an option"
+  },
+  "kicheko": {
+    "tagline": "Laugh • Watch • Vote",
+    "nav": {
+      "home": "Home",
+      "shorts": "Shorts",
+      "comedians": "Comedians",
+      "trending": "Trending",
+      "library": "My Library",
+      "liked": "Liked Videos",
+      "upload": "Upload & Manage",
+      "studio": "Studio (Dashboard)",
+      "you": "You",
+      "studioGroup": "Creator Studio"
+    },
+    "sidebar": {
+      "creatorPromo": {
+        "question": "Are you a Comedian?",
+        "pitch": "Join Kicheko, upload your comedy and earn from your work.",
+        "cta": "Start Today"
+      },
+      "footer": {
+        "about": "About Us",
+        "terms": "Terms",
+        "privacy": "Privacy"
+      }
+    },
+    "settings": {
+      "title": "System Settings",
+      "theme": {
+        "label": "Theme",
+        "description": "Choose your preferred dark or light appearance on the Kicheko platform."
+      },
+      "preferences": {
+        "label": "Language & Preferences",
+        "description": "Set the primary language to use on the site and your notifications."
+      },
+      "notifications": {
+        "label": "Notification Settings",
+        "description": "Choose the types of notifications you want to receive about new videos, comments and account activity."
+      }
+    },
+    "home": {
+      "hotBadge": "Trending Today",
+      "watchNow": "Watch Now",
+      "free": "Free",
+      "videosAvailable": "{n} videos available",
+      "noVideos": "No videos found",
+      "noVideosDesc": "No videos in this category yet. Try selecting \"All\" or visit another category.",
+      "showAll": "Show All Videos",
+      "recommended": "Recommended Videos",
+      "freeVideos": "Free Videos",
+      "premiumVideos": "Premium Videos",
+      "trending": "Most Watched in Tanzania",
+      "comedy": "Comedy: {cat}",
+      "shortsShelf": "Kicheko Shorts",
+      "seeAll": "See all",
+      "moreVideos": "More Videos"
+    },
+    "navbar": {
+      "watchPlatform": "Watch Platform",
+      "accountSettings": "Account Settings",
+      "mySettings": "Settings"
+    },
+    "admin": {
+      "nav": {
+        "public": "Public Platform",
+        "studio": "Kicheko Studio",
+        "videos": "Upload & Manage Videos",
+        "users": "Artists & Users",
+        "payments": "Payments & Sales",
+        "billing": "Sales Transactions",
+        "paymentMethods": "Payment Methods",
+        "pricingPlans": "Video Pricing",
+        "profile": "Artist Profile",
+        "settings": "System Settings",
+        "faq": "Help & FAQ"
+      }
+    }
   }
 }

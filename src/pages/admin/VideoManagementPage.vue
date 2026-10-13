@@ -6,7 +6,7 @@
     >
       <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span class="material-icons text-red-600">video_call</span>
+          <span class="material-icons text-amber-500">video_call</span>
           <span>Usimamizi na Upakiaji wa Video za Kicheko</span>
         </h1>
         <p class="text-xs sm:text-sm text-gray-500 mt-1">
@@ -16,7 +16,7 @@
 
       <button
         type="button"
-        class="px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-md flex items-center gap-2 transition-all self-start sm:self-auto"
+        class="px-5 py-2.5 rounded-full bg-amber-400 hover:bg-amber-500 text-gray-950 font-bold text-sm shadow-md flex items-center gap-2 transition-all self-start sm:self-auto"
         @click="openUploadModal"
       >
         <span class="material-icons text-lg">cloud_upload</span>
@@ -83,7 +83,7 @@
                     </p>
                     <span
                       v-if="v.is_short"
-                      class="text-[10px] px-1.5 py-0.2 rounded bg-red-100 text-red-600 font-bold dark:bg-red-950 dark:text-red-400"
+                      class="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold dark:bg-amber-950 dark:text-amber-400"
                     >
                       Short
                     </span>
@@ -134,7 +134,7 @@
               <td class="py-3 px-4 text-right">
                 <RouterLink
                   :to="{ name: v.is_short ? 'short-detail' : 'watch', params: { id: v.id } }"
-                  class="text-xs font-bold text-red-600 hover:text-red-700 underline"
+                  class="text-xs font-bold text-amber-600 hover:text-amber-700 underline"
                   target="_blank"
                 >
                   Tazama
@@ -151,7 +151,7 @@
       <div class="p-4 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
           <div class="flex items-center gap-2">
-            <span class="material-icons text-red-600 text-2xl">video_call</span>
+            <span class="material-icons text-amber-500 text-2xl">video_call</span>
             <h3 class="text-lg font-bold text-gray-900 dark:text-white">Pakia Video Mpya ya Kicheko</h3>
           </div>
           <button type="button" class="text-gray-400 hover:text-gray-600 text-lg" @click="showModal = false">✕</button>
@@ -282,7 +282,12 @@
 
           <!-- Checkbox: Is Short / Preview -->
           <div class="flex items-center gap-2">
-            <input id="isShortCheck" v-model="form.is_short" type="checkbox" class="rounded text-red-600" />
+            <input
+              id="isShortCheck"
+              v-model="form.is_short"
+              type="checkbox"
+              class="rounded text-amber-500 focus:ring-amber-400"
+            />
             <label for="isShortCheck" class="text-xs font-bold text-gray-700 dark:text-gray-300">
               Hii ni Short Preview (Video fupi ya 9:16 ya kuunganisha na video kuu)
             </label>
@@ -300,7 +305,7 @@
             <button
               type="submit"
               :disabled="isSubmitting"
-              class="flex-1 py-2 text-xs font-bold bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
+              class="flex-1 py-2 text-xs font-bold bg-amber-400 hover:bg-amber-500 text-gray-950 rounded-lg shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <span v-if="isSubmitting" class="material-icons animate-spin text-sm">refresh</span>
               <span>{{ isSubmitting ? 'Inapakia...' : 'Chapisha Video Sasa' }}</span>

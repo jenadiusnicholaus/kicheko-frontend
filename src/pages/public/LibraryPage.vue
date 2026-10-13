@@ -14,10 +14,10 @@
     <div class="flex gap-4 border-b border-gray-200 dark:border-gray-800 text-sm font-semibold">
       <button
         type="button"
-        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5"
+        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5 font-bold"
         :class="[
           activeTab === 'purchased'
-            ? 'border-red-600 text-red-600'
+            ? 'border-amber-400 text-amber-600 dark:text-amber-400'
             : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white',
         ]"
         @click="activeTab = 'purchased'"
@@ -28,10 +28,10 @@
 
       <button
         type="button"
-        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5"
+        class="pb-3 border-b-2 transition-colors flex items-center gap-1.5 font-bold"
         :class="[
           activeTab === 'liked'
-            ? 'border-red-600 text-red-600'
+            ? 'border-amber-400 text-amber-600 dark:text-amber-400'
             : 'border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white',
         ]"
         @click="activeTab = 'liked'"
@@ -60,7 +60,7 @@
         </p>
         <RouterLink
           to="/"
-          class="mt-4 inline-block px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full text-xs"
+          class="mt-4 inline-block px-5 py-2 bg-amber-400 hover:bg-amber-500 text-gray-950 font-bold rounded-full text-xs shadow-md"
         >
           Tazama Video za Sasa
         </RouterLink>

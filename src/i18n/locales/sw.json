@@ -1,0 +1,216 @@
+{
+  "auth": {
+    "agree": "Nakubali",
+    "createAccount": "Fungua akaunti",
+    "createNewAccount": "Fungua Akaunti Mpya",
+    "email": "Barua pepe",
+    "login": "Ingia",
+    "password": "Neno la siri",
+    "recover_password": "Rudisha neno la siri",
+    "sign_up": "Jiandikishe",
+    "keep_logged_in": "Niendelee kuwa nimeingia",
+    "termsOfUse": "Masharti ya Matumizi.",
+    "reset_password": "Weka upya neno la siri"
+  },
+  "404": {
+    "title": "Ukurasa huu haupatikani.",
+    "text": "Ikiwa unahisi haikuwa sahihi, tuma ujumbe kwetu kwa ",
+    "back_button": "Rudi kwenye dashibodi"
+  },
+  "typography": {
+    "primary": "Mitindo ya maandishi ya msingi",
+    "secondary": "Mitindo ya maandishi ya sekondari"
+  },
+  "dashboard": {
+    "versions": "Toleo",
+    "setupRemoteConnections": "Weka Miunganiko ya Mbali",
+    "currentVisitors": "Wageni wa Sasa",
+    "navigationLayout": "mpangilio wa urambazaji",
+    "topBarButton": "Upau wa Juu",
+    "sideBarButton": "Upau wa Pembeni"
+  },
+  "language": {
+    "brazilian_portuguese": "Kireno (Brazil)",
+    "english": "Kiingereza",
+    "spanish": "Kihispania",
+    "simplified_chinese": "Kichina (Rahisi)",
+    "persian": "Kiajemi",
+    "swahili": "Kiswahili"
+  },
+  "menu": {
+    "auth": "Uthibitishaji",
+    "buttons": "Vitufe",
+    "timelines": "Ratiba",
+    "dashboard": "Dashibodi",
+    "billing": "Bili",
+    "login": "Ingia",
+    "preferences": "Mapendeleo ya akaunti",
+    "payments": "Malipo",
+    "settings": "Mipangilio ya programu",
+    "pricing-plans": "Mipango ya bei",
+    "payment-methods": "Njia za malipo",
+    "signup": "Jiandikishe",
+    "recover-password": "Rudisha neno la siri",
+    "recover-password-email": "Barua pepe ya kurejesha neno la siri",
+    "404": "404",
+    "faq": "Maswali Yanayoulizwa Mara Kwa Mara",
+    "users": "Watumiaji",
+    "projects": "Miradi"
+  },
+  "messages": {
+    "all": "Angalia ujumbe wote",
+    "new": "Ujumbe mpya kutoka {name}",
+    "mark_as_read": "Weka kama umesomwa"
+  },
+  "navbar": {
+    "messageUs": "Maswali ya uendelezaji wa wavuti:",
+    "repository": "Hifadhi ya GitHub"
+  },
+  "notifications": {
+    "all": "Angalia arifa zote",
+    "less": "Angalia arifa chache",
+    "mark_as_read": "Weka kama imesomwa",
+    "sentMessage": "amekutumia ujumbe",
+    "uploadedZip": "amepakia faili mpya la Zip la {type}",
+    "startedTopic": "ameanzisha mada mpya"
+  },
+  "user": {
+    "language": "Badilisha lugha",
+    "logout": "Toka",
+    "profile": "Wasifu",
+    "settings": "Mipangilio",
+    "billing": "Bili",
+    "faq": "Maswali",
+    "helpAndSupport": "Msaada & ushauri",
+    "projects": "Miradi",
+    "account": "Akaunti",
+    "explore": "Chunguza"
+  },
+  "treeView": {
+    "basic": "Msingi",
+    "icons": "Ikoni",
+    "selectable": "Inayochaguliwa",
+    "editable": "Inayoweza kuhaririwa",
+    "advanced": "Ya juu"
+  },
+  "chat": {
+    "title": "Mazungumzo",
+    "sendButton": "Tuma"
+  },
+  "spacingPlayground": {
+    "value": "Thamani",
+    "margin": "Marjini",
+    "padding": "Padigi"
+  },
+  "spacing": {
+    "title": "Nafasi"
+  },
+  "helpAndSupport": "Msaada & ushauri",
+  "aboutVuesticAdmin": "Kuhusu Vuestic Admin",
+  "supportAndConsulting": "Msaada & Ushauri",
+  "search": {
+    "placeholder": "Tafuta..."
+  },
+  "buttonSelect": {
+    "dark": "Giza",
+    "light": "Mwanga"
+  },
+  "vuestic": {
+    "search": "Tafuta",
+    "noOptions": "Vipengele havikupatikana",
+    "ok": "Sawa",
+    "cancel": "Ghairi",
+    "uploadFile": "Pakia faili",
+    "undo": "Tendua",
+    "dropzone": "Buruta faili hapa kupakia",
+    "fileDeleted": "Faili limefutwa",
+    "closeAlert": "funga arifa",
+    "backToTop": "rudi juu",
+    "toggleDropdown": "geuza menyu",
+    "carousel": "gari ya picha",
+    "close": "funga",
+    "next": "Inayofuata",
+    "back": "Iliyopita",
+    "finish": "Maliza",
+    "loading": "Inapakia"
+  },
+  "kicheko": {
+    "tagline": "Cheka • Tazama • Piga Kura",
+    "nav": {
+      "home": "Nyumbani",
+      "shorts": "Vipindi Fupi",
+      "comedians": "Wasanii",
+      "trending": "Inayovuma",
+      "library": "Maktaba Yangu",
+      "liked": "Zilizopendwa",
+      "upload": "Pakia & Simamia",
+      "studio": "Dashibodi (Studio)",
+      "you": "Wewe",
+      "studioGroup": "Studio ya Wasanii"
+    },
+    "sidebar": {
+      "creatorPromo": {
+        "question": "Je, wewe ni Mchekeshaji?",
+        "pitch": "Jiunge na Kicheko, pakia vichekesho vyako na upate mapato ya kazi zako.",
+        "cta": "Anza Leo"
+      },
+      "footer": {
+        "about": "Kuhusu Sisi",
+        "terms": "Vigezo",
+        "privacy": "Faragha"
+      }
+    },
+    "settings": {
+      "title": "Mipangilio ya Mfumo",
+      "theme": {
+        "label": "Muonekano",
+        "description": "Chagua muonekano wa giza au mwanga unaopendelea kutumia kwenye jukwaa la Kicheko."
+      },
+      "preferences": {
+        "label": "Lugha na Mapendeleo",
+        "description": "Weka lugha kuu ya kutumia kwenye tovuti na taarifa zako."
+      },
+      "notifications": {
+        "label": "Mipangilio ya Taarifa",
+        "description": "Chagua aina za taarifa unazotaka kupokea kuhusu video mpya, maoni na shughuli za akaunti yako."
+      }
+    },
+    "home": {
+      "hotBadge": "Inayovuma Zaidi Leo",
+      "watchNow": "Tazama Sasa",
+      "free": "Bure",
+      "videosAvailable": "video {n} zinapatikana",
+      "noVideos": "Hakuna video zilizopatikana",
+      "noVideosDesc": "Hakuna video kwa kitengo hiki kwa sasa. Jaribu kuchagua \"Zote\" au tembelea kitengo kingine.",
+      "showAll": "Onyesha Video Zote",
+      "recommended": "Video Zinazopendekezwa",
+      "freeVideos": "Video za Bure",
+      "premiumVideos": "Video Maalum za Kulipia",
+      "trending": "Zinazotazamwa Zaidi Tanzania",
+      "comedy": "Vichekesho: {cat}",
+      "shortsShelf": "Shorts za Kicheko",
+      "seeAll": "Tazama zote",
+      "moreVideos": "Video Nyingine"
+    },
+    "navbar": {
+      "watchPlatform": "Tazama Jukwaa",
+      "accountSettings": "Mipangilio ya Akaunti",
+      "mySettings": "Mipangilio"
+    },
+    "admin": {
+      "nav": {
+        "public": "Jukwaa la Video (Umma)",
+        "studio": "Studio ya Kicheko",
+        "videos": "Pakia & Simamia Video",
+        "users": "Wasanii & Watumiaji",
+        "payments": "Malipo & Mauzo",
+        "billing": "Miamala ya Mauzo",
+        "paymentMethods": "Njia za Malipo",
+        "pricingPlans": "Gharama za Video",
+        "profile": "Wasifu wa Msanii",
+        "settings": "Mipangilio ya Mfumo",
+        "faq": "Msaada & Maswali"
+      }
+    }
+  }
+}

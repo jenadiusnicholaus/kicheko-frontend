@@ -80,7 +80,7 @@
             @click="isShown = false"
           >
             <span class="material-icons text-base text-gray-500 dark:text-gray-400">settings</span>
-            <span>Mipangilio</span>
+            <span>{{ $t('kicheko.navbar.mySettings') }}</span>
           </RouterLink>
         </div>
 
@@ -92,7 +92,7 @@
             @click="handleLogout"
           >
             <span class="material-icons text-base text-gray-500 dark:text-gray-400">logout</span>
-            <span>Ondoka (Logout)</span>
+            <span>{{ $t('user.logout') }}</span>
           </button>
         </div>
       </VaDropdownContent>
@@ -103,8 +103,11 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vuestic-ui'
 import { useAuth } from '../../../../composables/useAuth'
+
+const { t: $t } = useI18n()
 
 const isShown = ref(false)
 const router = useRouter()

@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-800">
       <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span class="material-icons text-red-600">theater_comedy</span>
+          <span class="material-icons text-amber-500">theater_comedy</span>
           <span>Wasanii wa Kicheko Tanzania</span>
         </h1>
         <p class="text-xs sm:text-sm text-gray-500 mt-1">
@@ -18,13 +18,13 @@
         v-for="c in comedians"
         :key="c.id"
         :to="{ name: 'comedian-profile', params: { id: c.id } }"
-        class="group p-5 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:border-red-500/50 transition-all flex flex-col items-center text-center"
+        class="group p-5 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm hover:shadow-md hover:border-amber-400/50 transition-all flex flex-col items-center text-center"
       >
         <div class="relative mb-3">
           <img
             :src="c.avatar"
             :alt="c.stage_name"
-            class="w-24 h-24 rounded-full object-cover border-2 border-red-500/50 group-hover:scale-105 transition-transform"
+            class="w-24 h-24 rounded-full object-cover border-2 border-amber-400/50 group-hover:scale-105 transition-transform"
           />
           <span
             v-if="c.verified"
@@ -35,7 +35,7 @@
           </span>
         </div>
 
-        <h3 class="font-bold text-base text-gray-900 dark:text-white group-hover:text-red-600 transition-colors">
+        <h3 class="font-bold text-base text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors">
           {{ c.stage_name }}
         </h3>
         <p class="text-xs text-gray-400 mt-0.5">{{ c.primary_category }}</p>
@@ -48,7 +48,7 @@
           class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 w-full flex items-center justify-between text-xs text-gray-500"
         >
           <span>{{ formatFollowers(c.followers_count) }} wafuasi</span>
-          <span class="text-red-600 font-semibold group-hover:underline">Tazama kazi &rarr;</span>
+          <span class="text-amber-600 dark:text-amber-400 font-bold group-hover:underline">Tazama kazi &rarr;</span>
         </div>
       </RouterLink>
     </div>

@@ -3,9 +3,10 @@
     <!-- Header -->
     <div class="pb-3 border-b border-gray-200 dark:border-gray-800">
       <h1 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-        <span class="material-icons text-red-600">search</span>
+        <span class="material-icons text-amber-500">search</span>
         <span
-          >Matokeo ya utafutaji wa: <span class="text-red-600">"{{ searchQuery }}"</span></span
+          >Matokeo ya utafutaji wa:
+          <span class="text-amber-600 dark:text-amber-400 font-bold">"{{ searchQuery }}"</span></span
         >
       </h1>
       <p class="text-xs text-gray-500 mt-1">Video {{ searchResults.length }} zimepatikana</p>
@@ -17,9 +18,12 @@
         v-model="inputQuery"
         type="text"
         placeholder="Tafuta jina la video au msanii..."
-        class="w-full px-4 py-2 text-sm bg-gray-50 dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded-full focus:outline-none focus:border-red-500 text-gray-900 dark:text-white"
+        class="w-full px-4 py-2 text-sm bg-gray-50 dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded-full focus:outline-none focus:border-amber-400 text-gray-900 dark:text-white"
       />
-      <button type="submit" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full text-sm">
+      <button
+        type="submit"
+        class="px-5 py-2 bg-amber-400 hover:bg-amber-500 text-gray-950 font-bold rounded-full text-sm"
+      >
         Tafuta
       </button>
     </form>
@@ -58,7 +62,7 @@
           </span>
           <span
             v-if="v.access_type === 'paid'"
-            class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-amber-500 text-white text-[10px] font-bold"
+            class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-amber-400 text-gray-950 text-[10px] font-bold"
           >
             Tsh {{ v.price_amount.toLocaleString() }}
           </span>
@@ -67,7 +71,7 @@
         <!-- Details -->
         <div class="flex-1 space-y-1.5 min-w-0">
           <h2
-            class="text-base font-bold text-gray-900 dark:text-white group-hover:text-red-600 transition-colors line-clamp-2"
+            class="text-base font-bold text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors line-clamp-2"
           >
             {{ v.title }}
           </h2>
