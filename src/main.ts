@@ -14,9 +14,7 @@ import { useAuthStore } from './stores/auth-store'
 
 // --- Apply saved theme before mount (avoids flash) ---
 ;(() => {
-  const saved = localStorage.getItem('kicheko-theme')
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  const isDark = saved === 'dark' || (!saved && prefersDark)
+  const isDark = localStorage.getItem('kicheko-theme') === 'dark'
   if (isDark) {
     document.documentElement.classList.add('dark')
   } else {

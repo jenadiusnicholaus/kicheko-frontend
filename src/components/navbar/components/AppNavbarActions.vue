@@ -72,20 +72,12 @@ const toggleTheme = () => {
   applyThemeClass(next === 'dark')
 }
 
-// On mount, restore saved theme
+// On mount, restore saved theme (light is the default)
 onMounted(() => {
   const saved = localStorage.getItem(THEME_KEY)
-  if (saved === 'dark' || saved === 'light') {
-    applyPreset(saved)
-    applyThemeClass(saved === 'dark')
-  } else {
-    // System preference fallback
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    if (prefersDark) {
-      applyPreset('dark')
-      applyThemeClass(true)
-    }
-  }
+  const preset = saved === 'dark' ? 'dark' : 'light'
+  applyPreset(preset)
+  applyThemeClass(saved === 'dark')
 })
 </script>
 
