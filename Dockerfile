@@ -5,13 +5,17 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies (use yarn or npm)
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile || npm install
+# Enable Corepack so Yarn matches the version in package.json
+RUN corepack enable
+
+# Install dependencies (e2e workspace manifest needed for --immutable)
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY e2e/package.json e2e/package.json
+RUN yarn install --immutable
 
 # Copy source code and build
 COPY . .
-RUN npm run build:ci
+RUN yarn build:ci
 
 # Stage 2: Serve static files with Nginx
 FROM nginx:alpine
