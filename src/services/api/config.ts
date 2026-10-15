@@ -5,7 +5,9 @@
 const env = import.meta.env
 
 export const apiConfig = {
-  baseUrl: env.VITE_API_BASE_URL,
+  // Dev: relative path — same-origin, forwarded by the Vite proxy.
+  // Prod: absolute URL to the API host, e.g. https://api.taifahouse.tz/api/v1
+  baseUrl: env.PROD ? `${env.VITE_API_PROXY_TARGET}${env.VITE_API_BASE_URL}` : env.VITE_API_BASE_URL,
   endpoints: {
     auth: {
       register: env.VITE_API_AUTH_REGISTER,
