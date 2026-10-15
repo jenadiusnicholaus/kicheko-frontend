@@ -57,12 +57,12 @@
           </RouterLink>
 
           <RouterLink
-            :to="{ name: 'admin-videos' }"
+            :to="{ name: 'admin-applications' }"
             class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             @click="isShown = false"
           >
-            <span class="material-icons text-base text-gray-500 dark:text-gray-400">video_settings</span>
-            <span>Pakia &amp; Simamia Video</span>
+            <span class="material-icons text-base text-gray-500 dark:text-gray-400">how_to_reg</span>
+            <span>Maombi ya Wachekeshaji (10k)</span>
           </RouterLink>
 
           <RouterLink

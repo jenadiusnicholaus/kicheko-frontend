@@ -13,7 +13,11 @@ export const useAuth = () => {
   /** Where to land after login/register (honours ?redirect=). */
   const postAuthTarget = computed(() => {
     const redirect = route.query.redirect
-    return typeof redirect === 'string' && redirect.startsWith('/') ? redirect : { name: 'home' }
+    if (typeof redirect === 'string' && redirect.startsWith('/')) return redirect
+
+    // Staff/admin goes to admin dashboard; everyone else goes to public home
+    if (store.isAdmin) return { name: 'admin-dashboard' }
+    return { name: 'home' }
   })
 
   const logout = async () => {

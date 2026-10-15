@@ -15,7 +15,7 @@ export default {
       name: 'home',
       displayName: 'kicheko.admin.nav.public',
       meta: {
-        icon: 'smart_display',
+        icon: 'home',
       },
     },
     {
@@ -26,10 +26,31 @@ export default {
       },
     },
     {
-      name: 'admin-videos',
-      displayName: 'kicheko.admin.nav.videos',
+      name: 'admin-applications',
+      displayName: 'taifa.admin.applicationsTitle',
       meta: {
-        icon: 'video_call',
+        icon: 'how_to_reg',
+      },
+    },
+    {
+      name: 'admin-universities',
+      displayName: 'taifa.admin.universitiesNav',
+      meta: {
+        icon: 'school',
+      },
+    },
+    {
+      name: 'admin-nani-ni-nani',
+      displayName: 'taifa.layout.naniNiNani',
+      meta: {
+        icon: 'sports_kabaddi',
+      },
+    },
+    {
+      name: 'admin-wall-of-fame',
+      displayName: 'taifa.layout.wallOfFame',
+      meta: {
+        icon: 'emoji_events',
       },
     },
     {
@@ -38,27 +59,6 @@ export default {
       meta: {
         icon: 'group',
       },
-    },
-    {
-      name: 'payments',
-      displayName: 'kicheko.admin.nav.payments',
-      meta: {
-        icon: 'payments',
-      },
-      children: [
-        {
-          name: 'billing',
-          displayName: 'kicheko.admin.nav.billing',
-        },
-        {
-          name: 'payment-methods',
-          displayName: 'kicheko.admin.nav.paymentMethods',
-        },
-        {
-          name: 'pricing-plans',
-          displayName: 'kicheko.admin.nav.pricingPlans',
-        },
-      ],
     },
     {
       name: 'preferences',

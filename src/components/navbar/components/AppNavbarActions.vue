@@ -10,14 +10,14 @@
       <span>{{ $t('kicheko.navbar.watchPlatform') }}</span>
     </RouterLink>
 
-    <!-- Quick Upload Video Action -->
+    <!-- Quick Comedian Applications Action -->
     <RouterLink
-      :to="{ name: 'admin-videos' }"
+      :to="{ name: 'admin-applications' }"
       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors"
-      :title="$t('kicheko.nav.upload')"
+      title="Maombi ya Wachekeshaji (10k)"
     >
-      <span class="material-icons text-base">video_call</span>
-      <span class="hidden md:inline">{{ $t('kicheko.nav.upload') }}</span>
+      <span class="material-icons text-base">how_to_reg</span>
+      <span class="hidden md:inline">Maombi (10k)</span>
     </RouterLink>
 
     <!-- Theme Switcher -->

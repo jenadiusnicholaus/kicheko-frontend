@@ -320,25 +320,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useToast } from 'vuestic-ui'
-import {
-  videoApi,
-  INITIAL_COMEDIANS,
-  type Video,
-  type Comedian,
-  type VideoUploadPayload,
-} from '../../services/api/video.api'
+import { videoApi, type Video, type Comedian, type VideoUploadPayload } from '../../services/api/video.api'
 
 const { init: toast } = useToast()
 
 const videos = ref<Video[]>([])
-const comedians = ref<Comedian[]>(INITIAL_COMEDIANS)
+const comedians = ref<Comedian[]>([])
 const showModal = ref(false)
 const isSubmitting = ref(false)
 
 const form = ref<VideoUploadPayload>({
   title: '',
   description: '',
-  comedian_id: INITIAL_COMEDIANS[0].id,
+  comedian_id: '',
   category: 'Stand-up Comedy',
   access_type: 'free',
   price_amount: 2500,
@@ -348,9 +342,16 @@ const form = ref<VideoUploadPayload>({
 })
 
 const loadVideos = async () => {
-  const all = await videoApi.getVideos()
-  const shorts = await videoApi.getShorts()
+  const [all, shorts, comList] = await Promise.all([
+    videoApi.getVideos(),
+    videoApi.getShorts(),
+    videoApi.getComedians(),
+  ])
   videos.value = [...all, ...shorts]
+  comedians.value = comList
+  if (comList.length > 0 && !form.value.comedian_id) {
+    form.value.comedian_id = comList[0].id
+  }
 }
 
 const paidCount = computed(() => videos.value.filter((v) => v.access_type === 'paid').length)
@@ -367,7 +368,7 @@ const openUploadModal = () => {
   form.value = {
     title: '',
     description: '',
-    comedian_id: INITIAL_COMEDIANS[0].id,
+    comedian_id: comedians.value[0]?.id || '',
     category: 'Stand-up Comedy',
     access_type: 'free',
     price_amount: 2500,

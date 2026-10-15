@@ -61,6 +61,7 @@
 
       <!-- Upload Video Action -->
       <RouterLink
+        v-if="authStore.isAdmin"
         :to="{ name: 'admin-videos' }"
         class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors"
       >
@@ -128,6 +129,7 @@
               </RouterLink>
 
               <RouterLink
+                v-if="authStore.isAdmin"
                 :to="{ name: 'admin-dashboard' }"
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
@@ -136,6 +138,7 @@
               </RouterLink>
 
               <RouterLink
+                v-if="authStore.isAdmin"
                 :to="{ name: 'admin-videos' }"
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >

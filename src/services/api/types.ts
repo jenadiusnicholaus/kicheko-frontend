@@ -20,6 +20,10 @@ export interface CurrentUser extends UserProfile {
   phone_number: string | null
   status: string
   is_staff: boolean
+  /** True when the user belongs to the `comedian` Django group. */
+  is_comedian: boolean
+  /** List of Django group names this user belongs to. */
+  groups: string[]
 }
 
 interface AuthUserResponse extends Omit<CurrentUser, keyof UserProfile> {
@@ -72,5 +76,11 @@ export type UpdateProfilePayload = Partial<
 /** Normalizes the nested `user.profile` auth shape and the flat `/me` shape into `CurrentUser`. */
 export const normalizeUser = (raw: AuthUserResponse | CurrentUser): CurrentUser => {
   const { profile, ...rest } = raw as AuthUserResponse
-  return { ...rest, is_staff: rest.is_staff ?? false, ...(profile ?? (raw as UserProfile)) }
+  return {
+    ...rest,
+    is_staff: rest.is_staff ?? false,
+    is_comedian: rest.is_comedian ?? false,
+    groups: rest.groups ?? [],
+    ...(profile ?? (raw as UserProfile)),
+  }
 }

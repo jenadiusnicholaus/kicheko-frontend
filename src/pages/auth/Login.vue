@@ -3,7 +3,7 @@
     <h1 class="font-bold text-2xl mb-1 text-slate-900 dark:text-white">Ingia Kicheko</h1>
     <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-5">
       Huna akaunti bado?
-      <RouterLink :to="{ name: 'signup' }" class="font-semibold text-primary hover:underline">Jisajili hapa</RouterLink>
+      <RouterLink :to="{ name: 'signup' }" class="font-semibold text-primary hover:underline">Apply Now</RouterLink>
     </p>
 
     <VaAlert v-if="errorMessage" color="danger" class="mb-4 text-sm" outline>
@@ -25,7 +25,7 @@
         :error-messages="fieldErrors.password"
         :type="isPasswordVisible.value ? 'text' : 'password'"
         class="mb-4"
-        label="Nenosiri (Password)"
+        label="Nenosiri"
         @clickAppendInner.stop="isPasswordVisible.value = !isPasswordVisible.value"
       >
         <template #appendInner>
@@ -49,9 +49,7 @@
     </div>
 
     <div class="flex justify-center mt-6">
-      <VaButton :loading="isSubmitting" size="large" class="w-full font-semibold" @click="submit">
-        Ingia (Login)
-      </VaButton>
+      <VaButton :loading="isSubmitting" size="large" class="w-full font-semibold" @click="submit"> Ingia </VaButton>
     </div>
   </VaForm>
 </template>

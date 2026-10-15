@@ -23,7 +23,7 @@
       :rules="[validators.required, validators.email]"
       :error-messages="fieldErrors.email"
       class="mb-4"
-      label="Barua pepe (Email)"
+      label="Barua pepe"
       type="email"
       placeholder="wewe@example.com"
     />
@@ -34,7 +34,7 @@
         :error-messages="fieldErrors.password"
         :type="isPasswordVisible.value ? 'text' : 'password'"
         class="mb-4"
-        label="Nenosiri (Password)"
+        label="Nenosiri"
         messages="Inatakiwa herufi 8+, namba, na alama maalum."
         @clickAppendInner.stop="isPasswordVisible.value = !isPasswordVisible.value"
       >
@@ -74,9 +74,7 @@
     />
 
     <div class="flex justify-center mt-6">
-      <VaButton :loading="isSubmitting" size="large" class="w-full font-semibold" @click="submit">
-        Tengeneza Akaunti (Sign Up)
-      </VaButton>
+      <VaButton :loading="isSubmitting" size="large" class="w-full font-semibold" @click="submit"> Apply Now </VaButton>
     </div>
   </VaForm>
 </template>

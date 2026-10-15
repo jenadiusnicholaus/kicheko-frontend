@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 import AuthLayout from '../layouts/AuthLayout.vue'
 import AppLayout from '../layouts/AppLayout.vue'
-import YouTubeLayout from '../layouts/YouTubeLayout.vue'
+import TaifaLayout from '../layouts/TaifaLayout.vue'
 import RouteViewComponent from '../layouts/RouterBypass.vue'
 import { useAuthStore } from '../stores/auth-store'
 
@@ -16,51 +16,40 @@ declare module 'vue-router' {
 }
 
 const routes: Array<RouteRecordRaw> = [
-  // 1. Public Video Platform (YouTube-Like Experience)
+  // 1. Public Kicheko Pro Platform (Taifa House PDF Design Experience)
   {
     path: '/',
-    component: YouTubeLayout,
+    component: TaifaLayout,
     children: [
       {
         name: 'home',
         path: '',
-        component: () => import('../pages/public/HomePage.vue'),
+        component: () => import('../pages/public/KichekoProLandingPage.vue'),
       },
       {
-        name: 'watch',
-        path: 'watch/:id',
-        component: () => import('../pages/public/WatchPage.vue'),
+        name: 'register-comedian',
+        path: 'register-comedian',
+        component: () => import('../pages/public/ComedianRegistrationPage.vue'),
       },
       {
-        name: 'shorts',
-        path: 'shorts',
-        component: () => import('../pages/public/ShortsPage.vue'),
+        name: 'apply',
+        path: 'apply',
+        redirect: { name: 'register-comedian' },
       },
       {
-        name: 'short-detail',
-        path: 'shorts/:id',
-        component: () => import('../pages/public/ShortsPage.vue'),
+        name: 'nani-ni-nani',
+        path: 'nani-ni-nani',
+        component: () => import('../pages/public/NaniNiNaniPage.vue'),
+      },
+      {
+        name: 'wall-of-fame',
+        path: 'wall-of-fame',
+        component: () => import('../pages/public/WallOfFamePage.vue'),
       },
       {
         name: 'comedians',
         path: 'comedians',
-        component: () => import('../pages/public/ComediansPage.vue'),
-      },
-      {
-        name: 'comedian-profile',
-        path: 'comedians/:id',
-        component: () => import('../pages/public/ComedianProfilePage.vue'),
-      },
-      {
-        name: 'search',
-        path: 'search',
-        component: () => import('../pages/public/SearchPage.vue'),
-      },
-      {
-        name: 'library',
-        path: 'library',
-        component: () => import('../pages/public/LibraryPage.vue'),
-        meta: { requiresAuth: true },
+        redirect: { name: 'nani-ni-nani' },
       },
     ],
   },
@@ -111,9 +100,29 @@ const routes: Array<RouteRecordRaw> = [
         redirect: { name: 'admin-dashboard' },
       },
       {
+        name: 'admin-applications',
+        path: 'applications',
+        component: () => import('../pages/admin/applications/ApplicationsPage.vue'),
+      },
+      {
+        name: 'admin-universities',
+        path: 'universities',
+        component: () => import('../pages/admin/universities/ManageUniversitiesPage.vue'),
+      },
+      {
         name: 'admin-videos',
         path: 'videos',
-        component: () => import('../pages/admin/VideoManagementPage.vue'),
+        redirect: { name: 'admin-applications' },
+      },
+      {
+        name: 'admin-nani-ni-nani',
+        path: 'nani-ni-nani',
+        component: () => import('../pages/admin/nani-ni-nani/ManageNaniNiNaniPage.vue'),
+      },
+      {
+        name: 'admin-wall-of-fame',
+        path: 'wall-of-fame',
+        component: () => import('../pages/admin/wall-of-fame/ManageWallOfFamePage.vue'),
       },
       {
         name: 'users',
@@ -213,6 +222,11 @@ router.beforeEach(async (to) => {
   // Protected routes bounce to login with redirect param
   if (to.matched.some((record) => record.meta.requiresAuth) && !auth.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
+  }
+
+  // Admin area protection: only staff/admin users can access /admin area
+  if (to.matched.some((record) => record.path.startsWith('/admin')) && auth.isAuthenticated && !auth.isAdmin) {
+    return { name: 'home' }
   }
 
   // Guest-only routes (login, signup) redirect to home if already authenticated

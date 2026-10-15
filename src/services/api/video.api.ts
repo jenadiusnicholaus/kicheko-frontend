@@ -55,280 +55,6 @@ export interface VideoUploadPayload {
   full_video_id?: string
 }
 
-// Fallback initial Tanzanian comedians
-export const INITIAL_COMEDIANS: Comedian[] = [
-  {
-    id: 'c1',
-    name: 'Anas Lucas',
-    stage_name: 'Joti',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&h=200&q=80',
-    cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&h=400&q=80',
-    verified: true,
-    bio: 'Mfalme wa Vichekesho Tanzania. Tazama vipindi vyote vya Joti TV, Shoki, na maonyesho ya jukwaani hapa Kicheko.',
-    followers_count: 852000,
-    primary_category: 'Skits',
-  },
-  {
-    id: 'c2',
-    name: 'Silvano Mavunjo',
-    stage_name: 'Mpoki',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&h=200&q=80',
-    cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1200&h=400&q=80',
-    verified: true,
-    bio: 'Mkongwe wa Stand-up na redio. Cheka na vituko vya mjini bila kikomo!',
-    followers_count: 640000,
-    primary_category: 'Stand-up Comedy',
-  },
-  {
-    id: 'c3',
-    name: 'Coy Mzungu',
-    stage_name: 'Coy Mzungu',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&h=200&q=80',
-    cover: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&h=400&q=80',
-    verified: true,
-    bio: 'Mwanzilishi wa jukwaa kubwa la Cheka Tu. Stand-up comedy halisi ya Kitanzania.',
-    followers_count: 520000,
-    primary_category: 'Stand-up Comedy',
-  },
-  {
-    id: 'c4',
-    name: 'Mau Fundi',
-    stage_name: 'Mau Fundi',
-    avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=200&h=200&q=80',
-    cover: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&h=400&q=80',
-    verified: true,
-    bio: 'Fundi wa mambo! Skits na vichekesho vya gereji na mtaani.',
-    followers_count: 310000,
-    primary_category: 'Skits',
-  },
-  {
-    id: 'c5',
-    name: 'Dogo Pepe',
-    stage_name: 'Dogo Pepe',
-    avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=200&h=200&q=80',
-    cover: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?auto=format&fit=crop&w=1200&h=400&q=80',
-    verified: false,
-    bio: 'Kizazi kipya cha vichekesho vya mitandaoni na Shorts zenye burudani tele.',
-    followers_count: 185000,
-    primary_category: 'Short Comedy',
-  },
-]
-
-// Fallback sample videos (using verified local media)
-const FALLBACK_VIDEOS: Video[] = [
-  {
-    id: 'v1',
-    title: 'Cheka Tu Live: Maisha ya Dar es Salaam vs Mikoani',
-    slug: 'cheka-tu-live-maisha-ya-dar',
-    description:
-      'Onyesho kamili la Cheka Tu lililofanyika Mlimani City. Coy Mzungu anachambua tofauti ya tabia za watu wa Dar es Salaam wakisafiri kwenda mikoani kwa mara ya kwanza.',
-    thumbnail: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&h=450&q=80',
-    video_url: '/videos/oceans.mp4',
-    duration_seconds: 1420,
-    duration_formatted: '23:40',
-    content_type: 'performance',
-    access_type: 'paid',
-    price_amount: 2500,
-    currency: 'TZS',
-    category: 'Stand-up Comedy',
-    comedian_id: 'c3',
-    comedian: INITIAL_COMEDIANS[2],
-    views_count: 142800,
-    likes_count: 12400,
-    is_short: false,
-    short_preview_id: 's1',
-    published_at: '2026-09-28T14:00:00Z',
-    publication_status: 'published',
-  },
-  {
-    id: 'v2',
-    title: 'Joti TV: Mzee wa Vikoba Akamatwa na Mke Mkubwa',
-    slug: 'joti-tv-mzee-wa-vikoba',
-    description:
-      'Joti akiwa kama Mzee wa Vikoba anajikuta katika wakati mgumu baada ya mkewe kumfumania akigawa mgao wa kikundi kwa mpangaji mpya.',
-    thumbnail: 'https://images.unsplash.com/photo-1585699324551-f6c309eedeca?auto=format&fit=crop&w=800&h=450&q=80',
-    video_url: '/videos/flower.mp4',
-    duration_seconds: 560,
-    duration_formatted: '09:20',
-    content_type: 'skit',
-    access_type: 'free',
-    price_amount: 0,
-    currency: 'TZS',
-    category: 'Skits',
-    comedian_id: 'c1',
-    comedian: INITIAL_COMEDIANS[0],
-    views_count: 320500,
-    likes_count: 28900,
-    is_short: false,
-    short_preview_id: 's2',
-    published_at: '2026-10-02T10:30:00Z',
-    publication_status: 'published',
-  },
-  {
-    id: 'v3',
-    title: 'Mpoki Special: Harusi za Kisasa na Bajeti Feki',
-    slug: 'mpoki-special-harusi-za-kisasa',
-    description:
-      'Mpoki akieleza kwa ucheshi changamoto za michango ya kadi za harusi na jinsi kamati zinavyopika bajeti za mamilioni.',
-    thumbnail: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&h=450&q=80',
-    video_url: '/videos/oceans.mp4',
-    duration_seconds: 1115,
-    duration_formatted: '18:35',
-    content_type: 'standup',
-    access_type: 'paid',
-    price_amount: 3000,
-    currency: 'TZS',
-    category: 'Stand-up Comedy',
-    comedian_id: 'c2',
-    comedian: INITIAL_COMEDIANS[1],
-    views_count: 98400,
-    likes_count: 8100,
-    is_short: false,
-    published_at: '2026-10-05T18:00:00Z',
-    publication_status: 'published',
-  },
-  {
-    id: 'v4',
-    title: 'Mau Fundi: Gereji ya Ujanja na Mteja Mzungu',
-    slug: 'mau-fundi-gereji-ya-ujanja',
-    description:
-      'Mau Fundi na vibarua wake wanapokea gari la mgeni kutoka Ulaya. Spana mkononi lakini lugha inakuwa chenga tupu!',
-    thumbnail: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&h=450&q=80',
-    video_url: '/videos/flower.mp4',
-    duration_seconds: 430,
-    duration_formatted: '07:10',
-    content_type: 'skit',
-    access_type: 'free',
-    price_amount: 0,
-    currency: 'TZS',
-    category: 'Skits',
-    comedian_id: 'c4',
-    comedian: INITIAL_COMEDIANS[3],
-    views_count: 215000,
-    likes_count: 19400,
-    is_short: false,
-    short_preview_id: 's3',
-    published_at: '2026-10-08T12:00:00Z',
-    publication_status: 'published',
-  },
-  {
-    id: 'v5',
-    title: 'Dogo Pepe: Mahojiano ya Kazi na Boss Mkali',
-    slug: 'dogo-pepe-mahojiano-ya-kazi',
-    description: 'Dogo Pepe anaenda kwenye interview ya kampuni kubwa akiwa amekariri majibu ya mtandaoni.',
-    thumbnail: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&h=450&q=80',
-    video_url: '/videos/flower.mp4',
-    duration_seconds: 320,
-    duration_formatted: '05:20',
-    content_type: 'skit',
-    access_type: 'free',
-    price_amount: 0,
-    currency: 'TZS',
-    category: 'Short Comedy',
-    comedian_id: 'c5',
-    comedian: INITIAL_COMEDIANS[4],
-    views_count: 184300,
-    likes_count: 15300,
-    is_short: false,
-    published_at: '2026-10-10T16:20:00Z',
-    publication_status: 'published',
-  },
-  {
-    id: 'v6',
-    title: 'Kicheko Gala 2026: Vichekesho Bora vya Mwaka',
-    slug: 'kicheko-gala-2026',
-    description: 'Tamasha kubwa la utoaji tuzo na vichekesho la Kicheko Gala. Washiriki wote wakiwa jukwaani pamoja.',
-    thumbnail: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&h=450&q=80',
-    video_url: '/videos/oceans.mp4',
-    duration_seconds: 3600,
-    duration_formatted: '60:00',
-    content_type: 'performance',
-    access_type: 'paid',
-    price_amount: 5000,
-    currency: 'TZS',
-    category: 'Stand-up Comedy',
-    comedian_id: 'c3',
-    comedian: INITIAL_COMEDIANS[2],
-    views_count: 410000,
-    likes_count: 45000,
-    is_short: false,
-    published_at: '2026-10-01T20:00:00Z',
-    publication_status: 'published',
-  },
-]
-
-const FALLBACK_SHORTS: Video[] = [
-  {
-    id: 's1',
-    title: 'Huu ndio utani mkubwa zaidi wa Dar! 😂',
-    slug: 'short-cheka-tu-dar',
-    description: 'Kipande kifupi cha Cheka Tu Live. Bonyeza "Watch Full Video" kutazama onyesho lote!',
-    thumbnail: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=450&h=800&q=80',
-    video_url: '/videos/flower.mp4',
-    duration_seconds: 45,
-    duration_formatted: '0:45',
-    content_type: 'short',
-    access_type: 'free',
-    price_amount: 0,
-    currency: 'TZS',
-    category: 'Shorts',
-    comedian_id: 'c3',
-    comedian: INITIAL_COMEDIANS[2],
-    views_count: 512000,
-    likes_count: 48900,
-    is_short: true,
-    full_video_id: 'v1',
-    published_at: '2026-10-03T12:00:00Z',
-    publication_status: 'published',
-  },
-  {
-    id: 's2',
-    title: 'Joti ashtukiwa na Mke Mkubwa Live! 🏃‍♂️',
-    slug: 'short-joti-mzee-wa-vikoba',
-    description: 'Mzee wa Vikoba mambo yameharibika! Bonyeza chini kuangalia video kamili.',
-    thumbnail: 'https://images.unsplash.com/photo-1585699324551-f6c309eedeca?auto=format&fit=crop&w=450&h=800&q=80',
-    video_url: '/videos/flower.mp4',
-    duration_seconds: 52,
-    duration_formatted: '0:52',
-    content_type: 'short',
-    access_type: 'free',
-    price_amount: 0,
-    currency: 'TZS',
-    category: 'Shorts',
-    comedian_id: 'c1',
-    comedian: INITIAL_COMEDIANS[0],
-    views_count: 890000,
-    likes_count: 76000,
-    is_short: true,
-    full_video_id: 'v2',
-    published_at: '2026-10-04T15:00:00Z',
-    publication_status: 'published',
-  },
-  {
-    id: 's3',
-    title: 'Mau Fundi akiomba dictionary ya gereji 🔧',
-    slug: 'short-mau-fundi-dictionary',
-    description: 'Spana na kizungu havikutani! Tazama video kamili hapa Kicheko.',
-    thumbnail: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=450&h=800&q=80',
-    video_url: '/videos/flower.mp4',
-    duration_seconds: 38,
-    duration_formatted: '0:38',
-    content_type: 'short',
-    access_type: 'free',
-    price_amount: 0,
-    currency: 'TZS',
-    category: 'Shorts',
-    comedian_id: 'c4',
-    comedian: INITIAL_COMEDIANS[3],
-    views_count: 340000,
-    likes_count: 27500,
-    is_short: true,
-    full_video_id: 'v4',
-    published_at: '2026-10-09T08:00:00Z',
-    publication_status: 'published',
-  },
-]
-
 const STORAGE_KEY_VIDEOS = 'kicheko.videos'
 const STORAGE_KEY_LIBRARY = 'kicheko.user_library'
 const STORAGE_KEY_LIKES = 'kicheko.user_likes'
@@ -336,15 +62,11 @@ const STORAGE_KEY_LIKES = 'kicheko.user_likes'
 class VideoService {
   private getLocalCache(): Video[] {
     const raw = localStorage.getItem(STORAGE_KEY_VIDEOS)
-    if (!raw) {
-      const all = [...FALLBACK_VIDEOS, ...FALLBACK_SHORTS]
-      localStorage.setItem(STORAGE_KEY_VIDEOS, JSON.stringify(all))
-      return all
-    }
+    if (!raw) return []
     try {
       return JSON.parse(raw)
     } catch {
-      return [...FALLBACK_VIDEOS, ...FALLBACK_SHORTS]
+      return []
     }
   }
 
@@ -362,13 +84,12 @@ class VideoService {
           is_short: false,
         },
       })
-      if (Array.isArray(data) && data.length > 0) {
-        // Cache for offline
+      if (Array.isArray(data)) {
         this.saveLocalCache(data)
         return data
       }
-    } catch {
-      // API call failed, fallback gracefully to cached/local data
+    } catch (e) {
+      console.warn('API call to /videos/ failed, checking local cache', e)
     }
 
     let list = this.getLocalCache().filter((v) => !v.is_short)
@@ -384,7 +105,7 @@ class VideoService {
         (v) =>
           v.title.toLowerCase().includes(q) ||
           v.description.toLowerCase().includes(q) ||
-          v.comedian.stage_name.toLowerCase().includes(q) ||
+          v.comedian?.stage_name?.toLowerCase().includes(q) ||
           v.category.toLowerCase().includes(q),
       )
     }
@@ -394,11 +115,11 @@ class VideoService {
   async getShorts(): Promise<Video[]> {
     try {
       const { data } = await http.get<Video[]>('/videos/shorts/')
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         return data
       }
-    } catch {
-      // fallback
+    } catch (e) {
+      console.warn('API call to /videos/shorts/ failed, checking local cache', e)
     }
     return this.getLocalCache().filter((v) => v.is_short)
   }
@@ -409,8 +130,8 @@ class VideoService {
       if (data && data.id) {
         return data
       }
-    } catch {
-      // fallback
+    } catch (e) {
+      console.warn(`API call to /videos/${id}/ failed, checking local cache`, e)
     }
     const list = this.getLocalCache()
     return list.find((v) => v.id === id || v.slug === id) || null
@@ -419,13 +140,13 @@ class VideoService {
   async getComedians(): Promise<Comedian[]> {
     try {
       const { data } = await http.get<Comedian[]>('/creators/')
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         return data
       }
-    } catch {
-      // fallback
+    } catch (e) {
+      console.warn('API call to /creators/ failed', e)
     }
-    return INITIAL_COMEDIANS
+    return []
   }
 
   async getComedianById(id: string): Promise<Comedian | null> {
@@ -434,56 +155,21 @@ class VideoService {
       if (data && data.creator) {
         return data.creator
       }
-    } catch {
-      // fallback
+    } catch (e) {
+      console.warn(`API call to /creators/${id}/ failed`, e)
     }
-    return INITIAL_COMEDIANS.find((c) => c.id === id) || null
+    return null
   }
 
   async createVideo(payload: VideoUploadPayload): Promise<Video> {
-    try {
-      const { data } = await http.post<Video>('/creator/videos/', payload)
-      if (data && data.id) {
-        return data
-      }
-    } catch {
-      // fallback to local creation
+    const { data } = await http.post<Video>('/creator/videos/', payload)
+    if (data && data.id) {
+      const current = this.getLocalCache()
+      current.unshift(data)
+      this.saveLocalCache(current)
+      return data
     }
-
-    const comedian = INITIAL_COMEDIANS.find((c) => c.id === payload.comedian_id) || INITIAL_COMEDIANS[0]
-    const id = `v_${Date.now()}`
-    const isShort = Boolean(payload.is_short)
-
-    const newVideo: Video = {
-      id,
-      title: payload.title,
-      slug: payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      description: payload.description || '',
-      thumbnail:
-        payload.thumbnail_url ||
-        'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&h=450&q=80',
-      video_url: payload.video_url || '/videos/oceans.mp4',
-      duration_seconds: isShort ? 45 : 600,
-      duration_formatted: isShort ? '0:45' : '10:00',
-      content_type: isShort ? 'short' : payload.category === 'Skits' ? 'skit' : 'performance',
-      access_type: payload.access_type || 'free',
-      price_amount: payload.access_type === 'paid' ? Number(payload.price_amount) || 2000 : 0,
-      currency: 'TZS',
-      category: payload.category || 'Stand-up Comedy',
-      comedian_id: comedian.id,
-      comedian,
-      views_count: 0,
-      likes_count: 0,
-      is_short: isShort,
-      full_video_id: payload.full_video_id,
-      published_at: new Date().toISOString(),
-      publication_status: 'published',
-    }
-
-    const current = this.getLocalCache()
-    current.unshift(newVideo)
-    this.saveLocalCache(current)
-    return newVideo
+    throw new Error('Failed to create video')
   }
 
   async recordView(id: string): Promise<void> {
@@ -541,7 +227,6 @@ class VideoService {
         phone_number: phone,
       })
       if (data && data.success) {
-        // Also save to local library storage
         const raw = localStorage.getItem(STORAGE_KEY_LIBRARY)
         const library: string[] = raw ? JSON.parse(raw) : []
         if (!library.includes(videoId)) {
@@ -550,8 +235,8 @@ class VideoService {
         }
         return data
       }
-    } catch {
-      // fallback
+    } catch (e) {
+      console.warn('Purchase video API failed', e)
     }
 
     const raw = localStorage.getItem(STORAGE_KEY_LIBRARY)
@@ -583,8 +268,8 @@ class VideoService {
       if (data && Array.isArray(data.purchased)) {
         return data.purchased
       }
-    } catch {
-      // fallback
+    } catch (e) {
+      console.warn('API call to /library/ failed', e)
     }
 
     const raw = localStorage.getItem(STORAGE_KEY_LIBRARY)
@@ -604,8 +289,8 @@ class VideoService {
       if (data && Array.isArray(data.liked)) {
         return data.liked
       }
-    } catch {
-      // fallback
+    } catch (e) {
+      console.warn('API call to /library/ likes failed', e)
     }
 
     const raw = localStorage.getItem(STORAGE_KEY_LIKES)
