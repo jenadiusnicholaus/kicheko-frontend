@@ -4,10 +4,10 @@
       <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <span class="material-icons text-amber-500">theater_comedy</span>
-          <span>Wasanii wa Kicheko Tanzania</span>
+          <span>{{ t('taifa.pages.comedians.title') }}</span>
         </h1>
         <p class="text-xs sm:text-sm text-gray-500 mt-1">
-          Gundua wachekeshaji maarufu na wanaochipukia, tazama kazi zao na uwafuate.
+          {{ t('taifa.pages.comedians.subtitle') }}
         </p>
       </div>
     </div>
@@ -29,7 +29,7 @@
           <span
             v-if="c.verified"
             class="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-md"
-            title="Verified"
+            :title="t('taifa.pages.comedians.verified')"
           >
             <span class="material-icons text-xs">check</span>
           </span>
@@ -47,8 +47,10 @@
         <div
           class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 w-full flex items-center justify-between text-xs text-gray-500"
         >
-          <span>{{ formatFollowers(c.followers_count) }} wafuasi</span>
-          <span class="text-amber-600 dark:text-amber-400 font-bold group-hover:underline">Tazama kazi &rarr;</span>
+          <span>{{ t('taifa.pages.common.followers', { count: formatFollowers(c.followers_count) }) }}</span>
+          <span class="text-amber-600 dark:text-amber-400 font-bold group-hover:underline"
+            >{{ t('taifa.pages.comedians.viewWork') }} &rarr;</span
+          >
         </div>
       </RouterLink>
     </div>
@@ -57,7 +59,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { videoApi, type Comedian } from '../../services/api/video.api'
+
+const { t } = useI18n()
 
 const comedians = ref<Comedian[]>([])
 

@@ -13,16 +13,16 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-              Usimamizi wa Vyuo Vikuu
+              {{ t('taifa.admin.universities.title') }}
             </h1>
             <span
               class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 text-xs font-bold border border-blue-200 dark:border-blue-800"
             >
-              Vyuo {{ uniStore.totalUniversities }}
+              {{ t('taifa.admin.universities.count', { count: uniStore.totalUniversities }) }}
             </span>
           </div>
           <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            Dhibiti orodha ya vyuo vikuu vinavyoshiriki mashindano na kuonekana kwenye fomu ya kujiunga ya Kicheko Pro.
+            {{ t('taifa.admin.universities.subtitle') }}
           </p>
         </div>
       </div>
@@ -34,7 +34,7 @@
           @click="openAddModal"
         >
           <span class="material-icons text-base">add</span>
-          <span>Ongeza Chuo Kipya</span>
+          <span>{{ t('taifa.admin.universities.addBtn') }}</span>
         </button>
       </div>
     </div>
@@ -61,7 +61,11 @@
                   : 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-400'
               "
             >
-              {{ uni.is_active ? 'Inatumika' : 'Imezimwa' }}
+              {{
+                uni.is_active
+                  ? t('taifa.admin.universities.statusActive')
+                  : t('taifa.admin.universities.statusInactive')
+              }}
             </span>
           </div>
 
@@ -86,7 +90,7 @@
             @click="openEditModal(uni)"
           >
             <span class="material-icons text-sm">edit</span>
-            <span>Hariri</span>
+            <span>{{ t('taifa.admin.editBtn') }}</span>
           </button>
 
           <button
@@ -95,7 +99,7 @@
             @click="deleteUni(uni.id)"
           >
             <span class="material-icons text-sm">delete</span>
-            <span>Futa</span>
+            <span>{{ t('taifa.admin.deleteLabel') }}</span>
           </button>
         </div>
       </div>
@@ -108,7 +112,7 @@
       >
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-zinc-800 pb-3">
           <h2 class="text-lg font-black text-gray-900 dark:text-white">
-            {{ isEditing ? 'Hariri Chuo Kikuu' : 'Ongeza Chuo Kikuu Kipya' }}
+            {{ isEditing ? t('taifa.admin.universities.editTitle') : t('taifa.admin.universities.addTitle') }}
           </h2>
           <button
             type="button"
@@ -121,42 +125,48 @@
 
         <form class="space-y-4 text-xs" @submit.prevent="saveUniversity">
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Jina Kamili la Chuo</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.universities.nameLabel')
+            }}</label>
             <input
               v-model="modalForm.name"
               type="text"
               required
-              placeholder="e.g. University of Dar es Salaam"
+              :placeholder="t('taifa.admin.universities.namePlaceholder')"
               class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
             />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Kifupisho (Code)</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.universities.codeLabel')
+              }}</label>
               <input
                 v-model="modalForm.code"
                 type="text"
                 required
-                placeholder="e.g. UDSM"
+                :placeholder="t('taifa.admin.universities.codePlaceholder')"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white uppercase font-mono"
               />
             </div>
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Mkoa / Eneo</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.universities.locationLabel')
+              }}</label>
               <input
                 v-model="modalForm.location"
                 type="text"
-                placeholder="e.g. Dar es Salaam"
+                :placeholder="t('taifa.admin.universities.locationPlaceholder')"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
               />
             </div>
           </div>
 
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1"
-              >Njia ya Nembo (Badge Image Path)</label
-            >
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.universities.badgeLabel')
+            }}</label>
             <input
               v-model="modalForm.badge"
               type="text"
@@ -172,9 +182,9 @@
               type="checkbox"
               class="rounded text-amber-500 focus:ring-amber-400"
             />
-            <label for="uni-active" class="font-bold text-gray-700 dark:text-gray-300"
-              >Chuo hiki kiko hai kwa ajili ya usajili</label
-            >
+            <label for="uni-active" class="font-bold text-gray-700 dark:text-gray-300">{{
+              t('taifa.admin.universities.activeLabel')
+            }}</label>
           </div>
 
           <div class="pt-3 flex items-center justify-end gap-2 border-t border-gray-100 dark:border-zinc-800">
@@ -183,14 +193,14 @@
               class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-400 font-bold cursor-pointer"
               @click="showModal = false"
             >
-              Ghairi
+              {{ t('taifa.admin.cancelBtn') }}
             </button>
             <button
               type="submit"
               :disabled="isSaving"
               class="px-5 py-2.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black shadow-md cursor-pointer disabled:opacity-50"
             >
-              {{ isSaving ? 'Inahifadhi...' : 'Hifadhi Chuo' }}
+              {{ isSaving ? t('taifa.admin.universities.savingBtn') : t('taifa.admin.universities.saveBtn') }}
             </button>
           </div>
         </form>
@@ -201,8 +211,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useUniversitiesStore, type University } from '../../../stores/universities'
 
+const { t } = useI18n()
 const uniStore = useUniversitiesStore()
 
 onMounted(() => {
@@ -261,7 +273,7 @@ const saveUniversity = async () => {
 }
 
 const deleteUni = async (id: string) => {
-  if (confirm('Una uhakika unataka kufuta chuo hiki?')) {
+  if (confirm(t('taifa.admin.universities.deleteConfirm'))) {
     await uniStore.deleteUniversity(id)
   }
 }

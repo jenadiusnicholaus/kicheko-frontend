@@ -22,7 +22,7 @@
               <template v-else>↓</template>
               {{ changeText }}
             </span>
-            since last month
+            {{ t('taifa.misc.cards.sinceLastMonth') }}
           </p>
         </div>
       </section>
@@ -32,7 +32,10 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { VaCard } from 'vuestic-ui'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   title: string

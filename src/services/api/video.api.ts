@@ -55,165 +55,58 @@ export interface VideoUploadPayload {
   full_video_id?: string
 }
 
-const STORAGE_KEY_VIDEOS = 'kicheko.videos'
-const STORAGE_KEY_LIBRARY = 'kicheko.user_library'
-const STORAGE_KEY_LIKES = 'kicheko.user_likes'
-
 class VideoService {
-  private getLocalCache(): Video[] {
-    const raw = localStorage.getItem(STORAGE_KEY_VIDEOS)
-    if (!raw) return []
-    try {
-      return JSON.parse(raw)
-    } catch {
-      return []
-    }
-  }
-
-  private saveLocalCache(videos: Video[]) {
-    localStorage.setItem(STORAGE_KEY_VIDEOS, JSON.stringify(videos))
-  }
-
   async getVideos(params?: { category?: string; query?: string; comedian_id?: string }): Promise<Video[]> {
-    try {
-      const { data } = await http.get<Video[]>('/videos/', {
-        params: {
-          category: params?.category,
-          q: params?.query,
-          comedian_id: params?.comedian_id,
-          is_short: false,
-        },
-      })
-      if (Array.isArray(data)) {
-        this.saveLocalCache(data)
-        return data
-      }
-    } catch (e) {
-      console.warn('API call to /videos/ failed, checking local cache', e)
-    }
-
-    let list = this.getLocalCache().filter((v) => !v.is_short)
-    if (params?.category && params.category !== 'All') {
-      list = list.filter((v) => v.category.toLowerCase() === params.category!.toLowerCase())
-    }
-    if (params?.comedian_id) {
-      list = list.filter((v) => v.comedian_id === params.comedian_id)
-    }
-    if (params?.query && params.query.trim()) {
-      const q = params.query.toLowerCase().trim()
-      list = list.filter(
-        (v) =>
-          v.title.toLowerCase().includes(q) ||
-          v.description.toLowerCase().includes(q) ||
-          v.comedian?.stage_name?.toLowerCase().includes(q) ||
-          v.category.toLowerCase().includes(q),
-      )
-    }
-    return list
+    const { data } = await http.get<Video[]>('/videos/', {
+      params: {
+        category: params?.category,
+        q: params?.query,
+        comedian_id: params?.comedian_id,
+        is_short: false,
+      },
+    })
+    return Array.isArray(data) ? data : []
   }
 
   async getShorts(): Promise<Video[]> {
-    try {
-      const { data } = await http.get<Video[]>('/videos/shorts/')
-      if (Array.isArray(data)) {
-        return data
-      }
-    } catch (e) {
-      console.warn('API call to /videos/shorts/ failed, checking local cache', e)
-    }
-    return this.getLocalCache().filter((v) => v.is_short)
+    const { data } = await http.get<Video[]>('/videos/shorts/')
+    return Array.isArray(data) ? data : []
   }
 
   async getVideoById(id: string): Promise<Video | null> {
-    try {
-      const { data } = await http.get<Video>(`/videos/${id}/`)
-      if (data && data.id) {
-        return data
-      }
-    } catch (e) {
-      console.warn(`API call to /videos/${id}/ failed, checking local cache`, e)
-    }
-    const list = this.getLocalCache()
-    return list.find((v) => v.id === id || v.slug === id) || null
+    const { data } = await http.get<Video>(`/videos/${id}/`)
+    return data && data.id ? data : null
   }
 
   async getComedians(): Promise<Comedian[]> {
-    try {
-      const { data } = await http.get<Comedian[]>('/creators/')
-      if (Array.isArray(data)) {
-        return data
-      }
-    } catch (e) {
-      console.warn('API call to /creators/ failed', e)
-    }
-    return []
+    const { data } = await http.get<Comedian[]>('/creators/')
+    return Array.isArray(data) ? data : []
   }
 
   async getComedianById(id: string): Promise<Comedian | null> {
-    try {
-      const { data } = await http.get<{ creator: Comedian; videos: Video[] }>(`/creators/${id}/`)
-      if (data && data.creator) {
-        return data.creator
-      }
-    } catch (e) {
-      console.warn(`API call to /creators/${id}/ failed`, e)
-    }
-    return null
+    const { data } = await http.get<{ creator: Comedian; videos: Video[] }>(`/creators/${id}/`)
+    return data && data.creator ? data.creator : null
   }
 
   async createVideo(payload: VideoUploadPayload): Promise<Video> {
     const { data } = await http.post<Video>('/creator/videos/', payload)
-    if (data && data.id) {
-      const current = this.getLocalCache()
-      current.unshift(data)
-      this.saveLocalCache(current)
-      return data
-    }
+    if (data && data.id) return data
     throw new Error('Failed to create video')
   }
 
   async recordView(id: string): Promise<void> {
-    try {
-      await http.post(`/videos/${id}/view/`)
-    } catch {
-      // ignore
-    }
+    await http.post(`/videos/${id}/view/`)
   }
 
   async toggleLike(id: string): Promise<boolean> {
-    try {
-      const { data } = await http.post<{ is_liked: boolean; likes_count: number }>(`/videos/${id}/like/`)
-      if (data && typeof data.is_liked === 'boolean') {
-        return data.is_liked
-      }
-    } catch {
-      // fallback
-    }
-
-    const rawLikes = localStorage.getItem(STORAGE_KEY_LIKES)
-    const likes: string[] = rawLikes ? JSON.parse(rawLikes) : []
-    const index = likes.indexOf(id)
-    let isLikedNow = false
-
-    if (index >= 0) {
-      likes.splice(index, 1)
-    } else {
-      likes.push(id)
-      isLikedNow = true
-    }
-    localStorage.setItem(STORAGE_KEY_LIKES, JSON.stringify(likes))
-    return isLikedNow
+    const { data } = await http.post<{ is_liked: boolean; likes_count: number }>(`/videos/${id}/like/`)
+    return data?.is_liked ?? false
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isLiked(id: string): boolean {
-    const raw = localStorage.getItem(STORAGE_KEY_LIKES)
-    if (!raw) return false
-    try {
-      const likes: string[] = JSON.parse(raw)
-      return likes.includes(id)
-    } catch {
-      return false
-    }
+    void id
+    return false
   }
 
   async purchaseVideo(
@@ -221,87 +114,27 @@ class VideoService {
     paymentMethod: string,
     phone: string,
   ): Promise<{ success: boolean; message: string }> {
-    try {
-      const { data } = await http.post<{ success: boolean; message: string }>(`/videos/${videoId}/purchase/`, {
-        payment_method: paymentMethod,
-        phone_number: phone,
-      })
-      if (data && data.success) {
-        const raw = localStorage.getItem(STORAGE_KEY_LIBRARY)
-        const library: string[] = raw ? JSON.parse(raw) : []
-        if (!library.includes(videoId)) {
-          library.push(videoId)
-          localStorage.setItem(STORAGE_KEY_LIBRARY, JSON.stringify(library))
-        }
-        return data
-      }
-    } catch (e) {
-      console.warn('Purchase video API failed', e)
-    }
-
-    const raw = localStorage.getItem(STORAGE_KEY_LIBRARY)
-    const library: string[] = raw ? JSON.parse(raw) : []
-    if (!library.includes(videoId)) {
-      library.push(videoId)
-      localStorage.setItem(STORAGE_KEY_LIBRARY, JSON.stringify(library))
-    }
-    return {
-      success: true,
-      message: `Malipo ya TZS yamekamilika kwa namba ${phone} kupitia ${paymentMethod}. Sasa unaweza kutazama video kamili!`,
-    }
+    const { data } = await http.post<{ success: boolean; message: string }>(`/videos/${videoId}/purchase/`, {
+      payment_method: paymentMethod,
+      phone_number: phone,
+    })
+    return data
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isPurchased(videoId: string): boolean {
-    const raw = localStorage.getItem(STORAGE_KEY_LIBRARY)
-    if (!raw) return false
-    try {
-      const library: string[] = JSON.parse(raw)
-      return library.includes(videoId)
-    } catch {
-      return false
-    }
+    void videoId
+    return false
   }
 
   async getUserLibrary(): Promise<Video[]> {
-    try {
-      const { data } = await http.get<{ purchased: Video[]; liked: Video[] }>('/library/')
-      if (data && Array.isArray(data.purchased)) {
-        return data.purchased
-      }
-    } catch (e) {
-      console.warn('API call to /library/ failed', e)
-    }
-
-    const raw = localStorage.getItem(STORAGE_KEY_LIBRARY)
-    if (!raw) return []
-    try {
-      const ids: string[] = JSON.parse(raw)
-      const list = this.getLocalCache()
-      return list.filter((v) => ids.includes(v.id))
-    } catch {
-      return []
-    }
+    const { data } = await http.get<{ purchased: Video[]; liked: Video[] }>('/library/')
+    return Array.isArray(data?.purchased) ? data.purchased : []
   }
 
   async getUserLikedVideos(): Promise<Video[]> {
-    try {
-      const { data } = await http.get<{ purchased: Video[]; liked: Video[] }>('/library/')
-      if (data && Array.isArray(data.liked)) {
-        return data.liked
-      }
-    } catch (e) {
-      console.warn('API call to /library/ likes failed', e)
-    }
-
-    const raw = localStorage.getItem(STORAGE_KEY_LIKES)
-    if (!raw) return []
-    try {
-      const ids: string[] = JSON.parse(raw)
-      const list = this.getLocalCache()
-      return list.filter((v) => ids.includes(v.id))
-    } catch {
-      return []
-    }
+    const { data } = await http.get<{ purchased: Video[]; liked: Video[] }>('/library/')
+    return Array.isArray(data?.liked) ? data.liked : []
   }
 }
 

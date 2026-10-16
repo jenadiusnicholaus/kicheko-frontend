@@ -7,14 +7,14 @@
         <div>
           <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-icons text-amber-500 text-lg">theater_comedy</span>
-            <span>Wachekeshaji Wanaoongoza</span>
+            <span>{{ t('taifa.misc.leaderboard.title') }}</span>
           </h2>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            Wasanii nguli wenye ushawishi mkubwa zaidi jukwaani
+            {{ t('taifa.misc.leaderboard.subtitle') }}
           </p>
         </div>
         <RouterLink to="/comedians" class="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline">
-          Wote &rarr;
+          {{ t('taifa.dashboard.viewAll') }} &rarr;
         </RouterLink>
       </div>
 
@@ -63,7 +63,9 @@
             <p class="font-black text-xs text-gray-900 dark:text-white">
               {{ formatFollowers(c.followers_count) }}
             </p>
-            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">wafuasi</p>
+            <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
+              {{ t('taifa.misc.leaderboard.followers') }}
+            </p>
           </div>
         </div>
       </div>
@@ -71,9 +73,9 @@
 
     <!-- Creator Signups CTA -->
     <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs">
-      <span class="text-gray-500">Unataka kuongeza msanii mpya?</span>
+      <span class="text-gray-500">{{ t('taifa.misc.leaderboard.addArtist') }}</span>
       <RouterLink :to="{ name: 'admin-videos' }" class="font-bold text-amber-600 dark:text-amber-400 hover:underline">
-        Pakia Maudhui Yake
+        {{ t('taifa.misc.leaderboard.uploadContent') }}
       </RouterLink>
     </div>
   </div>
@@ -81,7 +83,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Comedian } from '../../../../services/api/video.api'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   comedians: Comedian[]

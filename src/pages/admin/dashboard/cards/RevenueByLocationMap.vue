@@ -1,7 +1,7 @@
 <template>
   <VaCard class="flex flex-col">
     <VaCardTitle class="flex items-center justify-between">
-      <h1 class="card-title text-secondary font-bold uppercase">Revenue by location</h1>
+      <h1 class="card-title text-secondary font-bold uppercase">{{ t('taifa.misc.cards.revenueByLocation') }}</h1>
     </VaCardTitle>
     <VaCardContent class="flex-1 flex overflow-hidden">
       <VaAspectRatio class="w-full md:min-h-72 overflow-hidden relative flex items-center">
@@ -14,10 +14,13 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { VaCard } from 'vuestic-ui'
 import type countriesGeoJSON from '../../../../data/geo.json'
 import Map from '../../../../components/va-charts/chart-types/Map.vue'
 import type { ChartData } from 'chart.js'
+
+const { t } = useI18n()
 
 const getRevenue = (countryName: string) => {
   if (['United States of America', 'Canada', 'United Kingdom', 'China', 'Japan'].includes(countryName)) {
@@ -49,7 +52,7 @@ const data = computed<ChartData<'choropleth', { feature: any; value: number }[],
     labels: geoJson.value.features.map((d) => d.properties.name),
     datasets: [
       {
-        label: 'Countries',
+        label: t('taifa.misc.cards.countries'),
         data: geoJson.value.features.map((d) => ({ feature: d, value: getRevenue(d.properties.name) })),
       },
     ],

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PropType, computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useForm } from 'vuestic-ui'
 import { User, UserRole } from '../types'
 import UserAvatar from './UserAvatar.vue'
@@ -84,11 +85,13 @@ const onSave = () => {
   }
 }
 
-const roleSelectOptions: { text: Capitalize<Lowercase<UserRole>>; value: UserRole }[] = [
-  { text: 'Admin', value: 'admin' },
-  { text: 'User', value: 'user' },
-  { text: 'Owner', value: 'owner' },
-]
+const { t } = useI18n()
+
+const roleSelectOptions = computed<{ text: string; value: UserRole }[]>(() => [
+  { text: t('taifa.misc.users.roleAdmin'), value: 'admin' },
+  { text: t('taifa.misc.users.roleUser'), value: 'user' },
+  { text: t('taifa.misc.users.roleOwner'), value: 'owner' },
+])
 </script>
 
 <template>
@@ -100,7 +103,7 @@ const roleSelectOptions: { text: Capitalize<Lowercase<UserRole>>; value: UserRol
       class="self-stretch justify-start items-center gap-4 inline-flex"
     >
       <UserAvatar :user="newUser" size="large" />
-      <VaButton preset="primary" size="small">Add image</VaButton>
+      <VaButton preset="primary" size="small">{{ t('taifa.misc.users.addImage') }}</VaButton>
       <VaButton
         v-if="avatar"
         preset="primary"
@@ -115,14 +118,14 @@ const roleSelectOptions: { text: Capitalize<Lowercase<UserRole>>; value: UserRol
       <div class="flex gap-4 flex-col sm:flex-row w-full">
         <VaInput
           v-model="newUser.fullname"
-          label="Full name"
+          :label="t('taifa.misc.users.fullName')"
           class="w-full sm:w-1/2"
           :rules="[validators.required]"
           name="fullName"
         />
         <VaInput
           v-model="newUser.username"
-          label="Username"
+          :label="t('taifa.register.username')"
           class="w-full sm:w-1/2"
           :rules="[validators.required]"
           name="username"
@@ -131,14 +134,14 @@ const roleSelectOptions: { text: Capitalize<Lowercase<UserRole>>; value: UserRol
       <div class="flex gap-4 flex-col sm:flex-row w-full">
         <VaInput
           v-model="newUser.email"
-          label="Email"
+          :label="t('auth.email')"
           class="w-full sm:w-1/2"
           :rules="[validators.required, validators.email]"
           name="email"
         />
         <VaSelect
           v-model="newUser.projects"
-          label="Projects"
+          :label="t('menu.projects')"
           class="w-full sm:w-1/2"
           :options="projects"
           value-by="id"
@@ -154,7 +157,7 @@ const roleSelectOptions: { text: Capitalize<Lowercase<UserRole>>; value: UserRol
         <div class="w-1/2">
           <VaSelect
             v-model="newUser.role"
-            label="Role"
+            :label="t('taifa.misc.users.role')"
             class="w-full"
             :options="roleSelectOptions"
             :rules="[validators.required]"
@@ -164,13 +167,13 @@ const roleSelectOptions: { text: Capitalize<Lowercase<UserRole>>; value: UserRol
         </div>
 
         <div class="flex items-center w-1/2 mt-4">
-          <VaCheckbox v-model="newUser.active" label="Active" class="w-full" name="active" />
+          <VaCheckbox v-model="newUser.active" :label="t('taifa.misc.users.active')" class="w-full" name="active" />
         </div>
       </div>
 
-      <VaTextarea v-model="newUser.notes" label="Notes" class="w-full" name="notes" />
+      <VaTextarea v-model="newUser.notes" :label="t('taifa.misc.users.notes')" class="w-full" name="notes" />
       <div class="flex gap-2 flex-col-reverse items-stretch justify-end w-full sm:flex-row sm:items-center">
-        <VaButton preset="secondary" color="secondary" @click="$emit('close')">Cancel</VaButton>
+        <VaButton preset="secondary" color="secondary" @click="$emit('close')">{{ t('vuestic.cancel') }}</VaButton>
         <VaButton :disabled="!isValid" @click="onSave">{{ saveButtonLabel }}</VaButton>
       </div>
     </div>

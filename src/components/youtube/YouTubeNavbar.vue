@@ -7,7 +7,7 @@
       <button
         type="button"
         class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none transition-colors"
-        aria-label="Toggle menu"
+        :aria-label="t('taifa.misc.ytNav.toggleMenu')"
         @click="emit('toggleSidebar')"
       >
         <span class="material-icons text-xl leading-none">menu</span>
@@ -25,7 +25,7 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Tafuta video za vichekesho, wasanii, skits..."
+            :placeholder="t('taifa.misc.ytNav.searchPlaceholder')"
             class="w-full pl-4 pr-10 py-1.5 text-sm bg-gray-50 dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded-l-full focus:outline-none focus:border-amber-400 dark:focus:border-amber-400 text-gray-900 dark:text-white transition-all shadow-inner"
           />
           <button
@@ -40,7 +40,7 @@
         <button
           type="submit"
           class="px-5 py-1.5 bg-gray-100 dark:bg-[#27272a] hover:bg-gray-200 dark:hover:bg-[#323236] border border-l-0 border-gray-300 dark:border-gray-700 rounded-r-full text-gray-600 dark:text-gray-300 flex items-center justify-center transition-colors"
-          title="Tafuta"
+          :title="t('taifa.misc.common.search')"
         >
           <span class="material-icons text-lg">search</span>
         </button>
@@ -53,7 +53,7 @@
       <button
         type="button"
         class="sm:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200"
-        aria-label="Tafuta"
+        :aria-label="t('taifa.misc.common.search')"
         @click="showMobileSearch = !showMobileSearch"
       >
         <span class="material-icons text-xl">search</span>
@@ -66,14 +66,14 @@
         class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors"
       >
         <span class="material-icons text-base">video_call</span>
-        <span>Pakia Video</span>
+        <span>{{ t('taifa.misc.ytNav.uploadVideo') }}</span>
       </RouterLink>
 
       <!-- Theme Switcher -->
       <button
         type="button"
         class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 transition-colors"
-        :title="isDark ? 'Badili kwenda rangi ya kawaida' : 'Badili kwenda dark mode'"
+        :title="isDark ? t('taifa.misc.navbar.toLight') : t('taifa.misc.navbar.toDark')"
         @click="toggleTheme"
       >
         <span class="material-icons text-xl">{{ isDark ? 'light_mode' : 'dark_mode' }}</span>
@@ -91,7 +91,12 @@
               <div
                 class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm flex items-center justify-center uppercase overflow-hidden"
               >
-                <img v-if="userAvatar" :src="userAvatar" alt="Avatar" class="w-full h-full object-cover" />
+                <img
+                  v-if="userAvatar"
+                  :src="userAvatar"
+                  :alt="t('taifa.misc.ytNav.avatarAlt')"
+                  class="w-full h-full object-cover"
+                />
                 <span v-else>{{ userInitial }}</span>
               </div>
             </button>
@@ -105,12 +110,17 @@
               <div
                 class="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold text-sm flex items-center justify-center uppercase shrink-0"
               >
-                <img v-if="userAvatar" :src="userAvatar" class="w-full h-full rounded-full object-cover" />
+                <img
+                  v-if="userAvatar"
+                  :src="userAvatar"
+                  :alt="t('taifa.misc.ytNav.avatarAlt')"
+                  class="w-full h-full rounded-full object-cover"
+                />
                 <span v-else>{{ userInitial }}</span>
               </div>
               <div class="overflow-hidden">
                 <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">
-                  {{ authStore.user?.display_name || 'Mtumiaji wa Kicheko' }}
+                  {{ authStore.user?.display_name || t('taifa.misc.ytNav.defaultUser') }}
                 </p>
                 <p class="text-xs text-gray-500 truncate">
                   {{ authStore.user?.email || authStore.user?.username }}
@@ -125,7 +135,7 @@
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <span class="material-icons text-base text-gray-500 dark:text-gray-400">video_library</span>
-                <span>Maktaba Yangu</span>
+                <span>{{ t('kicheko.nav.library') }}</span>
               </RouterLink>
 
               <RouterLink
@@ -134,7 +144,7 @@
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <span class="material-icons text-base text-gray-500 dark:text-gray-400">dashboard</span>
-                <span>Studio ya Kicheko</span>
+                <span>{{ t('kicheko.admin.nav.studio') }}</span>
               </RouterLink>
 
               <RouterLink
@@ -143,7 +153,7 @@
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <span class="material-icons text-base text-gray-500 dark:text-gray-400">video_settings</span>
-                <span>Simamia &amp; Pakia Video</span>
+                <span>{{ t('kicheko.admin.nav.videos') }}</span>
               </RouterLink>
 
               <RouterLink
@@ -151,7 +161,7 @@
                 class="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <span class="material-icons text-base text-gray-500 dark:text-gray-400">settings</span>
-                <span>Mipangilio ya Akaunti</span>
+                <span>{{ t('kicheko.navbar.accountSettings') }}</span>
               </RouterLink>
             </div>
 
@@ -162,7 +172,7 @@
                 @click="handleLogout"
               >
                 <span class="material-icons text-lg">logout</span>
-                <span>Ondoka (Logout)</span>
+                <span>{{ t('user.logout') }}</span>
               </button>
             </div>
           </VaDropdownContent>
@@ -176,14 +186,14 @@
           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-700 transition-colors"
         >
           <span class="material-icons text-base">account_circle</span>
-          <span>Ingia</span>
+          <span>{{ t('auth.login') }}</span>
         </RouterLink>
 
         <RouterLink
           :to="{ name: 'signup' }"
           class="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors"
         >
-          <span>Jisajili</span>
+          <span>{{ t('auth.sign_up') }}</span>
         </RouterLink>
       </template>
     </div>
@@ -198,11 +208,13 @@
       <input
         v-model="searchQuery"
         type="text"
-        placeholder="Tafuta video za vichekesho..."
+        :placeholder="t('taifa.misc.ytNav.searchPlaceholderMobile')"
         class="w-full px-3 py-1.5 text-sm bg-gray-50 dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded-full focus:outline-none focus:border-red-500 text-gray-900 dark:text-white"
         autofocus
       />
-      <button type="submit" class="px-3 py-1.5 bg-red-600 text-white rounded-full text-sm font-semibold">Tafuta</button>
+      <button type="submit" class="px-3 py-1.5 bg-red-600 text-white rounded-full text-sm font-semibold">
+        {{ t('taifa.misc.common.search') }}
+      </button>
     </form>
   </div>
 </template>
@@ -210,6 +222,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useColors, useToast } from 'vuestic-ui'
 import KichekoLogo from '../KichekoLogo.vue'
 import { useAuthStore } from '../../stores/auth-store'
@@ -217,6 +230,8 @@ import { useAuthStore } from '../../stores/auth-store'
 const emit = defineEmits<{
   (e: 'toggleSidebar'): void
 }>()
+
+const { t } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -262,7 +277,7 @@ const handleSearch = () => {
 
 const handleLogout = async () => {
   authStore.logout()
-  toast({ message: 'Umetoka kwenye akaunti yako salama.', color: 'info' })
+  toast({ message: t('taifa.misc.ytNav.loggedOut'), color: 'info' })
   router.push({ name: 'home' })
 }
 </script>

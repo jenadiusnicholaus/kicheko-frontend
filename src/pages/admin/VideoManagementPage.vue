@@ -7,10 +7,10 @@
       <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <span class="material-icons text-amber-500">video_call</span>
-          <span>Usimamizi na Upakiaji wa Video za Kicheko</span>
+          <span>{{ t('taifa.admin.videos.title') }}</span>
         </h1>
         <p class="text-xs sm:text-sm text-gray-500 mt-1">
-          Pakia video mpya za vichekesho, tengeneza preview fupi za Shorts, weka bei na dhibiti maudhui.
+          {{ t('taifa.admin.videos.subtitle') }}
         </p>
       </div>
 
@@ -20,26 +20,26 @@
         @click="openUploadModal"
       >
         <span class="material-icons text-lg">cloud_upload</span>
-        <span>Pakia Video Mpya</span>
+        <span>{{ t('taifa.admin.videos.uploadBtn') }}</span>
       </button>
     </div>
 
     <!-- Stats Summary Row -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
-        <span class="text-xs text-gray-500 font-medium">Jumla ya Video</span>
+        <span class="text-xs text-gray-500 font-medium">{{ t('taifa.admin.videos.statTotal') }}</span>
         <p class="text-2xl font-extrabold text-gray-900 dark:text-white mt-1">{{ videos.length }}</p>
       </div>
       <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
-        <span class="text-xs text-gray-500 font-medium">Video za Kulipia</span>
+        <span class="text-xs text-gray-500 font-medium">{{ t('taifa.admin.videos.statPaid') }}</span>
         <p class="text-2xl font-extrabold text-amber-500 mt-1">{{ paidCount }}</p>
       </div>
       <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
-        <span class="text-xs text-gray-500 font-medium">Shorts / Previews</span>
+        <span class="text-xs text-gray-500 font-medium">{{ t('taifa.admin.videos.statShorts') }}</span>
         <p class="text-2xl font-extrabold text-red-500 mt-1">{{ shortsCount }}</p>
       </div>
       <div class="p-4 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
-        <span class="text-xs text-gray-500 font-medium">Jumla ya Views</span>
+        <span class="text-xs text-gray-500 font-medium">{{ t('taifa.admin.videos.statViews') }}</span>
         <p class="text-2xl font-extrabold text-emerald-500 mt-1">{{ totalViewsFormatted }}</p>
       </div>
     </div>
@@ -49,8 +49,10 @@
       class="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm"
     >
       <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-        <h2 class="font-bold text-base text-gray-900 dark:text-white">Orodha ya Video zilizopo Kwenye Mfumo</h2>
-        <span class="text-xs text-gray-500">{{ videos.length }} video</span>
+        <h2 class="font-bold text-base text-gray-900 dark:text-white">
+          {{ t('taifa.admin.videos.tableTitle') }}
+        </h2>
+        <span class="text-xs text-gray-500">{{ t('taifa.admin.videos.videoCount', { count: videos.length }) }}</span>
       </div>
 
       <div class="overflow-x-auto">
@@ -59,12 +61,12 @@
             class="bg-gray-50 dark:bg-gray-800/60 text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider"
           >
             <tr>
-              <th class="py-3 px-4">Video / Kichwa</th>
-              <th class="py-3 px-4">Msanii</th>
-              <th class="py-3 px-4">Kitengo</th>
-              <th class="py-3 px-4">Aina ya Upatikanaji</th>
-              <th class="py-3 px-4">Views</th>
-              <th class="py-3 px-4 text-right">Vitendo</th>
+              <th class="py-3 px-4">{{ t('taifa.admin.videos.thVideo') }}</th>
+              <th class="py-3 px-4">{{ t('taifa.admin.videos.thArtist') }}</th>
+              <th class="py-3 px-4">{{ t('taifa.admin.videos.thCategory') }}</th>
+              <th class="py-3 px-4">{{ t('taifa.admin.videos.thAccess') }}</th>
+              <th class="py-3 px-4">{{ t('taifa.admin.videos.thViews') }}</th>
+              <th class="py-3 px-4 text-right">{{ t('taifa.admin.actionsTh') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -87,7 +89,9 @@
                     >
                       Short
                     </span>
-                    <span v-else class="text-[10px] text-gray-400"> Muda: {{ v.duration_formatted }} </span>
+                    <span v-else class="text-[10px] text-gray-400">
+                      {{ t('taifa.admin.videos.durationLabel', { duration: v.duration_formatted }) }}
+                    </span>
                   </div>
                 </div>
               </td>
@@ -115,13 +119,13 @@
                   v-if="v.access_type === 'paid'"
                   class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
                 >
-                  Kulipia: Tsh {{ v.price_amount.toLocaleString() }}
+                  {{ t('taifa.admin.videos.paidBadge', { price: v.price_amount.toLocaleString() }) }}
                 </span>
                 <span
                   v-else
                   class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
                 >
-                  Bure
+                  {{ t('kicheko.home.free') }}
                 </span>
               </td>
 
@@ -137,7 +141,7 @@
                   class="text-xs font-bold text-amber-600 hover:text-amber-700 underline"
                   target="_blank"
                 >
-                  Tazama
+                  {{ t('taifa.admin.videos.viewLink') }}
                 </RouterLink>
               </td>
             </tr>
@@ -152,7 +156,9 @@
         <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
           <div class="flex items-center gap-2">
             <span class="material-icons text-amber-500 text-2xl">video_call</span>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Pakia Video Mpya ya Kicheko</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+              {{ t('taifa.admin.videos.modalTitle') }}
+            </h3>
           </div>
           <button type="button" class="text-gray-400 hover:text-gray-600 text-lg" @click="showModal = false">✕</button>
         </div>
@@ -161,13 +167,13 @@
           <!-- Title -->
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-              Kichwa cha Video (Title) *
+              {{ t('taifa.admin.videos.titleLabel') }}
             </label>
             <input
               v-model="form.title"
               type="text"
               required
-              placeholder="Mfano: Cheka Tu Live: Vituko vya Dar es Salaam..."
+              :placeholder="t('taifa.admin.videos.titlePlaceholder')"
               class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
             />
           </div>
@@ -175,12 +181,12 @@
           <!-- Description -->
           <div>
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-              Maelezo ya Video (Description)
+              {{ t('taifa.admin.videos.descLabel') }}
             </label>
             <textarea
               v-model="form.description"
               rows="3"
-              placeholder="Eleza kwa ufupi maudhui ya onyesho hili la vichekesho..."
+              :placeholder="t('taifa.admin.videos.descPlaceholder')"
               class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
             />
           </div>
@@ -189,7 +195,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-                Msanii / Mchekeshaji (Comedian) *
+                {{ t('taifa.admin.videos.comedianLabel') }}
               </label>
               <select
                 v-model="form.comedian_id"
@@ -202,7 +208,7 @@
 
             <div>
               <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-                Kitengo (Category) *
+                {{ t('taifa.admin.videos.categoryLabel') }}
               </label>
               <select
                 v-model="form.category"
@@ -224,23 +230,23 @@
           >
             <div>
               <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-                Upatikanaji (Access Type)
+                {{ t('taifa.admin.videos.accessLabel') }}
               </label>
               <div class="flex gap-4 mt-2">
                 <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
                   <input v-model="form.access_type" type="radio" value="free" />
-                  <span>Bure (Free)</span>
+                  <span>{{ t('taifa.admin.videos.accessFree') }}</span>
                 </label>
                 <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer">
                   <input v-model="form.access_type" type="radio" value="paid" />
-                  <span class="text-amber-600 font-bold">Kulipia (Paid)</span>
+                  <span class="text-amber-600 font-bold">{{ t('taifa.admin.videos.accessPaid') }}</span>
                 </label>
               </div>
             </div>
 
             <div v-if="form.access_type === 'paid'">
               <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-                Bei ya Video (TZS) *
+                {{ t('taifa.admin.videos.priceLabel') }}
               </label>
               <input
                 v-model.number="form.price_amount"
@@ -257,7 +263,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-                URL ya Faili la Video (mp4 / webm)
+                {{ t('taifa.admin.videos.videoUrlLabel') }}
               </label>
               <input
                 v-model="form.video_url"
@@ -269,7 +275,7 @@
 
             <div>
               <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
-                URL ya Picha ya Jalada (Thumbnail)
+                {{ t('taifa.admin.videos.thumbUrlLabel') }}
               </label>
               <input
                 v-model="form.thumbnail_url"
@@ -289,7 +295,7 @@
               class="rounded text-amber-500 focus:ring-amber-400"
             />
             <label for="isShortCheck" class="text-xs font-bold text-gray-700 dark:text-gray-300">
-              Hii ni Short Preview (Video fupi ya 9:16 ya kuunganisha na video kuu)
+              {{ t('taifa.admin.videos.shortLabel') }}
             </label>
           </div>
 
@@ -300,7 +306,7 @@
               class="flex-1 py-2 text-xs font-bold border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
               @click="showModal = false"
             >
-              Ghairi (Cancel)
+              {{ t('taifa.admin.videos.cancelBtn') }}
             </button>
             <button
               type="submit"
@@ -308,7 +314,9 @@
               class="flex-1 py-2 text-xs font-bold bg-amber-400 hover:bg-amber-500 text-gray-950 rounded-lg shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <span v-if="isSubmitting" class="material-icons animate-spin text-sm">refresh</span>
-              <span>{{ isSubmitting ? 'Inapakia...' : 'Chapisha Video Sasa' }}</span>
+              <span>{{
+                isSubmitting ? t('taifa.admin.videos.submittingBtn') : t('taifa.admin.videos.submitBtn')
+              }}</span>
             </button>
           </div>
         </form>
@@ -319,9 +327,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vuestic-ui'
 import { videoApi, type Video, type Comedian, type VideoUploadPayload } from '../../services/api/video.api'
 
+const { t } = useI18n()
 const { init: toast } = useToast()
 
 const videos = ref<Video[]>([])
@@ -384,7 +394,7 @@ const submitUpload = async () => {
   isSubmitting.value = true
   try {
     await videoApi.createVideo(form.value)
-    toast({ message: 'Video imepakiwa na kuchapishwa kikamilifu!', color: 'success' })
+    toast({ message: t('taifa.admin.videos.uploadSuccess'), color: 'success' })
     showModal.value = false
     await loadVideos()
   } finally {

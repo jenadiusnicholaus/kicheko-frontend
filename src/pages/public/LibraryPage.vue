@@ -4,9 +4,9 @@
       <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <span class="material-icons text-purple-600">video_library</span>
-          <span>Maktaba Yangu ya Kicheko</span>
+          <span>{{ t('taifa.pages.library.title') }}</span>
         </h1>
-        <p class="text-xs text-gray-500 mt-1">Hapa unakuta video ulizonunua na zile ulizoweka alama ya kupenda.</p>
+        <p class="text-xs text-gray-500 mt-1">{{ t('taifa.pages.library.subtitle') }}</p>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
         @click="activeTab = 'purchased'"
       >
         <span class="material-icons text-base">shopping_bag</span>
-        <span>Video Zilizolipwa ({{ purchasedVideos.length }})</span>
+        <span>{{ t('taifa.pages.library.purchasedTab', { count: purchasedVideos.length }) }}</span>
       </button>
 
       <button
@@ -37,7 +37,7 @@
         @click="activeTab = 'liked'"
       >
         <span class="material-icons text-base">thumb_up</span>
-        <span>Zilizopendwa ({{ likedVideos.length }})</span>
+        <span>{{ t('taifa.pages.library.likedTab', { count: likedVideos.length }) }}</span>
       </button>
     </div>
 
@@ -54,15 +54,17 @@
         class="text-center py-16 bg-gray-50 dark:bg-[#18181b] rounded-2xl border border-gray-200 dark:border-gray-800 p-8"
       >
         <span class="material-icons text-5xl text-gray-400">workspace_premium</span>
-        <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 mt-2">Bado hujanunua video yoyote</h3>
+        <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 mt-2">
+          {{ t('taifa.pages.library.noPurchased') }}
+        </h3>
         <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
-          Unaponunua video za kulipia za wasanii wako pendwa, zitaonekana hapa moja kwa moja bila kikomo cha kuzitazama.
+          {{ t('taifa.pages.library.noPurchasedDesc') }}
         </p>
         <RouterLink
           to="/"
           class="mt-4 inline-block px-5 py-2 bg-amber-400 hover:bg-amber-500 text-gray-950 font-bold rounded-full text-xs shadow-md"
         >
-          Tazama Video za Sasa
+          {{ t('taifa.pages.library.browseCta') }}
         </RouterLink>
       </div>
     </div>
@@ -80,9 +82,11 @@
         class="text-center py-16 bg-gray-50 dark:bg-[#18181b] rounded-2xl border border-gray-200 dark:border-gray-800 p-8"
       >
         <span class="material-icons text-5xl text-gray-400">thumb_up_off_alt</span>
-        <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 mt-2">Bado huna video ulizozipenda</h3>
+        <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 mt-2">
+          {{ t('taifa.pages.library.noLiked') }}
+        </h3>
         <p class="text-xs text-gray-500 mt-1">
-          Bonyeza kitufe cha 'Like' kwenye video yoyote ya Kicheko ili kuihifadhi hapa.
+          {{ t('taifa.pages.library.noLikedDesc') }}
         </p>
       </div>
     </div>
@@ -92,10 +96,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import VideoCard from '../../components/youtube/VideoCard.vue'
 import { videoApi, type Video } from '../../services/api/video.api'
 
 const route = useRoute()
+const { t } = useI18n()
 
 const activeTab = ref<'purchased' | 'liked'>('purchased')
 const purchasedVideos = ref<Video[]>([])

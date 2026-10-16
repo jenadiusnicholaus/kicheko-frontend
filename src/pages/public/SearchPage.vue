@@ -5,11 +5,13 @@
       <h1 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
         <span class="material-icons text-amber-500">search</span>
         <span
-          >Matokeo ya utafutaji wa:
+          >{{ t('taifa.pages.search.resultsFor') }}
           <span class="text-amber-600 dark:text-amber-400 font-bold">"{{ searchQuery }}"</span></span
         >
       </h1>
-      <p class="text-xs text-gray-500 mt-1">Video {{ searchResults.length }} zimepatikana</p>
+      <p class="text-xs text-gray-500 mt-1">
+        {{ t('taifa.pages.search.videosFound', { count: searchResults.length }) }}
+      </p>
     </div>
 
     <!-- Search input if user wants to refine -->
@@ -17,14 +19,14 @@
       <input
         v-model="inputQuery"
         type="text"
-        placeholder="Tafuta jina la video au msanii..."
+        :placeholder="t('taifa.pages.search.placeholder')"
         class="w-full px-4 py-2 text-sm bg-gray-50 dark:bg-[#18181b] border border-gray-300 dark:border-gray-700 rounded-full focus:outline-none focus:border-amber-400 text-gray-900 dark:text-white"
       />
       <button
         type="submit"
         class="px-5 py-2 bg-amber-400 hover:bg-amber-500 text-gray-950 font-bold rounded-full text-sm"
       >
-        Tafuta
+        {{ t('vuestic.search') }}
       </button>
     </form>
 
@@ -34,8 +36,10 @@
       class="text-center py-16 bg-gray-50 dark:bg-[#18181b] rounded-2xl border border-gray-200 dark:border-gray-800 p-8"
     >
       <span class="material-icons text-5xl text-gray-400">search_off</span>
-      <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 mt-2">Hakuna matokeo yaliyopatikana</h3>
-      <p class="text-xs text-gray-500 mt-1">Jaribu maneno mengine kama "Joti", "Cheka Tu", "Mpoki", au "Skits".</p>
+      <h3 class="text-base font-bold text-gray-800 dark:text-gray-200 mt-2">
+        {{ t('taifa.pages.search.noResults') }}
+      </h3>
+      <p class="text-xs text-gray-500 mt-1">{{ t('taifa.pages.search.noResultsHint') }}</p>
     </div>
 
     <!-- Results List (YouTube search style row layout) -->
@@ -77,7 +81,7 @@
           </h2>
 
           <div class="flex items-center gap-1.5 text-xs text-gray-500">
-            <span>{{ v.views_count.toLocaleString() }} views</span>
+            <span>{{ t('taifa.pages.common.views', { count: v.views_count.toLocaleString() }) }}</span>
             <span>•</span>
             <span>{{ new Date(v.published_at).toLocaleDateString('sw-TZ') }}</span>
           </div>
@@ -101,10 +105,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { videoApi, type Video } from '../../services/api/video.api'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
 const searchResults = ref<Video[]>([])
 const inputQuery = ref('')

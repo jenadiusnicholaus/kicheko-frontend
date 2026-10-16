@@ -13,16 +13,16 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-              Usimamizi wa Wall of Fame
+              {{ t('taifa.admin.manageFame.title') }}
             </h1>
             <span
               class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400 text-xs font-bold border border-purple-200"
             >
-              Mabingwa {{ fameStore.totalInductees }}
+              {{ t('taifa.admin.manageFame.count', { count: fameStore.totalInductees }) }}
             </span>
           </div>
           <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            Dhibiti orodha ya wachekeshaji mashuhuri wanaoingia kwenye Wall of Fame ya Taifa House.
+            {{ t('taifa.admin.manageFame.subtitle') }}
           </p>
         </div>
       </div>
@@ -34,7 +34,7 @@
           class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center gap-1.5 transition-colors"
         >
           <span class="material-icons text-base">visibility</span>
-          <span>Tazama Ukumbi</span>
+          <span>{{ t('taifa.admin.manageFame.viewBtn') }}</span>
           <span class="material-icons text-xs">open_in_new</span>
         </RouterLink>
 
@@ -44,7 +44,7 @@
           @click="openAddModal"
         >
           <span class="material-icons text-base">add</span>
-          <span>Ongeza Bingwa Mpya</span>
+          <span>{{ t('taifa.admin.manageFame.addBtn') }}</span>
         </button>
       </div>
     </div>
@@ -69,13 +69,13 @@
           <div
             class="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#FEBF01] text-gray-950 font-black text-xs shadow-md"
           >
-            Mwaka {{ item.competitionYear }}
+            {{ t('taifa.admin.manageFame.yearBadge', { year: item.competitionYear }) }}
           </div>
 
           <!-- Total Votes Badge -->
           <div class="absolute bottom-3 left-3 text-white text-xs font-bold flex items-center gap-1">
             <span class="material-icons text-amber-400 text-sm">star</span>
-            <span>{{ item.totalVotes.toLocaleString() }} Kura</span>
+            <span>{{ t('taifa.admin.manageFame.votesCount', { count: item.totalVotes.toLocaleString() }) }}</span>
           </div>
         </div>
 
@@ -105,12 +105,12 @@
               class="px-3 py-1.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 text-xs font-bold transition-colors"
               @click="openEditModal(item)"
             >
-              Hariri
+              {{ t('taifa.admin.editBtn') }}
             </button>
             <button
               type="button"
               class="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
-              title="Futa Bingwa"
+              :title="t('taifa.admin.manageFame.deleteTitle')"
               @click="deleteItem(item.id)"
             >
               <span class="material-icons text-base">delete_outline</span>
@@ -137,12 +137,14 @@
         </button>
 
         <h3 class="text-xl font-black text-gray-900 dark:text-white mb-4">
-          {{ isEditing ? 'Hariri Bingwa wa Wall of Fame' : 'Ongeza Bingwa Kwenye Wall of Fame' }}
+          {{ isEditing ? t('taifa.admin.manageFame.editTitle') : t('taifa.admin.manageFame.addTitle') }}
         </h3>
 
         <form class="space-y-4 text-xs" @submit.prevent="saveInductee">
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Jina Kamili</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.manageFame.nameLabel')
+            }}</label>
             <input
               v-model="modalForm.name"
               type="text"
@@ -153,7 +155,9 @@
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Chuo Kikuu</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.universityTh')
+              }}</label>
               <input
                 v-model="modalForm.university"
                 type="text"
@@ -162,12 +166,14 @@
               />
             </div>
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Kifupi cha Chuo</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.manageFame.codeLabel')
+              }}</label>
               <input
                 v-model="modalForm.universityCode"
                 type="text"
                 required
-                placeholder="mf. UDSM"
+                :placeholder="t('taifa.admin.manageFame.codePlaceholder')"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white font-mono"
               />
             </div>
@@ -175,7 +181,9 @@
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Mwaka wa Mashindano</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.wall.competitionYear')
+              }}</label>
               <input
                 v-model.number="modalForm.competitionYear"
                 type="number"
@@ -184,7 +192,9 @@
               />
             </div>
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Jumla ya Kura</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.wall.totalVotes')
+              }}</label>
               <input
                 v-model.number="modalForm.totalVotes"
                 type="number"
@@ -195,7 +205,9 @@
           </div>
 
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Maelezo (Bio)</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.manageFame.bioLabel')
+            }}</label>
             <textarea
               v-model="modalForm.bio"
               rows="3"
@@ -205,7 +217,9 @@
           </div>
 
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Nukuu Yake Maarufu (Optional)</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.manageFame.quoteLabel')
+            }}</label>
             <input
               v-model="modalForm.featuredQuote"
               type="text"
@@ -219,13 +233,13 @@
               class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-400 font-bold"
               @click="showModal = false"
             >
-              Ghairi
+              {{ t('taifa.admin.cancelBtn') }}
             </button>
             <button
               type="submit"
               class="px-5 py-2.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black shadow-md cursor-pointer"
             >
-              Hifadhi Bingwa
+              {{ t('taifa.admin.manageFame.saveBtn') }}
             </button>
           </div>
         </form>
@@ -236,8 +250,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useWallOfFameStore, type WallOfFameInductee } from '../../../stores/wall-of-fame'
 
+const { t } = useI18n()
 const fameStore = useWallOfFameStore()
 
 onMounted(() => {
@@ -297,7 +313,7 @@ const saveInductee = async () => {
 }
 
 const deleteItem = async (id: string) => {
-  if (confirm('Una uhakika unataka kuondoa bingwa huyu kwenye Wall of Fame?')) {
+  if (confirm(t('taifa.admin.manageFame.deleteConfirm'))) {
     await fameStore.deleteInductee(id)
   }
 }

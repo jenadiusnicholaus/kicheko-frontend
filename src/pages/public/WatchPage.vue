@@ -27,7 +27,7 @@
               v-else
               class="px-2.5 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 border border-emerald-500/20"
             >
-              Bure (Free)
+              {{ t('kicheko.home.free') }}
             </span>
             <span
               class="px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
@@ -62,7 +62,9 @@
                 <span>{{ video.comedian.stage_name }}</span>
                 <span v-if="video.comedian.verified" class="material-icons text-xs text-blue-500">check_circle</span>
               </RouterLink>
-              <p class="text-xs text-gray-500">{{ formatFollowers(video.comedian.followers_count) }} wafuasi</p>
+              <p class="text-xs text-gray-500">
+                {{ t('taifa.pages.common.followers', { count: formatFollowers(video.comedian.followers_count) }) }}
+              </p>
             </div>
 
             <!-- Follow / Subscribe Button -->
@@ -76,7 +78,7 @@
               ]"
               @click="toggleFollow"
             >
-              {{ isFollowed ? 'Unamfuata' : 'Mfuatilie (Follow)' }}
+              {{ isFollowed ? t('taifa.pages.common.following') : t('taifa.pages.common.follow') }}
             </button>
           </div>
 
@@ -104,7 +106,7 @@
               @click="copyShareLink"
             >
               <span class="material-icons text-base">share</span>
-              <span>Shiriki (Share)</span>
+              <span>{{ t('taifa.pages.watch.share') }}</span>
             </button>
 
             <!-- Save / Buy Action -->
@@ -115,7 +117,7 @@
               @click="showCheckoutModal = true"
             >
               <span class="material-icons text-base">shopping_bag</span>
-              <span>Nunua</span>
+              <span>{{ t('taifa.pages.watch.buy') }}</span>
             </button>
           </div>
         </div>
@@ -123,7 +125,7 @@
         <!-- Description Box -->
         <div class="bg-gray-100 dark:bg-[#18181b] rounded-2xl p-4 text-sm text-gray-800 dark:text-gray-200 space-y-2">
           <div class="flex items-center gap-2 text-xs font-bold text-gray-600 dark:text-gray-400">
-            <span>{{ video.views_count.toLocaleString() }} views</span>
+            <span>{{ t('taifa.pages.common.views', { count: video.views_count.toLocaleString() }) }}</span>
             <span>•</span>
             <span>{{ new Date(video.published_at).toLocaleDateString('sw-TZ', { dateStyle: 'long' }) }}</span>
             <span>•</span>
@@ -142,7 +144,7 @@
             class="text-xs font-bold text-gray-600 dark:text-gray-300 hover:underline"
             @click="isDescriptionExpanded = !isDescriptionExpanded"
           >
-            {{ isDescriptionExpanded ? 'Funga (Show less)' : 'Soma zaidi (Show more)' }}
+            {{ isDescriptionExpanded ? t('taifa.pages.watch.showLess') : t('taifa.pages.watch.showMore') }}
           </button>
         </div>
       </div>
@@ -151,7 +153,7 @@
       <div class="space-y-4">
         <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <span class="material-icons text-amber-500 text-lg">playlist_play</span>
-          <span>Inayofuata (Up Next)</span>
+          <span>{{ t('taifa.pages.watch.upNext') }}</span>
         </h2>
 
         <div class="space-y-3">
@@ -179,7 +181,7 @@
                 v-if="rel.access_type === 'paid'"
                 class="absolute top-1 left-1 px-1.5 py-0.2 rounded bg-amber-500 text-[9px] text-white font-bold"
               >
-                Paid
+                {{ t('taifa.pages.watch.paid') }}
               </span>
             </div>
 
@@ -193,7 +195,9 @@
               <p class="text-[11px] text-gray-500 mt-1 truncate">
                 {{ rel.comedian.stage_name }}
               </p>
-              <p class="text-[10px] text-gray-400">{{ formatViews(rel.views_count) }} views</p>
+              <p class="text-[10px] text-gray-400">
+                {{ t('taifa.pages.common.views', { count: formatViews(rel.views_count) }) }}
+              </p>
             </div>
           </RouterLink>
         </div>
@@ -209,16 +213,19 @@
           >
             <span class="material-icons text-2xl">account_balance_wallet</span>
           </div>
-          <h3 class="text-lg font-bold text-gray-900 dark:text-white">Malipo ya Video ya Kicheko</h3>
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+            {{ t('taifa.pages.watch.paymentTitle') }}
+          </h3>
           <p class="text-xs text-gray-500">
-            Nunua haki ya kutazama: <strong class="text-gray-800 dark:text-gray-200">{{ video.title }}</strong>
+            {{ t('taifa.pages.watch.buyAccess') }}
+            <strong class="text-gray-800 dark:text-gray-200">{{ video.title }}</strong>
           </p>
         </div>
 
         <div
           class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200 dark:border-amber-900/40 flex justify-between items-center text-sm"
         >
-          <span class="text-gray-600 dark:text-gray-300">Kiasi cha Kulipa:</span>
+          <span class="text-gray-600 dark:text-gray-300">{{ t('taifa.pages.watch.amountDue') }}</span>
           <span class="text-lg font-extrabold text-amber-600 dark:text-amber-400">
             Tsh {{ video.price_amount.toLocaleString() }}
           </span>
@@ -226,7 +233,9 @@
 
         <!-- Payment Method Selector -->
         <div class="space-y-2">
-          <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Chagua Njia ya Malipo:</label>
+          <label class="text-xs font-bold text-gray-700 dark:text-gray-300">
+            {{ t('taifa.register.selectPayment') }}
+          </label>
           <div class="grid grid-cols-3 gap-2">
             <button
               v-for="provider in ['M-Pesa', 'Tigo Pesa', 'Airtel Money']"
@@ -248,12 +257,12 @@
         <!-- Mobile Phone Number -->
         <div>
           <label class="text-xs font-bold text-gray-700 dark:text-gray-300 block mb-1">
-            Namba ya Simu ya Kutoa Pesa:
+            {{ t('taifa.pages.watch.phoneLabel') }}
           </label>
           <input
             v-model="phoneInput"
             type="tel"
-            placeholder="07XXXXXXXX au +255..."
+            :placeholder="t('taifa.pages.watch.phonePlaceholder')"
             class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-amber-400"
           />
         </div>
@@ -264,7 +273,7 @@
             class="flex-1 py-2 rounded-lg text-xs font-semibold border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
             @click="showCheckoutModal = false"
           >
-            Ghairi (Cancel)
+            {{ t('vuestic.cancel') }}
           </button>
           <button
             type="button"
@@ -273,7 +282,7 @@
             @click="processPurchase"
           >
             <span v-if="isProcessingPayment" class="material-icons animate-spin text-sm">refresh</span>
-            <span>{{ isProcessingPayment ? 'Inathibitisha...' : 'Lipia Sasa' }}</span>
+            <span>{{ isProcessingPayment ? t('taifa.pages.watch.verifying') : t('taifa.pages.watch.payNow') }}</span>
           </button>
         </div>
       </div>
@@ -282,18 +291,20 @@
 
   <div v-else class="text-center py-20">
     <span class="material-icons text-5xl text-gray-400 animate-spin">refresh</span>
-    <p class="mt-2 text-sm text-gray-500">Inapakia video...</p>
+    <p class="mt-2 text-sm text-gray-500">{{ t('taifa.pages.watch.loading') }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vuestic-ui'
 import { videoApi, type Video } from '../../services/api/video.api'
 import YouTubePlayer from '../../components/youtube/YouTubePlayer.vue'
 
 const route = useRoute()
+const { t } = useI18n()
 const { init: toast } = useToast()
 
 const video = ref<Video | null>(null)
@@ -353,7 +364,7 @@ const handleLike = async () => {
   isLiked.value = await videoApi.toggleLike(video.value.id)
   if (isLiked.value) {
     video.value.likes_count += 1
-    toast({ message: 'Umependa video hii!', color: 'success' })
+    toast({ message: t('taifa.pages.watch.likedToast'), color: 'success' })
   } else {
     video.value.likes_count = Math.max(0, video.value.likes_count - 1)
   }
@@ -363,15 +374,15 @@ const toggleFollow = () => {
   isFollowed.value = !isFollowed.value
   toast({
     message: isFollowed.value
-      ? `Sasa unamfuata ${video.value?.comedian.stage_name}!`
-      : `Umeacha kumfuata ${video.value?.comedian.stage_name}.`,
+      ? t('taifa.pages.common.followedToast', { name: video.value?.comedian.stage_name })
+      : t('taifa.pages.common.unfollowedToast', { name: video.value?.comedian.stage_name }),
     color: 'info',
   })
 }
 
 const copyShareLink = () => {
   navigator.clipboard.writeText(window.location.href)
-  toast({ message: 'Kiungo cha video kimewekwa kwenye clipboard!', color: 'success' })
+  toast({ message: t('taifa.pages.watch.linkCopied'), color: 'success' })
 }
 
 const processPurchase = async () => {

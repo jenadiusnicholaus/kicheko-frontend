@@ -7,14 +7,14 @@
         <div>
           <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-icons text-amber-500 text-lg">account_balance_wallet</span>
-            <span>Malipo ya Simu (Mobile Money)</span>
+            <span>{{ t('taifa.misc.revenue.mobileMoney') }}</span>
           </h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Mgawanyo wa mapato kwa watoa huduma Tanzania</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ t('taifa.misc.revenue.subtitle') }}</p>
         </div>
         <span
           class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 text-xs font-bold"
         >
-          98.4% Yamefanikiwa
+          {{ t('taifa.misc.revenue.successRate', { n: '98.4' }) }}
         </span>
       </div>
 
@@ -30,12 +30,12 @@
             <div class="w-3 h-3 rounded-full bg-red-600 shrink-0"></div>
             <div>
               <p class="font-bold text-gray-900 dark:text-white">M-Pesa (Vodacom)</p>
-              <p class="text-[10px] text-gray-400">5,820 miamala</p>
+              <p class="text-[10px] text-gray-400">{{ t('taifa.misc.revenue.transactions', { n: '5,820' }) }}</p>
             </div>
           </div>
           <div class="text-right">
             <p class="font-black text-gray-900 dark:text-white">Tsh 8,613,000</p>
-            <p class="text-[10px] text-gray-500 font-bold">58% ya mapato</p>
+            <p class="text-[10px] text-gray-500 font-bold">{{ t('taifa.misc.revenue.ofRevenue', { n: 58 }) }}</p>
           </div>
         </div>
 
@@ -44,12 +44,12 @@
             <div class="w-3 h-3 rounded-full bg-sky-500 shrink-0"></div>
             <div>
               <p class="font-bold text-gray-900 dark:text-white">Tigo Pesa (Mixx by Yas)</p>
-              <p class="text-[10px] text-gray-400">2,610 miamala</p>
+              <p class="text-[10px] text-gray-400">{{ t('taifa.misc.revenue.transactions', { n: '2,610' }) }}</p>
             </div>
           </div>
           <div class="text-right">
             <p class="font-black text-gray-900 dark:text-white">Tsh 3,861,000</p>
-            <p class="text-[10px] text-gray-500 font-bold">26% ya mapato</p>
+            <p class="text-[10px] text-gray-500 font-bold">{{ t('taifa.misc.revenue.ofRevenue', { n: 26 }) }}</p>
           </div>
         </div>
 
@@ -58,12 +58,12 @@
             <div class="w-3 h-3 rounded-full bg-amber-400 shrink-0"></div>
             <div>
               <p class="font-bold text-gray-900 dark:text-white">Airtel Money</p>
-              <p class="text-[10px] text-gray-400">1,412 miamala</p>
+              <p class="text-[10px] text-gray-400">{{ t('taifa.misc.revenue.transactions', { n: '1,412' }) }}</p>
             </div>
           </div>
           <div class="text-right">
             <p class="font-black text-gray-900 dark:text-white">Tsh 2,376,000</p>
-            <p class="text-[10px] text-gray-500 font-bold">16% ya mapato</p>
+            <p class="text-[10px] text-gray-500 font-bold">{{ t('taifa.misc.revenue.ofRevenue', { n: 16 }) }}</p>
           </div>
         </div>
       </div>
@@ -73,17 +73,20 @@
     <div
       class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-500 flex items-center justify-between"
     >
-      <span>Malipo huwekwa moja kwa moja:</span>
-      <span class="font-bold text-gray-800 dark:text-gray-200">Kila Ijumaa (Weekly)</span>
+      <span>{{ t('taifa.misc.revenue.settlement') }}</span>
+      <span class="font-bold text-gray-800 dark:text-gray-200">{{ t('taifa.misc.revenue.settlementFreq') }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Chart, registerables } from 'chart.js'
 
 Chart.register(...registerables)
+
+const { t } = useI18n()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 let chartInstance: Chart | null = null
@@ -123,7 +126,7 @@ const createChart = () => {
           backgroundColor: '#18181b',
           padding: 8,
           callbacks: {
-            label: (item) => ` ${item.label}: ${item.raw}% ya mapato`,
+            label: (item) => ` ${t('taifa.misc.revenue.tooltipRevenue', { label: item.label, n: item.raw })}`,
           },
         },
       },

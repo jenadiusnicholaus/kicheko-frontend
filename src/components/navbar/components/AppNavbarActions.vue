@@ -14,17 +14,17 @@
     <RouterLink
       :to="{ name: 'admin-applications' }"
       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors"
-      title="Maombi ya Wachekeshaji (10k)"
+      :title="$t('taifa.misc.navbar.applicationsTitle')"
     >
       <span class="material-icons text-base">how_to_reg</span>
-      <span class="hidden md:inline">Maombi (10k)</span>
+      <span class="hidden md:inline">{{ $t('taifa.misc.navbar.applications') }}</span>
     </RouterLink>
 
     <!-- Theme Switcher -->
     <button
       type="button"
       class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors focus:outline-none"
-      :title="isDark ? 'Badili kwenda mwanga' : 'Badili kwenda giza'"
+      :title="isDark ? $t('taifa.misc.navbar.toLight') : $t('taifa.misc.navbar.toDark')"
       @click="toggleTheme"
     >
       <span class="material-icons text-[20px] leading-none">{{ isDark ? 'light_mode' : 'dark_mode' }}</span>

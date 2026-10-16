@@ -75,7 +75,6 @@
               <input
                 v-model="form.username"
                 type="text"
-                required
                 :placeholder="t('taifa.register.usernamePlaceholder')"
                 class="w-full pl-9 pr-3.5 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] focus:border-[#FEBF01] transition-all"
               />
@@ -138,6 +137,11 @@
             </p>
           </div>
 
+          <!-- Submit Error -->
+          <p v-if="submitError" class="text-xs font-semibold text-red-600 dark:text-red-400 text-center">
+            {{ submitError }}
+          </p>
+
           <!-- Action Buttons matching PDF -->
           <div class="grid grid-cols-2 gap-4 pt-4 sm:pt-6">
             <button
@@ -151,122 +155,16 @@
 
             <button
               type="submit"
-              class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-md hover:shadow-[#FEBF01]/30 transition-all active:scale-98 cursor-pointer"
+              :disabled="isSubmitting"
+              class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-md hover:shadow-[#FEBF01]/30 transition-all active:scale-98 disabled:opacity-60 cursor-pointer"
             >
-              <span>{{ t('taifa.register.submit') }}</span>
-              <span class="material-icons text-base">arrow_forward</span>
+              <span v-if="isSubmitting" class="material-icons animate-spin text-base">sync</span>
+              <span>{{ isSubmitting ? t('taifa.register.confirming') : t('taifa.register.submit') }}</span>
+              <span v-if="!isSubmitting" class="material-icons text-base">arrow_forward</span>
             </button>
           </div>
         </div>
       </form>
-    </div>
-
-    <!-- Step 2: Confirm Application & 10,000 TSh Fee Payment Modal -->
-    <div
-      v-if="showPaymentModal"
-      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-    >
-      <div
-        class="w-full max-w-md bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 sm:p-7 relative overflow-hidden"
-      >
-        <!-- Close Button -->
-        <button
-          type="button"
-          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-          @click="showPaymentModal = false"
-        >
-          <span class="material-icons text-lg">close</span>
-        </button>
-
-        <!-- Illustration -->
-        <div class="text-center mb-4">
-          <img src="/taifa/payment_cards_icon.png" alt="Payment" class="h-16 mx-auto object-contain mb-2" />
-          <h3 class="text-xl font-black text-gray-900 dark:text-white">
-            {{ t('taifa.register.confirmTitle') }}
-          </h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            {{ t('taifa.register.confirmFeeDesc') }}
-          </p>
-        </div>
-
-        <!-- Application Summary Card -->
-        <div
-          class="p-3.5 rounded-2xl bg-gray-50 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-700/80 mb-4 text-xs space-y-1.5"
-        >
-          <div class="flex justify-between">
-            <span class="text-gray-500">{{ t('taifa.register.applicant') }}:</span>
-            <span class="font-bold text-gray-900 dark:text-white"
-              >{{ form.firstName }} {{ form.lastName }} (@{{ form.username }})</span
-            >
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">{{ t('taifa.register.university') }}:</span>
-            <span class="font-bold text-gray-900 dark:text-white truncate max-w-[200px]">{{ form.university }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">{{ t('taifa.register.phone') }}:</span>
-            <span class="font-bold text-gray-900 dark:text-white">+255 {{ form.phone }}</span>
-          </div>
-        </div>
-
-        <!-- Fee Amount Box -->
-        <div
-          class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-center mb-4"
-        >
-          <div class="text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">
-            {{ t('taifa.register.feeBoxTitle') }}
-          </div>
-          <div class="text-3xl font-black text-amber-900 dark:text-amber-300 mt-0.5">TSh 10,000</div>
-        </div>
-
-        <!-- Payment Method Selection -->
-        <div class="mb-5">
-          <label class="block text-xs font-bold text-gray-800 dark:text-gray-200 mb-2">
-            {{ t('taifa.register.selectPayment') }}
-          </label>
-          <div class="grid grid-cols-2 gap-2">
-            <button
-              v-for="method in paymentMethods"
-              :key="method.id"
-              type="button"
-              class="p-2.5 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer"
-              :class="
-                selectedPaymentMethod === method.id
-                  ? 'border-[#FEBF01] bg-amber-50/60 dark:bg-amber-950/40 text-gray-950 dark:text-white font-bold ring-1 ring-[#FEBF01]'
-                  : 'border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-300'
-              "
-              @click="selectedPaymentMethod = method.id"
-            >
-              <span class="text-lg">{{ method.icon }}</span>
-              <span class="text-xs font-medium">{{ method.name }}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Submit Payment Button -->
-        <div class="space-y-2">
-          <button
-            type="button"
-            :disabled="isProcessingPayment"
-            class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 disabled:opacity-60 cursor-pointer"
-            @click="processPayment"
-          >
-            <span v-if="isProcessingPayment" class="material-icons animate-spin text-base">sync</span>
-            <span v-else class="material-icons text-base">payments</span>
-            <span>
-              {{ isProcessingPayment ? t('taifa.register.confirming') : t('taifa.register.payAndSubmit') }}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            class="w-full py-2.5 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 font-semibold cursor-pointer"
-            @click="showPaymentModal = false"
-          >
-            {{ t('taifa.register.cancel') }}
-          </button>
-        </div>
-      </div>
     </div>
 
     <!-- Success Screen Modal -->
@@ -292,8 +190,8 @@
 
         <!-- Reference badge -->
         <div class="p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl mb-6 text-xs text-gray-500 dark:text-gray-400">
-          {{ t('taifa.register.paymentRef') }}
-          <span class="font-mono font-bold text-gray-900 dark:text-white">{{ completedRef }}</span>
+          {{ t('taifa.register.appRef') }}
+          <span class="font-mono font-bold text-gray-900 dark:text-white">{{ createdAppId }}</span>
         </div>
 
         <div class="space-y-2.5">
@@ -340,40 +238,28 @@ const form = reactive({
   phone: '',
 })
 
-const showPaymentModal = ref(false)
 const showSuccessModal = ref(false)
-const isProcessingPayment = ref(false)
+const isSubmitting = ref(false)
 const createdAppId = ref('')
-const completedRef = ref('')
-
-const paymentMethods = [
-  { id: 'M-Pesa', name: 'Vodacom M-Pesa', icon: '🔴' },
-  { id: 'Tigo Pesa', name: 'Tigo Pesa / Mixx', icon: '🔵' },
-  { id: 'Airtel Money', name: 'Airtel Money', icon: '🟡' },
-  { id: 'HaloPesa', name: 'HaloPesa', icon: '🟠' },
-]
-
-const selectedPaymentMethod = ref('M-Pesa')
+const submitError = ref('')
 
 const handleSubmit = async () => {
-  const app = await applicationsStore.createApplication({
-    firstName: form.firstName,
-    lastName: form.lastName,
-    username: form.username,
-    university: form.university,
-    phone: form.phone,
-  })
-  createdAppId.value = app.id
-  showPaymentModal.value = true
-}
-
-const processPayment = async () => {
-  isProcessingPayment.value = true
-  const refNum = `${selectedPaymentMethod.value.slice(0, 2).toUpperCase()}-${Math.floor(1000000 + Math.random() * 9000000)}`
-  await applicationsStore.payApplicationFee(createdAppId.value, selectedPaymentMethod.value, refNum)
-  isProcessingPayment.value = false
-  completedRef.value = refNum
-  showPaymentModal.value = false
-  showSuccessModal.value = true
+  isSubmitting.value = true
+  submitError.value = ''
+  try {
+    const app = await applicationsStore.createApplication({
+      firstName: form.firstName,
+      lastName: form.lastName,
+      username: form.username,
+      university: form.university,
+      phone: form.phone,
+    })
+    createdAppId.value = app.id
+    showSuccessModal.value = true
+  } catch (e: any) {
+    submitError.value = e?.response?.data?.detail || e?.message || 'Submission failed'
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>

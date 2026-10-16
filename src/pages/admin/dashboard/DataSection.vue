@@ -19,6 +19,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useColors } from 'vuestic-ui'
 import DataSectionItem from './DataSectionItem.vue'
 
@@ -33,12 +34,14 @@ interface DashboardMetric {
   iconColor: string
 }
 
+const { t } = useI18n()
+
 const { getColor } = useColors()
 
 const dashboardMetrics = computed<DashboardMetric[]>(() => [
   {
     id: 'openInvoices',
-    title: 'Open invoices',
+    title: t('taifa.misc.metrics.openInvoices'),
     value: '$35,548',
     icon: 'mso-attach_money',
     changeText: '$1, 450',
@@ -48,7 +51,7 @@ const dashboardMetrics = computed<DashboardMetric[]>(() => [
   },
   {
     id: 'ongoingProjects',
-    title: 'Ongoing project',
+    title: t('taifa.misc.metrics.ongoingProjects'),
     value: '15',
     icon: 'mso-folder_open',
     changeText: '25.36%',
@@ -58,7 +61,7 @@ const dashboardMetrics = computed<DashboardMetric[]>(() => [
   },
   {
     id: 'employees',
-    title: 'Employees',
+    title: t('taifa.misc.metrics.employees'),
     value: '25',
     icon: 'mso-account_circle',
     changeText: '2.5%',
@@ -68,7 +71,7 @@ const dashboardMetrics = computed<DashboardMetric[]>(() => [
   },
   {
     id: 'newProfit',
-    title: 'New profit',
+    title: t('taifa.misc.metrics.newProfit'),
     value: '27%',
     icon: 'mso-grade',
     changeText: '4%',

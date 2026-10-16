@@ -161,12 +161,14 @@
     >
       <div v-if="fameStore.isLoading" class="flex flex-col items-center justify-center gap-3 py-10">
         <span class="material-icons text-4xl text-amber-500 animate-spin">sync</span>
-        <p class="text-sm font-semibold text-gray-500">Inapakia Wall of Fame...</p>
+        <p class="text-sm font-semibold text-gray-500">{{ t('taifa.pages.fame.loading') }}</p>
       </div>
       <div v-else class="flex flex-col items-center justify-center gap-3 py-10">
         <span class="material-icons text-5xl text-gray-400">emoji_events</span>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Hakuna Mabingwa Bado</h3>
-        <p class="text-sm text-gray-500">Mabingwa wa Kicheko Pro wataorodheshwa hapa hivi karibuni.</p>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white">
+          {{ t('taifa.pages.fame.emptyTitle') }}
+        </h3>
+        <p class="text-sm text-gray-500">{{ t('taifa.pages.fame.emptyDesc') }}</p>
       </div>
     </div>
   </div>

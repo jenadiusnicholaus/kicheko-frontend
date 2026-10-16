@@ -9,10 +9,10 @@
       <div>
         <div class="flex items-center gap-2">
           <span class="material-icons text-amber-500 text-xl">insights</span>
-          <h2 class="text-base font-bold text-gray-900 dark:text-white">Mwenendo wa Utazamaji &amp; Ushiriki</h2>
+          <h2 class="text-base font-bold text-gray-900 dark:text-white">{{ t('taifa.misc.analytics.title') }}</h2>
         </div>
         <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-          Takwimu halisi za watazamaji na mwingiliano wa video za Kicheko
+          {{ t('taifa.misc.analytics.subtitle') }}
         </p>
       </div>
 
@@ -30,7 +30,7 @@
           ]"
           @click="changeMetric('views')"
         >
-          Watazamaji (Views)
+          {{ t('taifa.misc.analytics.viewsTab') }}
         </button>
         <button
           type="button"
@@ -42,7 +42,7 @@
           ]"
           @click="changeMetric('revenue')"
         >
-          Mapato (TZS)
+          {{ t('taifa.misc.analytics.revenueTab') }}
         </button>
         <button
           type="button"
@@ -54,7 +54,7 @@
           ]"
           @click="changeMetric('likes')"
         >
-          Vipendwa (Likes)
+          {{ t('taifa.misc.analytics.likesTab') }}
         </button>
       </div>
     </div>
@@ -62,15 +62,15 @@
     <!-- Key Metrics Highlight Strip -->
     <div class="grid grid-cols-3 gap-2 sm:gap-4 py-3 border-b border-gray-100 dark:border-gray-800 text-center">
       <div class="p-2 bg-gray-50 dark:bg-zinc-800/40 rounded-xl">
-        <p class="text-[11px] text-gray-500 dark:text-gray-400">Muda wa Kutazama</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">{{ t('taifa.misc.analytics.watchTime') }}</p>
         <p class="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white mt-0.5">148,200 hrs</p>
       </div>
       <div class="p-2 bg-gray-50 dark:bg-zinc-800/40 rounded-xl">
-        <p class="text-[11px] text-gray-500 dark:text-gray-400">Wastani kwa Video</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">{{ t('taifa.misc.analytics.avgPerVideo') }}</p>
         <p class="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white mt-0.5">5m 48s</p>
       </div>
       <div class="p-2 bg-gray-50 dark:bg-zinc-800/40 rounded-xl">
-        <p class="text-[11px] text-gray-500 dark:text-gray-400">Kiwango cha Kurudia</p>
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">{{ t('taifa.misc.analytics.returnRate') }}</p>
         <p class="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5">76.4%</p>
       </div>
     </div>
@@ -83,16 +83,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Chart, registerables } from 'chart.js'
 
 Chart.register(...registerables)
+
+const { t } = useI18n()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 let chartInstance: Chart | null = null
 const activeMetric = ref<'views' | 'revenue' | 'likes'>('views')
 
-const months = ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun', 'Jul', 'Ago', 'Sep', 'Okt', 'Nov', 'Des']
+const months = computed(() => t('taifa.misc.analytics.months').split(','))
 
 const datasetViews = [140, 185, 220, 290, 340, 410, 480, 560, 620, 710, 830, 940] // thousands
 const datasetRevenue = [1.2, 1.5, 1.8, 2.4, 2.9, 3.5, 4.1, 4.8, 5.2, 6.1, 7.4, 8.5] // Millions TZS
@@ -107,18 +110,18 @@ const createChart = () => {
     chartInstance.destroy()
   }
 
-  let label = 'Watazamaji (Maelfu)'
+  let label = t('taifa.misc.analytics.viewsLabel')
   let data = datasetViews
   let borderColor = '#FEBF01' // Amber
   let bgColor = 'rgba(254, 191, 1, 0.15)'
 
   if (activeMetric.value === 'revenue') {
-    label = 'Mapato (Milioni TZS)'
+    label = t('taifa.misc.analytics.revenueLabel')
     data = datasetRevenue
     borderColor = '#10B981' // Emerald
     bgColor = 'rgba(16, 185, 129, 0.15)'
   } else if (activeMetric.value === 'likes') {
-    label = 'Vipendwa (Maelfu)'
+    label = t('taifa.misc.analytics.likesLabel')
     data = datasetLikes
     borderColor = '#F43F5E' // Rose
     bgColor = 'rgba(244, 63, 94, 0.15)'
@@ -127,7 +130,7 @@ const createChart = () => {
   chartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: months,
+      labels: months.value,
       datasets: [
         {
           label,

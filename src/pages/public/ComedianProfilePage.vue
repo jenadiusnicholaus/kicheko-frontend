@@ -25,7 +25,8 @@
           </div>
           <p class="text-xs text-gray-500">
             @{{ comedian.stage_name.toLowerCase().replace(/\s+/g, '') }} •
-            {{ formatFollowers(comedian.followers_count) }} wafuasi • {{ comedianVideos.length }} video
+            {{ t('taifa.pages.common.followers', { count: formatFollowers(comedian.followers_count) }) }} •
+            {{ t('taifa.pages.profile.videosCount', { count: comedianVideos.length }) }}
           </p>
           <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 max-w-xl leading-relaxed">
             {{ comedian.bio }}
@@ -44,7 +45,7 @@
         ]"
         @click="toggleFollow"
       >
-        {{ isFollowed ? 'Unamfuata' : 'Mfuatilie (Follow)' }}
+        {{ isFollowed ? t('taifa.pages.common.following') : t('taifa.pages.common.follow') }}
       </button>
     </div>
 
@@ -60,7 +61,7 @@
         ]"
         @click="activeTab = 'videos'"
       >
-        Video Zote ({{ comedianVideos.length }})
+        {{ t('taifa.pages.profile.allVideos', { count: comedianVideos.length }) }}
       </button>
       <button
         type="button"
@@ -72,7 +73,7 @@
         ]"
         @click="activeTab = 'shorts'"
       >
-        Shorts ({{ comedianShorts.length }})
+        {{ t('taifa.pages.profile.shortsTab', { count: comedianShorts.length }) }}
       </button>
     </div>
 
@@ -84,7 +85,7 @@
       >
         <VideoCard v-for="v in comedianVideos" :key="v.id" :video="v" />
       </div>
-      <div v-else class="text-center py-12 text-gray-500">Msanii huyu bado hajapakia video ndefu.</div>
+      <div v-else class="text-center py-12 text-gray-500">{{ t('taifa.pages.profile.noVideos') }}</div>
     </div>
 
     <!-- Shorts Grid -->
@@ -110,7 +111,7 @@
           </div>
         </RouterLink>
       </div>
-      <div v-else class="text-center py-12 text-gray-500">Msanii huyu hana Shorts kwa sasa.</div>
+      <div v-else class="text-center py-12 text-gray-500">{{ t('taifa.pages.profile.noShorts') }}</div>
     </div>
   </div>
 </template>
@@ -118,11 +119,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vuestic-ui'
 import VideoCard from '../../components/youtube/VideoCard.vue'
 import { videoApi, type Comedian, type Video } from '../../services/api/video.api'
 
 const route = useRoute()
+const { t } = useI18n()
 const { init: toast } = useToast()
 
 const comedian = ref<Comedian | null>(null)
@@ -144,8 +147,8 @@ const toggleFollow = () => {
   isFollowed.value = !isFollowed.value
   toast({
     message: isFollowed.value
-      ? `Sasa unamfuata ${comedian.value?.stage_name}!`
-      : `Umeacha kumfuata ${comedian.value?.stage_name}.`,
+      ? t('taifa.pages.common.followedToast', { name: comedian.value?.stage_name })
+      : t('taifa.pages.common.unfollowedToast', { name: comedian.value?.stage_name }),
     color: 'info',
   })
 }

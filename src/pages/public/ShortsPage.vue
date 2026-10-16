@@ -27,7 +27,9 @@
           >
             Short
           </span>
-          <span class="text-xs text-white/80 font-medium"> {{ currentIndex + 1 }} ya {{ shorts.length }} </span>
+          <span class="text-xs text-white/80 font-medium">
+            {{ t('taifa.pages.shorts.counter', { current: currentIndex + 1, total: shorts.length }) }}
+          </span>
         </div>
         <button
           type="button"
@@ -68,14 +70,14 @@
           >
             <span class="material-icons text-2xl">share</span>
           </div>
-          <span class="text-[11px] font-bold drop-shadow">Shiriki</span>
+          <span class="text-[11px] font-bold drop-shadow">{{ t('taifa.pages.common.share') }}</span>
         </button>
 
         <!-- Next Short Button -->
         <button
           type="button"
           class="flex flex-col items-center gap-1 group"
-          title="Short Inayofuata"
+          :title="t('taifa.pages.shorts.nextTitle')"
           @click="nextShort"
         >
           <div
@@ -83,7 +85,7 @@
           >
             <span class="material-icons text-2xl">arrow_downward</span>
           </div>
-          <span class="text-[11px] font-bold drop-shadow">Ijayo</span>
+          <span class="text-[11px] font-bold drop-shadow">{{ t('taifa.pages.shorts.next') }}</span>
         </button>
       </div>
 
@@ -123,7 +125,7 @@
             class="w-full py-2.5 px-4 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
           >
             <span class="material-icons text-base">smart_display</span>
-            <span>Tazama Onyesho Lote (Watch Full Video)</span>
+            <span>{{ t('taifa.pages.shorts.watchFull') }}</span>
             <span class="material-icons text-sm">arrow_forward</span>
           </RouterLink>
         </div>
@@ -138,7 +140,7 @@
     <!-- Empty State -->
     <div v-else class="text-center py-20 text-gray-400">
       <span class="material-icons text-5xl">bolt</span>
-      <p class="mt-2 text-sm">Hakuna video fupi (Shorts) kwa sasa.</p>
+      <p class="mt-2 text-sm">{{ t('taifa.pages.shorts.empty') }}</p>
     </div>
   </div>
 </template>
@@ -146,10 +148,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useToast } from 'vuestic-ui'
 import { videoApi, type Video } from '../../services/api/video.api'
 
 const route = useRoute()
+const { t } = useI18n()
 const { init: toast } = useToast()
 
 const shorts = ref<Video[]>([])
@@ -226,7 +230,7 @@ const handleLike = async () => {
   isLiked.value = await videoApi.toggleLike(currentShort.value.id)
   if (isLiked.value) {
     currentShort.value.likes_count += 1
-    toast({ message: 'Umependa Short hii!', color: 'success' })
+    toast({ message: t('taifa.pages.shorts.likedToast'), color: 'success' })
   } else {
     currentShort.value.likes_count = Math.max(0, currentShort.value.likes_count - 1)
   }
@@ -234,7 +238,7 @@ const handleLike = async () => {
 
 const shareShort = () => {
   navigator.clipboard.writeText(window.location.href)
-  toast({ message: 'Kiungo cha Short kimewekwa kwenye clipboard!', color: 'success' })
+  toast({ message: t('taifa.pages.shorts.linkCopied'), color: 'success' })
 }
 
 onMounted(() => {

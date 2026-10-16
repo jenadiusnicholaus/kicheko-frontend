@@ -13,16 +13,16 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-              Usimamizi wa "Nani ni Nani?"
+              {{ t('taifa.admin.nani.title') }}
             </h1>
             <span
               class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 text-xs font-bold border border-emerald-200"
             >
-              Live Mtandaoni
+              {{ t('taifa.dashboard.liveOnline') }}
             </span>
           </div>
           <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            Panga mapambano ya wachekeshaji wa vyuo, fuatilia kura na ada ya TSh 1,000 kwa kila kura.
+            {{ t('taifa.admin.nani.subtitle') }}
           </p>
         </div>
       </div>
@@ -34,7 +34,7 @@
           class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center gap-1.5 transition-colors"
         >
           <span class="material-icons text-base">visibility</span>
-          <span>Tazama Jukwaani</span>
+          <span>{{ t('taifa.admin.nani.viewBtn') }}</span>
           <span class="material-icons text-xs">open_in_new</span>
         </RouterLink>
 
@@ -44,7 +44,7 @@
           @click="naniStore.resetToDefault()"
         >
           <span class="material-icons text-base">refresh</span>
-          <span>Weka Upya</span>
+          <span>{{ t('taifa.admin.nani.resetBtn') }}</span>
         </button>
       </div>
     </div>
@@ -52,35 +52,39 @@
     <!-- Battle Metrics Summary -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
-        <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Jumla ya Kura Zilizopigwa</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
+          {{ t('taifa.admin.nani.totalVotesLabel') }}
+        </div>
         <div class="text-3xl font-black text-gray-900 dark:text-white">
           {{ naniStore.totalVotes.toLocaleString() }}
         </div>
-        <span class="text-[11px] text-gray-500">Kura zote kwenye pambano hai</span>
+        <span class="text-[11px] text-gray-500">{{ t('taifa.admin.nani.totalVotesDesc') }}</span>
       </div>
 
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
-          Mapato ya Kura (TSh 1,000 / Kura)
+          {{ t('taifa.admin.nani.revenueLabel') }}
         </div>
         <div class="text-3xl font-black text-amber-500">TSh {{ naniStore.voteRevenue.toLocaleString() }}</div>
-        <span class="text-[11px] text-gray-500">Mapato ya wapiga kura Tanzania</span>
+        <span class="text-[11px] text-gray-500">{{ t('taifa.admin.nani.revenueDesc') }}</span>
       </div>
 
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
-        <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Mchekeshaji Anayeongoza</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">
+          {{ t('taifa.admin.nani.leaderLabel') }}
+        </div>
         <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-          {{ naniStore.leadingContestant?.name || 'Sare' }}
+          {{ naniStore.leadingContestant?.name || t('taifa.admin.nani.tie') }}
         </div>
         <span class="text-[11px] text-gray-500"
           >{{ naniStore.leadingContestant?.universityCode }} •
-          {{ naniStore.leadingContestant?.votes.toLocaleString() }} votes</span
+          {{ t('taifa.admin.nani.votesText', { votes: naniStore.leadingContestant?.votes.toLocaleString() }) }}</span
         >
       </div>
     </div>
 
     <!-- Active Battle Management Form & Cards -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div v-if="battle" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Contestant A Edit -->
       <div
         class="p-6 rounded-3xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm space-y-4"
@@ -88,16 +92,25 @@
         <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-zinc-800">
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-[#183153]"></span>
-            <h3 class="font-black text-gray-900 dark:text-white text-base">Mshiriki A (Upande wa Kushoto)</h3>
+            <h3 class="font-black text-gray-900 dark:text-white text-base">
+              {{ t('taifa.admin.nani.contestantATitle') }}
+            </h3>
           </div>
           <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">
-            {{ battle.contestantA.votes.toLocaleString() }} Kura ({{ naniStore.contestantAPercentage }}%)
+            {{
+              t('taifa.admin.nani.votesBadge', {
+                votes: battle.contestantA.votes.toLocaleString(),
+                pct: naniStore.contestantAPercentage,
+              })
+            }}
           </span>
         </div>
 
         <div class="space-y-3 text-xs">
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Jina Kamili</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.nani.nameLabel')
+            }}</label>
             <input
               v-model="editA.name"
               type="text"
@@ -107,7 +120,9 @@
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Chuo Kikuu</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.universityTh')
+              }}</label>
               <input
                 v-model="editA.university"
                 type="text"
@@ -115,7 +130,9 @@
               />
             </div>
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Kifupi cha Chuo</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.nani.codeLabel')
+              }}</label>
               <input
                 v-model="editA.universityCode"
                 type="text"
@@ -125,7 +142,9 @@
           </div>
 
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Idadi ya Kura za Awali</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.nani.initialVotesLabel')
+            }}</label>
             <input
               v-model.number="editA.votes"
               type="number"
@@ -142,16 +161,25 @@
         <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-zinc-800">
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-[#FEBF01]"></span>
-            <h3 class="font-black text-gray-900 dark:text-white text-base">Mshiriki B (Upande wa Kulia)</h3>
+            <h3 class="font-black text-gray-900 dark:text-white text-base">
+              {{ t('taifa.admin.nani.contestantBTitle') }}
+            </h3>
           </div>
           <span class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-xs font-bold">
-            {{ battle.contestantB.votes.toLocaleString() }} Kura ({{ naniStore.contestantBPercentage }}%)
+            {{
+              t('taifa.admin.nani.votesBadge', {
+                votes: battle.contestantB.votes.toLocaleString(),
+                pct: naniStore.contestantBPercentage,
+              })
+            }}
           </span>
         </div>
 
         <div class="space-y-3 text-xs">
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Jina Kamili</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.nani.nameLabel')
+            }}</label>
             <input
               v-model="editB.name"
               type="text"
@@ -161,7 +189,9 @@
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Chuo Kikuu</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.universityTh')
+              }}</label>
               <input
                 v-model="editB.university"
                 type="text"
@@ -169,7 +199,9 @@
               />
             </div>
             <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Kifupi cha Chuo</label>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.nani.codeLabel')
+              }}</label>
               <input
                 v-model="editB.universityCode"
                 type="text"
@@ -179,7 +211,9 @@
           </div>
 
           <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">Idadi ya Kura za Awali</label>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.nani.initialVotesLabel')
+            }}</label>
             <input
               v-model.number="editB.votes"
               type="number"
@@ -192,6 +226,7 @@
 
     <!-- Save Changes & Reset Controls -->
     <div
+      v-if="battle"
       class="flex items-center justify-between p-4 bg-white dark:bg-[#18181b] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
     >
       <div class="flex items-center gap-2">
@@ -201,7 +236,7 @@
           @click="saveContestants"
         >
           <span class="material-icons text-base">save</span>
-          <span>Hifadhi Mabadiliko ya Washiriki</span>
+          <span>{{ t('taifa.admin.nani.saveBtn') }}</span>
         </button>
         <span v-if="saveSuccessMsg" class="text-xs font-bold text-emerald-600 flex items-center gap-1">
           <span class="material-icons text-sm">check</span>
@@ -214,7 +249,7 @@
         class="px-4 py-2 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-xs font-bold transition-all"
         @click="resetVotes"
       >
-        Weka Kura Zote Kuwa 0
+        {{ t('taifa.admin.nani.resetVotesBtn') }}
       </button>
     </div>
   </div>
@@ -222,8 +257,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useNaniNiNaniStore } from '../../../stores/nani-ni-nani'
 
+const { t } = useI18n()
 const naniStore = useNaniNiNaniStore()
 const battle = computed(() => naniStore.activeBattle)
 
@@ -242,6 +279,7 @@ const editB = reactive({
 })
 
 const syncFromBattle = () => {
+  if (!battle.value) return
   editA.name = battle.value.contestantA.name
   editA.university = battle.value.contestantA.university
   editA.universityCode = battle.value.contestantA.universityCode
@@ -273,17 +311,17 @@ const saveContestants = async () => {
     contestantA: { ...editA },
     contestantB: { ...editB },
   })
-  saveSuccessMsg.value = 'Mabadiliko yamehifadhiwa!'
+  saveSuccessMsg.value = t('taifa.admin.nani.savedMsg')
   setTimeout(() => {
     saveSuccessMsg.value = ''
   }, 3000)
 }
 
 const resetVotes = () => {
-  if (confirm('Una uhakika unataka kuweka kura zote kuwa sifuri (0)?')) {
-    naniStore.resetVotes()
+  if (confirm(t('taifa.admin.nani.resetVotesConfirm'))) {
     editA.votes = 0
     editB.votes = 0
+    saveContestants()
   }
 }
 </script>

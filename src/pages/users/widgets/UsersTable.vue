@@ -3,18 +3,23 @@ import { defineVaDataTableColumns, useModal } from 'vuestic-ui'
 import { User, UserRole } from '../types'
 import UserAvatar from './UserAvatar.vue'
 import { PropType, computed, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Pagination, Sorting } from '../../../data/pages/users'
 import { useVModel } from '@vueuse/core'
 import { Project } from '../../projects/types'
 
-const columns = defineVaDataTableColumns([
-  { label: 'Full Name', key: 'fullname', sortable: true },
-  { label: 'Email', key: 'email', sortable: true },
-  { label: 'Username', key: 'username', sortable: true },
-  { label: 'Role', key: 'role', sortable: true },
-  { label: 'Projects', key: 'projects', sortable: true },
-  { label: ' ', key: 'actions', align: 'right' },
-])
+const { t } = useI18n()
+
+const columns = computed(() =>
+  defineVaDataTableColumns([
+    { label: t('taifa.misc.users.fullName'), key: 'fullname', sortable: true },
+    { label: t('auth.email'), key: 'email', sortable: true },
+    { label: t('taifa.register.username'), key: 'username', sortable: true },
+    { label: t('taifa.misc.users.role'), key: 'role', sortable: true },
+    { label: t('menu.projects'), key: 'projects', sortable: true },
+    { label: ' ', key: 'actions', align: 'right' },
+  ]),
+)
 
 const props = defineProps({
   users: {
@@ -54,10 +59,10 @@ const { confirm } = useModal()
 
 const onUserDelete = async (user: User) => {
   const agreed = await confirm({
-    title: 'Delete user',
-    message: `Are you sure you want to delete ${user.fullname}?`,
-    okText: 'Delete',
-    cancelText: 'Cancel',
+    title: t('taifa.misc.users.deleteUser'),
+    message: t('taifa.misc.users.deleteConfirm', { name: user.fullname }),
+    okText: t('taifa.misc.common.delete'),
+    cancelText: t('vuestic.cancel'),
     size: 'small',
     maxWidth: '380px',
   })
@@ -77,20 +82,18 @@ const formatProjectNames = (projects: Project['id'][]) => {
 
     return acc
   }, [] as string[])
-  if (names.length === 0) return 'No projects'
+  if (names.length === 0) return t('taifa.misc.common.noProjects')
   if (names.length <= 2) {
     return names.map((name) => name).join(', ')
   }
 
-  return (
-    names
+  return t('taifa.misc.users.moreProjects', {
+    names: names
       .slice(0, 2)
       .map((name) => name)
-      .join(', ') +
-    ' + ' +
-    (names.length - 2) +
-    ' more'
-  )
+      .join(', '),
+    count: names.length - 2,
+  })
 }
 </script>
 
@@ -137,7 +140,7 @@ const formatProjectNames = (projects: Project['id'][]) => {
           preset="primary"
           size="small"
           icon="mso-edit"
-          aria-label="Edit user"
+          :aria-label="t('taifa.misc.users.editUser')"
           @click="$emit('edit-user', rowData as User)"
         />
         <VaButton
@@ -145,7 +148,7 @@ const formatProjectNames = (projects: Project['id'][]) => {
           size="small"
           icon="mso-delete"
           color="danger"
-          aria-label="Delete user"
+          :aria-label="t('taifa.misc.users.deleteUser')"
           @click="onUserDelete(rowData as User)"
         />
       </div>
@@ -154,8 +157,8 @@ const formatProjectNames = (projects: Project['id'][]) => {
 
   <div class="flex flex-col-reverse md:flex-row gap-2 justify-between items-center py-2">
     <div>
-      <b>{{ $props.pagination.total }} results.</b>
-      Results per page
+      <b>{{ t('taifa.misc.users.results', { n: $props.pagination.total }) }}</b>
+      {{ t('taifa.misc.users.resultsPerPage') }}
       <VaSelect v-model="$props.pagination.perPage" class="!w-20" :options="[10, 50, 100]" />
     </div>
 
@@ -163,7 +166,7 @@ const formatProjectNames = (projects: Project['id'][]) => {
       <VaButton
         preset="secondary"
         icon="va-arrow-left"
-        aria-label="Previous page"
+        :aria-label="t('taifa.misc.users.prevPage')"
         :disabled="$props.pagination.page === 1"
         @click="$props.pagination.page--"
       />
@@ -171,7 +174,7 @@ const formatProjectNames = (projects: Project['id'][]) => {
         class="mr-2"
         preset="secondary"
         icon="va-arrow-right"
-        aria-label="Next page"
+        :aria-label="t('taifa.misc.users.nextPage')"
         :disabled="$props.pagination.page === totalPages"
         @click="$props.pagination.page++"
       />

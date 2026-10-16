@@ -1,7 +1,9 @@
 <template>
   <VaCard>
     <VaCardTitle>
-      <h1 class="card-title text-tag text-secondary font-bold uppercase">Monthly Earnings</h1>
+      <h1 class="card-title text-tag text-secondary font-bold uppercase">
+        {{ t('taifa.misc.cards.monthlyEarnings') }}
+      </h1>
     </VaCardTitle>
     <VaCardContent>
       <div class="p-1 bg-black rounded absolute right-4 top-4">
@@ -12,7 +14,7 @@
         <p class="text-xs text-success">
           <VaIcon name="arrow_upward" />
           25.36%
-          <span class="text-secondary"> last month</span>
+          <span class="text-secondary"> {{ t('taifa.misc.cards.lastMonth') }}</span>
         </p>
       </section>
       <div class="w-full flex items-center">
@@ -24,10 +26,13 @@
 
 <script setup lang="ts">
 import { VaCard } from 'vuestic-ui'
+import { useI18n } from 'vue-i18n'
 import VaChart from '../../../../components/va-charts/VaChart.vue'
 import { useChartData } from '../../../../data/charts/composables/useChartData'
 import { lineChartData } from '../../../../data/charts/lineChartData'
 import { ChartOptions } from 'chart.js'
+
+const { t } = useI18n()
 
 const chartData = useChartData(lineChartData)
 

@@ -7,13 +7,13 @@
         <div>
           <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-icons text-amber-500 text-lg">notifications_active</span>
-            <span>Shughuli za Jukwaa (Live Activity)</span>
+            <span>{{ t('taifa.misc.activity.title') }}</span>
           </h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Matukio na miamala ya hivi punde kwenye Kicheko</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ t('taifa.misc.activity.subtitle') }}</p>
         </div>
         <span class="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          Moja kwa Moja
+          {{ t('taifa.misc.activity.live') }}
         </span>
       </div>
 
@@ -42,17 +42,20 @@
 
     <!-- Live System Health Footer -->
     <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[11px]">
-      <span class="text-gray-500">Hali ya Seva ya Video (Streaming CDN):</span>
+      <span class="text-gray-500">{{ t('taifa.misc.activity.cdnStatus') }}</span>
       <span class="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-        100% Imara (Normal)
+        {{ t('taifa.misc.activity.cdnHealthy') }}
       </span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface ActivityItem {
   id: string
@@ -64,48 +67,48 @@ interface ActivityItem {
   iconColor: string
 }
 
-const activities = ref<ActivityItem[]>([
+const activities = computed<ActivityItem[]>(() => [
   {
     id: 'act1',
-    title: 'Malipo ya M-Pesa Yamethibitishwa',
-    description: 'Mtumiaji +255 754 *** amekamilisha Tsh 2,500 kwa video "Cheka Tu Live Season 4".',
-    time: 'Dakika 3 zilizopita',
+    title: t('taifa.misc.activity.act1Title'),
+    description: t('taifa.misc.activity.act1Desc'),
+    time: t('taifa.misc.activity.act1Time'),
     icon: 'check_circle',
     bgClass: 'bg-emerald-100 dark:bg-emerald-950/70',
     iconColor: 'text-emerald-600 dark:text-emerald-400',
   },
   {
     id: 'act2',
-    title: 'Short Mpya Imepakiwa',
-    description: 'Joti amechapisha video fupi ya Short: "Ushauri wa Mtaa".',
-    time: 'Dakika 18 zilizopita',
+    title: t('taifa.misc.activity.act2Title'),
+    description: t('taifa.misc.activity.act2Desc'),
+    time: t('taifa.misc.activity.act2Time'),
     icon: 'bolt',
     bgClass: 'bg-amber-100 dark:bg-amber-950/70',
     iconColor: 'text-amber-600 dark:text-amber-400',
   },
   {
     id: 'act3',
-    title: 'Milestone ya Watazamaji',
-    description: 'Video ya "Vituko vya Kariakoo" imevuka watazamaji 850,000 leo!',
-    time: 'Saa 1 lililopita',
+    title: t('taifa.misc.activity.act3Title'),
+    description: t('taifa.misc.activity.act3Desc'),
+    time: t('taifa.misc.activity.act3Time'),
     icon: 'local_fire_department',
     bgClass: 'bg-rose-100 dark:bg-rose-950/70',
     iconColor: 'text-rose-600 dark:text-rose-400',
   },
   {
     id: 'act4',
-    title: 'Malipo ya Tigo Pesa Yamethibitishwa',
-    description: 'Mtumiaji +255 713 *** amekamilisha Tsh 1,500 kwa video "Harusi ya Shoki".',
-    time: 'Saa 2 zilizopita',
+    title: t('taifa.misc.activity.act4Title'),
+    description: t('taifa.misc.activity.act4Desc'),
+    time: t('taifa.misc.activity.act4Time'),
     icon: 'payments',
     bgClass: 'bg-sky-100 dark:bg-sky-950/70',
     iconColor: 'text-sky-600 dark:text-sky-400',
   },
   {
     id: 'act5',
-    title: 'Mchekeshaji Mpya Amejiunga',
-    description: 'Mau Fundi amethibitishwa rasmi na akaunti yake imewashwa kwenye Kicheko.',
-    time: 'Saa 4 zilizopita',
+    title: t('taifa.misc.activity.act5Title'),
+    description: t('taifa.misc.activity.act5Desc'),
+    time: t('taifa.misc.activity.act5Time'),
     icon: 'verified',
     bgClass: 'bg-indigo-100 dark:bg-indigo-950/70',
     iconColor: 'text-indigo-600 dark:text-indigo-400',

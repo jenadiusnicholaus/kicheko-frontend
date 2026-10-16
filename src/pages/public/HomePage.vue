@@ -51,9 +51,7 @@
           <span class="material-icons text-amber-500 text-xl">movie</span>
           <span>{{ feedHeading }}</span>
         </h2>
-        <span class="text-xs text-gray-500"
-          >{{ filteredVideos.length }} {{ t('kicheko.home.videosAvailable').replace('{n}', '') }}</span
-        >
+        <span class="text-xs text-gray-500">{{ t('kicheko.home.videosAvailable', { n: filteredVideos.length }) }}</span>
       </div>
 
       <!-- Loading skeleton -->
@@ -242,7 +240,7 @@ const feedHeading = computed(() => {
   if (selectedCategory.value === 'Free') return t('kicheko.home.freeVideos')
   if (selectedCategory.value === 'Premium') return t('kicheko.home.premiumVideos')
   if (selectedCategory.value === 'Trending') return t('kicheko.home.trending')
-  return `${t('kicheko.home.comedy').replace('{cat}', selectedCategory.value)}`
+  return t('kicheko.home.comedy', { cat: selectedCategory.value })
 })
 
 const formatViews = (views: number): string => {

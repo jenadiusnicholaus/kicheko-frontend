@@ -18,7 +18,7 @@
             <span
               class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 text-xs font-bold border border-amber-200 dark:border-amber-800"
             >
-              Ada: TSh 10,000
+              {{ t('taifa.admin.feeBadge') }}
             </span>
           </div>
           <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
@@ -45,49 +45,49 @@
       <!-- Total Applications -->
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Jumla ya Maombi</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.totalApps') }}</span>
           <span class="material-icons text-blue-500">assignment</span>
         </div>
         <div class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white">
           {{ applicationsStore.totalApplications }}
         </div>
-        <span class="text-[11px] text-gray-500">Wanafunzi waliojisajili</span>
+        <span class="text-[11px] text-gray-500">{{ t('taifa.admin.totalAppsDesc') }}</span>
       </div>
 
       <!-- Paid & Pending Review -->
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Yanasubiri Idhini</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.pendingApproval') }}</span>
           <span class="material-icons text-amber-500">pending_actions</span>
         </div>
         <div class="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400">
           {{ applicationsStore.pendingReviewCount }}
         </div>
-        <span class="text-[11px] text-gray-500">Wamelipa TSh 10,000</span>
+        <span class="text-[11px] text-gray-500">{{ t('taifa.admin.pendingPaidDesc') }}</span>
       </div>
 
       <!-- Approved Comedians -->
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Yaliyothibitishwa</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.confirmedApps') }}</span>
           <span class="material-icons text-emerald-500">check_circle</span>
         </div>
         <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
           {{ applicationsStore.approvedCount }}
         </div>
-        <span class="text-[11px] text-gray-500">Wachekeshaji Rasmi</span>
+        <span class="text-[11px] text-gray-500">{{ t('taifa.admin.confirmedDesc') }}</span>
       </div>
 
       <!-- Total Fee Revenue Collected -->
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Mapato ya Ada (10,000 TSh)</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.feeRevenueTitle') }}</span>
           <span class="material-icons text-[#FEBF01]">payments</span>
         </div>
         <div class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
           TSh {{ applicationsStore.totalFeeRevenue.toLocaleString() }}
         </div>
-        <span class="text-[11px] text-gray-500">Kupitia M-Pesa / Tigo / Airtel</span>
+        <span class="text-[11px] text-gray-500">{{ t('taifa.admin.feeRevenueDesc') }}</span>
       </div>
     </div>
 
@@ -126,7 +126,7 @@
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Tafuta jina, chuo, simu..."
+          :placeholder="t('taifa.admin.searchPlaceholder')"
           class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/80 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
         />
       </div>
@@ -190,30 +190,18 @@
                 </div>
               </td>
 
-              <!-- Fee Status (10,000 TSh) -->
+              <!-- Fee Status -->
               <td class="py-4 px-4">
                 <div v-if="app.paymentStatus === 'paid'" class="flex flex-col">
                   <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
                     <span class="material-icons text-sm">check_circle</span>
-                    <span>TSh 10,000 (Imelipwa)</span>
+                    <span>{{ t('taifa.admin.feePaidLabel') }}</span>
                   </span>
                   <span class="text-[10px] text-gray-400 font-mono">
                     {{ app.paymentMethod }} • {{ app.paymentRef }}
                   </span>
                 </div>
-                <div v-else class="flex flex-col">
-                  <span class="inline-flex items-center gap-1 text-red-500 font-bold">
-                    <span class="material-icons text-sm">hourglass_empty</span>
-                    <span>Bado Haijalipwa</span>
-                  </span>
-                  <button
-                    type="button"
-                    class="text-[11px] text-amber-600 hover:underline text-left mt-0.5"
-                    @click="markPaid(app.id)"
-                  >
-                    Weka Imelipwa
-                  </button>
-                </div>
+                <span v-else class="text-gray-400 font-semibold">—</span>
               </td>
 
               <!-- Application Status -->
@@ -223,26 +211,26 @@
                   class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-bold text-[11px] inline-flex items-center gap-1"
                 >
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                  Imethibitishwa
+                  {{ t('taifa.dashboard.statusApproved') }}
                 </span>
                 <span
-                  v-else-if="app.status === 'paid_pending_review'"
+                  v-else-if="app.status === 'pending' || app.status === 'paid_pending_review'"
                   class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 font-bold text-[11px] inline-flex items-center gap-1"
                 >
                   <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                  Inasubiri Idhini ya Admin
+                  {{ t('taifa.admin.statusPendingAdmin') }}
                 </span>
                 <span
                   v-else-if="app.status === 'pending_payment'"
                   class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 font-bold text-[11px]"
                 >
-                  Inasubiri Ada ya Usajili
+                  {{ t('taifa.admin.statusPendingFee') }}
                 </span>
                 <span
                   v-else-if="app.status === 'rejected'"
                   class="px-2.5 py-1 rounded-full bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold text-[11px]"
                 >
-                  Imekataliwa
+                  {{ t('taifa.admin.statusRejected') }}
                 </span>
               </td>
 
@@ -301,8 +289,8 @@
             <tr v-if="filteredApplications.length === 0">
               <td colspan="6" class="py-12 text-center text-gray-400">
                 <span class="material-icons text-4xl mb-2 text-gray-300">inbox</span>
-                <p class="font-bold text-sm">Hakuna maombi yaliyopatikana</p>
-                <p class="text-xs text-gray-400">Hakuna kumbukumbu kulingana na kichujio chako.</p>
+                <p class="font-bold text-sm">{{ t('taifa.admin.emptyTitle') }}</p>
+                <p class="text-xs text-gray-400">{{ t('taifa.admin.emptyDesc') }}</p>
               </td>
             </tr>
           </tbody>
@@ -406,26 +394,21 @@ onMounted(() => {
   applicationsStore.fetchApplicationsFromBackend()
 })
 
-const currentFilter = ref<'all' | 'pending_review' | 'approved' | 'pending_payment' | 'rejected'>('all')
+const currentFilter = ref<'all' | 'pending_review' | 'approved' | 'rejected'>('all')
 const searchQuery = ref('')
 
 const filterTabs = computed(() => [
   { id: 'all' as const, label: t('taifa.admin.all'), count: applicationsStore.totalApplications },
   { id: 'pending_review' as const, label: t('taifa.admin.filterPending'), count: applicationsStore.pendingReviewCount },
   { id: 'approved' as const, label: t('taifa.admin.filterApproved'), count: applicationsStore.approvedCount },
-  {
-    id: 'pending_payment' as const,
-    label: t('taifa.admin.filterUnpaid'),
-    count: applicationsStore.pendingPaymentCount,
-  },
   { id: 'rejected' as const, label: t('taifa.admin.filterRejected'), count: applicationsStore.rejectedCount },
 ])
 
 const filteredApplications = computed(() => {
   return applicationsStore.applications.filter((app) => {
-    if (currentFilter.value === 'pending_review' && app.status !== 'paid_pending_review') return false
+    if (currentFilter.value === 'pending_review' && app.status !== 'pending' && app.status !== 'paid_pending_review')
+      return false
     if (currentFilter.value === 'approved' && app.status !== 'approved') return false
-    if (currentFilter.value === 'pending_payment' && app.paymentStatus !== 'pending') return false
     if (currentFilter.value === 'rejected' && app.status !== 'rejected') return false
 
     if (searchQuery.value.trim()) {
@@ -450,13 +433,9 @@ const rejectApp = (id: string) => {
   applicationsStore.rejectApplication(id)
 }
 
-const markPaid = (id: string) => {
-  applicationsStore.payApplicationFee(id, 'M-Pesa')
-}
-
-const deleteApp = (id: string) => {
+const deleteApp = async (id: string) => {
   if (confirm(t('taifa.admin.deleteConfirm'))) {
-    applicationsStore.deleteApplication(id)
+    await applicationsStore.deleteApplication(id)
   }
 }
 
@@ -502,11 +481,13 @@ const doSendCredentials = async () => {
 const copyCredentials = () => {
   if (!credModal.app) return
   const text = [
-    `Habari ${credModal.app.firstName}!`,
-    `Umeidhinishwa kwenye Kicheko Pro.`,
-    `Jina la mtumiaji: ${credModal.app.username}`,
-    `Nywila ya muda: ${credModal.tempPassword || '(tuma kwanza)'}`,
-    `Simu: ${credModal.app.phone}`,
+    t('taifa.admin.credMsgGreeting', { name: credModal.app.firstName }),
+    t('taifa.admin.credMsgApproved'),
+    t('taifa.admin.credMsgUsername', { username: credModal.app.username }),
+    t('taifa.admin.credMsgPassword', {
+      password: credModal.tempPassword || t('taifa.admin.credMsgSendFirst'),
+    }),
+    t('taifa.admin.credMsgPhone', { phone: credModal.app.phone }),
   ].join('\n')
   navigator.clipboard.writeText(text).catch(() => {})
 }

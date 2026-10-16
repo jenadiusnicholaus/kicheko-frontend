@@ -13,17 +13,17 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-              Dashibodi Kuu ya Usimamizi (Taifa House Admin)
+              {{ t('taifa.admin.title') }} (Taifa House Admin)
             </h1>
             <span
               class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 text-[11px] font-bold"
             >
               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Live Mtandaoni
+              {{ t('taifa.dashboard.liveOnline') }}
             </span>
           </div>
           <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            Usimamizi wa maombi ya wachekeshaji (ada 10,000 TSh), mapambano ya "Nani ni Nani?" na "Wall of Fame".
+            {{ t('taifa.admin.subtitle') }}
           </p>
         </div>
       </div>
@@ -36,7 +36,7 @@
           class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center gap-1.5 transition-colors"
         >
           <span class="material-icons text-base">visibility</span>
-          <span>Tazama Jukwaa</span>
+          <span>{{ t('taifa.dashboard.viewPlatform') }}</span>
           <span class="material-icons text-xs">open_in_new</span>
         </RouterLink>
 
@@ -45,7 +45,7 @@
           class="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-500 text-gray-950 text-xs font-black shadow-md hover:shadow-amber-400/30 flex items-center gap-1.5 transition-all"
         >
           <span class="material-icons text-base">how_to_reg</span>
-          <span>Kagua Maombi ({{ applicationsStore.pendingReviewCount }})</span>
+          <span>{{ t('taifa.dashboard.reviewApps') }} ({{ applicationsStore.pendingReviewCount }})</span>
         </RouterLink>
       </div>
     </div>
@@ -58,7 +58,7 @@
         class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm hover:border-amber-400 transition-all group"
       >
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Maombi ya Wachekeshaji</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.dashboard.appsCard') }}</span>
           <span class="material-icons text-blue-500 group-hover:scale-110 transition-transform">assignment</span>
         </div>
         <div class="text-3xl font-black text-gray-900 dark:text-white">
@@ -66,23 +66,27 @@
         </div>
         <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1">
           <span
-            >Yaliyoidhinishwa: <strong class="text-emerald-600">{{ applicationsStore.approvedCount }}</strong></span
+            >{{ t('taifa.dashboard.approved') }}:
+            <strong class="text-emerald-600">{{ applicationsStore.approvedCount }}</strong></span
           >
-          <span class="text-amber-600 font-bold">{{ applicationsStore.pendingReviewCount }} mapya</span>
+          <span class="text-amber-600 font-bold"
+            >{{ applicationsStore.pendingReviewCount }} {{ t('taifa.dashboard.newApps') }}</span
+          >
         </div>
       </RouterLink>
 
       <!-- Fee Revenue (10,000 TSh) -->
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Ada za Usajili (10k TSh)</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.dashboard.feeCard') }}</span>
           <span class="material-icons text-emerald-500">payments</span>
         </div>
         <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
           TSh {{ applicationsStore.totalFeeRevenue.toLocaleString() }}
         </div>
         <div class="text-[11px] text-gray-500 mt-1">
-          Kutoka kwa wachekeshaji {{ applicationsStore.applications.filter((a) => a.paymentStatus === 'paid').length }}
+          {{ t('taifa.dashboard.feeFrom') }}
+          {{ applicationsStore.applications.filter((a) => a.paymentStatus === 'paid').length }}
         </div>
       </div>
 
@@ -92,7 +96,7 @@
         class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm hover:border-amber-400 transition-all group"
       >
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Kura za "Nani ni Nani?"</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.dashboard.naniVotesCard') }}</span>
           <span class="material-icons text-red-500 group-hover:scale-110 transition-transform">favorite</span>
         </div>
         <div class="text-3xl font-black text-gray-900 dark:text-white">
@@ -100,9 +104,10 @@
         </div>
         <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1">
           <span
-            >Mapato: <strong class="text-amber-500">TSh {{ naniStore.voteRevenue.toLocaleString() }}</strong></span
+            >{{ t('taifa.dashboard.revenue') }}:
+            <strong class="text-amber-500">TSh {{ naniStore.voteRevenue.toLocaleString() }}</strong></span
           >
-          <span>(1,000 TSh / Kura)</span>
+          <span>{{ t('taifa.dashboard.perVote') }}</span>
         </div>
       </RouterLink>
 
@@ -112,34 +117,37 @@
         class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm hover:border-amber-400 transition-all group"
       >
         <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider">Wall of Fame</span>
+          <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.dashboard.fameCard') }}</span>
           <span class="material-icons text-purple-500 group-hover:scale-110 transition-transform">emoji_events</span>
         </div>
         <div class="text-3xl font-black text-gray-900 dark:text-white">
           {{ fameStore.totalInductees }}
         </div>
-        <div class="text-[11px] text-gray-500 mt-1">Mabingwa walioidhinishwa rasmi</div>
+        <div class="text-[11px] text-gray-500 mt-1">{{ t('taifa.dashboard.fameApproved') }}</div>
       </RouterLink>
     </div>
 
     <!-- Active "Nani ni Nani" Battle Spotlight Card -->
-    <div class="p-6 rounded-3xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+    <div
+      v-if="battle"
+      class="p-6 rounded-3xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm"
+    >
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100 dark:border-zinc-800 mb-6"
       >
         <div>
           <h2 class="text-base sm:text-lg font-black text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-icons text-amber-500">sports_kabaddi</span>
-            <span>Pambano Linaloendelea Sasa: "Nani ni Nani?"</span>
+            <span>{{ t('taifa.dashboard.activeBattle') }}</span>
           </h2>
-          <p class="text-xs text-gray-500">Watazamaji wanapiga kura kwa TSh 1,000</p>
+          <p class="text-xs text-gray-500">{{ t('taifa.dashboard.voteFeeNote') }}</p>
         </div>
 
         <RouterLink
           to="/admin/nani-ni-nani"
           class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 text-xs font-bold text-gray-800 dark:text-gray-200 transition-colors inline-flex items-center gap-1.5"
         >
-          <span>Dhibiti Pambano</span>
+          <span>{{ t('taifa.dashboard.manageBattle') }}</span>
           <span class="material-icons text-sm">tune</span>
         </RouterLink>
       </div>
@@ -206,16 +214,16 @@
         <div>
           <h2 class="text-base sm:text-lg font-black text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-icons text-blue-500">how_to_reg</span>
-            <span>Maombi ya Hivi Karibuni ya Wachekeshaji</span>
+            <span>{{ t('taifa.dashboard.recentApps') }}</span>
           </h2>
-          <p class="text-xs text-gray-500">Wachekeshaji waliojisajili na kulipa ada ya TSh 10,000</p>
+          <p class="text-xs text-gray-500">{{ t('taifa.dashboard.recentAppsDesc') }}</p>
         </div>
 
         <RouterLink
           to="/admin/applications"
           class="text-xs font-bold text-amber-600 hover:text-amber-700 dark:text-amber-400 flex items-center gap-1"
         >
-          <span>Tazama Yote ({{ applicationsStore.totalApplications }})</span>
+          <span>{{ t('taifa.dashboard.viewAll') }} ({{ applicationsStore.totalApplications }})</span>
           <span class="material-icons text-sm">arrow_forward</span>
         </RouterLink>
       </div>
@@ -226,11 +234,11 @@
             <tr
               class="text-gray-400 font-bold uppercase tracking-wider text-[11px] border-b border-gray-100 dark:border-zinc-800"
             >
-              <th class="py-3 px-3">Mchekeshaji</th>
-              <th class="py-3 px-3">Chuo Kikuu</th>
-              <th class="py-3 px-3">Ada (10k TSh)</th>
-              <th class="py-3 px-3">Hali</th>
-              <th class="py-3 px-3 text-right">Kitendo</th>
+              <th class="py-3 px-3">{{ t('taifa.dashboard.applicantTh') }}</th>
+              <th class="py-3 px-3">{{ t('taifa.dashboard.universityTh') }}</th>
+              <th class="py-3 px-3">{{ t('taifa.dashboard.feeTh') }}</th>
+              <th class="py-3 px-3">{{ t('taifa.dashboard.statusTh') }}</th>
+              <th class="py-3 px-3 text-right">{{ t('taifa.dashboard.actionsTh') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-gray-700 dark:text-gray-300">
@@ -250,9 +258,9 @@
 
               <td class="py-3 px-3">
                 <span v-if="app.paymentStatus === 'paid'" class="text-emerald-600 font-bold">
-                  ✓ Imelipwa ({{ app.paymentMethod }})
+                  ✓ {{ t('taifa.dashboard.paid') }} ({{ app.paymentMethod }})
                 </span>
-                <span v-else class="text-amber-600 font-semibold"> ⏳ Bado </span>
+                <span v-else class="text-amber-600 font-semibold"> ⏳ {{ t('taifa.dashboard.unpaid') }} </span>
               </td>
 
               <td class="py-3 px-3">
@@ -260,13 +268,13 @@
                   v-if="app.status === 'approved'"
                   class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold"
                 >
-                  Imethibitishwa
+                  {{ t('taifa.dashboard.statusApproved') }}
                 </span>
                 <span
                   v-else-if="app.status === 'paid_pending_review'"
                   class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold"
                 >
-                  Inasubiri Idhini
+                  {{ t('taifa.dashboard.statusPendingReview') }}
                 </span>
                 <span v-else class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px]">
                   {{ app.status }}
@@ -280,9 +288,9 @@
                   class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] transition-all"
                   @click="applicationsStore.approveApplication(app.id)"
                 >
-                  Thibitisha
+                  {{ t('taifa.dashboard.approveBtn') }}
                 </button>
-                <span v-else class="text-emerald-600 text-xs font-bold"> Kamilifu </span>
+                <span v-else class="text-emerald-600 text-xs font-bold"> {{ t('taifa.dashboard.complete') }} </span>
               </td>
             </tr>
           </tbody>
@@ -293,14 +301,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
 import { useNaniNiNaniStore } from '../../../stores/nani-ni-nani'
 import { useWallOfFameStore } from '../../../stores/wall-of-fame'
 
+const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 const naniStore = useNaniNiNaniStore()
 const fameStore = useWallOfFameStore()
 
 const battle = computed(() => naniStore.activeBattle)
+
+onMounted(() => {
+  naniStore.fetchActiveBattle()
+  applicationsStore.fetchApplicationsFromBackend()
+  fameStore.fetchInducteesFromBackend()
+})
 </script>

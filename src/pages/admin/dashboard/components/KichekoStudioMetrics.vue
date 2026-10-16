@@ -7,7 +7,7 @@
       <div class="flex items-start justify-between">
         <div>
           <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Jumla ya Video
+            {{ t('taifa.misc.studio.totalVideos') }}
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
             {{ totalVideos }}
@@ -22,9 +22,11 @@
       <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-between text-xs">
         <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-0.5">
           <span class="material-icons text-sm">trending_up</span>
-          +18% mwezi huu
+          +18% {{ t('taifa.misc.studio.thisMonth') }}
         </span>
-        <span class="text-gray-400 dark:text-gray-500"> {{ normalVideosCount }} ndefu • {{ shortsCount }} shorts </span>
+        <span class="text-gray-400 dark:text-gray-500">
+          {{ t('taifa.misc.studio.videosSplit', { long: normalVideosCount, short: shortsCount }) }}
+        </span>
       </div>
     </div>
 
@@ -35,7 +37,7 @@
       <div class="flex items-start justify-between">
         <div>
           <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Watazamaji Wote (Views)
+            {{ t('taifa.misc.studio.totalViews') }}
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
             {{ formatLargeNumber(totalViews) }}
@@ -50,9 +52,11 @@
       <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-between text-xs">
         <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-0.5">
           <span class="material-icons text-sm">trending_up</span>
-          +28.4% ukuaji
+          +28.4% {{ t('taifa.misc.studio.growth') }}
         </span>
-        <span class="text-gray-400 dark:text-gray-500"> Wastani {{ formatViews(avgViewsPerVideo) }}/video </span>
+        <span class="text-gray-400 dark:text-gray-500">
+          {{ t('taifa.misc.studio.avgPerVideo', { n: formatViews(avgViewsPerVideo) }) }}
+        </span>
       </div>
     </div>
 
@@ -63,7 +67,7 @@
       <div class="flex items-start justify-between">
         <div>
           <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Mapato ya Maudhui (TZS)
+            {{ t('taifa.misc.studio.revenueLabel') }}
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">
             Tsh {{ formatMoneyTZS(totalRevenue) }}
@@ -78,7 +82,7 @@
       <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-between text-xs">
         <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-0.5">
           <span class="material-icons text-sm">arrow_upward</span>
-          +22.5% mauzo
+          +22.5% {{ t('taifa.misc.studio.sales') }}
         </span>
         <span class="text-gray-400 dark:text-gray-500"> M-Pesa &amp; Tigo Pesa </span>
       </div>
@@ -91,7 +95,7 @@
       <div class="flex items-start justify-between">
         <div>
           <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Vipendwa &amp; Ushiriki
+            {{ t('taifa.misc.studio.likesEngagement') }}
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1">
             {{ formatLargeNumber(totalLikes) }}
@@ -106,9 +110,11 @@
       <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-between text-xs">
         <span class="text-rose-600 dark:text-rose-400 font-bold flex items-center gap-0.5">
           <span class="material-icons text-sm">favorite</span>
-          {{ engagementRate }}% ushiriki
+          {{ engagementRate }}% {{ t('taifa.misc.studio.engagement') }}
         </span>
-        <span class="text-gray-400 dark:text-gray-500"> {{ totalComedians }} wachekeshaji </span>
+        <span class="text-gray-400 dark:text-gray-500">
+          {{ t('taifa.misc.studio.comedians', { n: totalComedians }) }}
+        </span>
       </div>
     </div>
   </div>
@@ -116,7 +122,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Video, Comedian } from '../../../../services/api/video.api'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   videos: Video[]

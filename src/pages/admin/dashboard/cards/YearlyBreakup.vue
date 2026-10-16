@@ -1,7 +1,7 @@
 <template>
   <VaCard>
     <VaCardTitle class="pb-0!">
-      <h1 class="card-title text-secondary font-bold uppercase">Yearly Breakup</h1>
+      <h1 class="card-title text-secondary font-bold uppercase">{{ t('taifa.misc.cards.yearlyBreakup') }}</h1>
     </VaCardTitle>
     <VaCardContent class="flex flex-row gap-1">
       <section class="w-1/2">
@@ -9,16 +9,16 @@
         <p class="text-xs text-success whitespace-nowrap">
           <VaIcon name="arrow_outward" />
           +2,5%
-          <span class="text-secondary"> last year</span>
+          <span class="text-secondary"> {{ t('taifa.misc.cards.lastYear') }}</span>
         </p>
         <div class="my-4 gap-2 flex flex-col">
           <div class="flex items-center">
             <span class="inline-block w-2 h-2 mr-2" :style="{ backgroundColor: earningsBackground }"></span>
-            <span class="text-secondary">Earnings</span>
+            <span class="text-secondary">{{ t('taifa.misc.cards.earnings') }}</span>
           </div>
           <div class="flex items-center">
             <span class="inline-block w-2 h-2 mr-2" :style="{ backgroundColor: profitBackground }"></span>
-            <span class="text-secondary">Profit</span>
+            <span class="text-secondary">{{ t('taifa.misc.cards.profit') }}</span>
           </div>
         </div>
       </section>
@@ -37,12 +37,15 @@
 
 <script setup lang="ts">
 import { VaCard } from 'vuestic-ui'
+import { useI18n } from 'vue-i18n'
 import VaChart from '../../../../components/va-charts/VaChart.vue'
 import { useChartData } from '../../../../data/charts/composables/useChartData'
 import { doughnutChartData, profitBackground, earningsBackground } from '../../../../data/charts/doughnutChartData'
 import { doughnutConfig } from '../../../../components/va-charts/vaChartConfigs'
 import { ChartOptions } from 'chart.js'
 import { externalTooltipHandler } from '../../../../components/va-charts/external-tooltip'
+
+const { t } = useI18n()
 
 const chartData = useChartData(doughnutChartData)
 

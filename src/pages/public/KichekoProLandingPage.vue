@@ -4,7 +4,7 @@
     <div class="mb-6 sm:mb-8 animate-fade-in">
       <img
         src="/taifa/kicheko_pro_logo.png"
-        alt="Kicheko Pro - Jiandae Kucheka"
+        :alt="t('taifa.pages.pro.logoAlt')"
         class="w-48 sm:w-64 max-w-full mx-auto object-contain drop-shadow-sm hover:scale-102 transition-transform duration-300"
       />
     </div>

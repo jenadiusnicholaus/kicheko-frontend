@@ -4,14 +4,19 @@ import UserAvatar from '../../../users/widgets/UserAvatar.vue'
 import ProjectStatusBadge from '../../../projects/components/ProjectStatusBadge.vue'
 import { useProjects } from '../../../projects/composables/useProjects'
 import { Pagination } from '../../../../data/pages/projects'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useProjectUsers } from '../../../projects/composables/useProjectUsers'
 
-const columns = defineVaDataTableColumns([
-  { label: 'Name', key: 'project_name', sortable: true },
-  { label: 'Status', key: 'status', sortable: true },
-  { label: 'Team', key: 'team', sortable: true },
-])
+const { t } = useI18n()
+
+const columns = computed(() =>
+  defineVaDataTableColumns([
+    { label: t('taifa.misc.common.name'), key: 'project_name', sortable: true },
+    { label: t('taifa.misc.common.status'), key: 'status', sortable: true },
+    { label: t('taifa.misc.common.team'), key: 'team', sortable: true },
+  ]),
+)
 
 const pagination = ref<Pagination>({ page: 1, perPage: 5, total: 0 })
 const { projects, isLoading, sorting } = useProjects({
@@ -24,8 +29,8 @@ const { getTeamOptions, getUserById } = useProjectUsers()
 <template>
   <VaCard>
     <VaCardTitle class="flex items-start justify-between">
-      <h1 class="card-title text-secondary font-bold uppercase">Projects</h1>
-      <VaButton preset="primary" size="small" to="/projects">View all projects</VaButton>
+      <h1 class="card-title text-secondary font-bold uppercase">{{ t('menu.projects') }}</h1>
+      <VaButton preset="primary" size="small" to="/projects">{{ t('taifa.misc.cards.viewAllProjects') }}</VaButton>
     </VaCardTitle>
     <VaCardContent>
       <div v-if="projects.length > 0">
@@ -59,7 +64,9 @@ const { getTeamOptions, getUserById } = useProjectUsers()
           </template>
         </VaDataTable>
       </div>
-      <div v-else class="p-4 flex justify-center items-center text-[var(--va-secondary)]">No projects</div>
+      <div v-else class="p-4 flex justify-center items-center text-[var(--va-secondary)]">
+        {{ t('taifa.misc.common.noProjects') }}
+      </div>
     </VaCardContent>
   </VaCard>
 </template>
