@@ -4,27 +4,16 @@
   >
     <!-- Top Header Bar -->
     <header class="w-full bg-[#183153] text-white px-4 sm:px-8 py-3.5 flex items-center justify-between shadow-md z-30">
-      <!-- Left: Logo & Back Button -->
+      <!-- Left: Logo -->
       <div class="flex items-center gap-3 sm:gap-4">
         <!-- Taifa House Circular Logo Badge -->
         <RouterLink
           to="/"
-          class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white p-1 flex items-center justify-center shadow hover:scale-105 transition-transform shrink-0"
+          class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow hover:scale-105 transition-transform shrink-0 overflow-hidden"
           title="Kicheko Pro - Taifa House"
         >
-          <img src="/taifa/taifa_logo.png" alt="Taifa House" class="w-full h-full object-contain" />
+          <img src="/taifa/taifa_logo.png" alt="Taifa House" class="w-full h-full object-cover rounded-full" />
         </RouterLink>
-
-        <!-- Back Button when on subpages -->
-        <button
-          v-if="route.path !== '/'"
-          type="button"
-          class="px-3.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors border border-white/20 cursor-pointer"
-          @click="goBack"
-        >
-          <span class="material-icons text-base">arrow_back</span>
-          <span>{{ t('taifa.layout.back') }}</span>
-        </button>
       </div>
 
       <!-- Center Badge -->
@@ -102,9 +91,11 @@
       </div>
 
       <!-- Bottom Floating Nav Bar & African Pattern (Visible across public screens) -->
-      <footer class="relative z-20 w-full pt-6 pb-0 flex flex-col items-center">
-        <!-- 3-Pill Bottom Navigation Bar matching PDF -->
-        <div class="flex items-center gap-2 sm:gap-3 p-1.5 bg-[#183153] rounded-2xl shadow-xl border border-white/10">
+      <footer class="relative z-20 w-full pt-6 pb-16 flex flex-col items-center">
+        <!-- 3-Pill Bottom Navigation Bar matching PDF (fixed so it never leaves the viewport) -->
+        <div
+          class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 sm:gap-3 p-1.5 bg-[#183153] rounded-2xl shadow-xl border border-white/10"
+        >
           <RouterLink
             to="/"
             class="px-5 sm:px-8 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-black tracking-wide transition-all text-center"
@@ -147,36 +138,27 @@
           <img src="/taifa/taifa_icon.png" alt="" class="w-4 h-4 object-contain" />
           <span class="italic tracking-wide">{{ t('taifa.layout.tagline') }}</span>
         </div>
-
-        <!-- Authentic African Bottom Ribbon Border -->
-        <div
-          class="w-full h-5 sm:h-7 bg-repeat-x bg-contain relative shadow-inner"
-          style="background-image: url('/taifa/african_ribbon.png')"
-        ></div>
       </footer>
+
+      <!-- Authentic African Bottom Ribbon Border (fixed at viewport bottom) -->
+      <div
+        class="fixed bottom-0 left-0 right-0 z-40 w-full h-5 sm:h-7 bg-repeat-x bg-contain shadow-inner pointer-events-none"
+        style="background-image: url('/taifa/african_ribbon.png')"
+      ></div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth-store'
 
 const route = useRoute()
-const router = useRouter()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
 
 const toggleLanguage = () => {
   locale.value = locale.value === 'sw' ? 'gb' : 'sw'
-}
-
-const goBack = () => {
-  if (window.history.length > 1) {
-    router.back()
-  } else {
-    router.push('/')
-  }
 }
 </script>

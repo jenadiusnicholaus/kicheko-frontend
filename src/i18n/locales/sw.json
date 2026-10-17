@@ -278,7 +278,11 @@
       "verifyingVote": "Inathibitisha Kura...",
       "cancel": "Ghairi",
       "votedSuccess": "UmemPigia Kura {name} kwa TSh {fee}! Kura sasa ni {votes}",
-      "loading": "Inapakia mashindano..."
+      "loading": "Inapakia mashindano...",
+      "endedPill": "Mzunguko #{round} • Imekwisha",
+      "battleEnded": "Pambano Limekwisha",
+      "battlesTitle": "Mapambano",
+      "watchClip": "Tazama Video"
     },
     "wall": {
       "title": "Wall of Fame",
@@ -385,6 +389,7 @@
         "codeLabel": "Kifupi cha Chuo",
         "codePlaceholder": "mf. UDSM",
         "bioLabel": "Maelezo (Bio)",
+        "photoLabel": "Picha ya Bingwa",
         "quoteLabel": "Nukuu Yake Maarufu (Optional)",
         "saveBtn": "Hifadhi Bingwa",
         "deleteConfirm": "Una uhakika unataka kuondoa bingwa huyu kwenye Wall of Fame?"
@@ -410,7 +415,25 @@
         "saveBtn": "Hifadhi Mabadiliko ya Washiriki",
         "savedMsg": "Mabadiliko yamehifadhiwa!",
         "resetVotesBtn": "Weka Kura Zote Kuwa 0",
-        "resetVotesConfirm": "Una uhakika unataka kuweka kura zote kuwa sifuri (0)?"
+        "resetVotesConfirm": "Una uhakika unataka kuweka kura zote kuwa sifuri (0)?",
+        "battlesCount": "Mapambano {count}",
+        "newBattleBtn": "Pambano Jipya",
+        "newBattleTitle": "Tengeneza Pambano Jipya",
+        "editBattleTitle": "Hariri Pambano",
+        "titleLabel": "Kichwa cha Pambano",
+        "roundLabel": "Raundi",
+        "feeLabel": "Ada ya Kura (TSh)",
+        "categoryLabel": "Aina ya Burudani",
+        "categoryNone": "Hakuna Aina",
+        "statusLabel": "Hali",
+        "statusDraft": "Rasimu",
+        "statusActive": "Inaendelea",
+        "statusEnded": "Imekwisha",
+        "badgeLabel": "Nembo ya Chuo",
+        "videoUrlLabel": "Kiungo cha Video (YouTube)",
+        "activateBtn": "Wezesha",
+        "emptyBattles": "Hakuna mapambano bado — tengeneza pambano jipya.",
+        "deleteBattleConfirm": "Una uhakika unataka kufuta pambano hili?"
       },
       "videos": {
         "title": "Usimamizi na Upakiaji wa Video za Kicheko",

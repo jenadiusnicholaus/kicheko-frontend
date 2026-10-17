@@ -386,7 +386,11 @@
       "verifyingVote": "Casting Vote...",
       "cancel": "Cancel",
       "votedSuccess": "You voted for {name} with TSh {fee}! Current votes: {votes}",
-      "loading": "Loading battle..."
+      "loading": "Loading battle...",
+      "endedPill": "Round #{round} • Ended",
+      "battleEnded": "Battle Ended",
+      "battlesTitle": "Battles",
+      "watchClip": "Watch Clip"
     },
     "wall": {
       "title": "Wall of Fame",
@@ -493,6 +497,7 @@
         "codeLabel": "University Abbreviation",
         "codePlaceholder": "e.g. UDSM",
         "bioLabel": "Bio",
+        "photoLabel": "Champion Photo",
         "quoteLabel": "Their Famous Quote (Optional)",
         "saveBtn": "Save Champion",
         "deleteConfirm": "Are you sure you want to remove this champion from the Wall of Fame?"
@@ -518,7 +523,25 @@
         "saveBtn": "Save Contestant Changes",
         "savedMsg": "Changes saved successfully!",
         "resetVotesBtn": "Reset All Votes to 0",
-        "resetVotesConfirm": "Are you sure you want to reset all votes to zero (0)?"
+        "resetVotesConfirm": "Are you sure you want to reset all votes to zero (0)?",
+        "battlesCount": "{count} Battles",
+        "newBattleBtn": "New Battle",
+        "newBattleTitle": "Create New Battle",
+        "editBattleTitle": "Edit Battle",
+        "titleLabel": "Battle Title",
+        "roundLabel": "Round",
+        "feeLabel": "Vote Fee (TSh)",
+        "categoryLabel": "Entertainment Category",
+        "categoryNone": "No Category",
+        "statusLabel": "Status",
+        "statusDraft": "Draft",
+        "statusActive": "Live",
+        "statusEnded": "Ended",
+        "badgeLabel": "University Badge",
+        "videoUrlLabel": "Video URL (YouTube)",
+        "activateBtn": "Activate",
+        "emptyBattles": "No battles yet — create your first battle.",
+        "deleteBattleConfirm": "Are you sure you want to delete this battle?"
       },
       "videos": {
         "title": "Kicheko Video Management & Upload",

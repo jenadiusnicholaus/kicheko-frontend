@@ -359,13 +359,25 @@
         <div class="flex flex-col gap-2.5">
           <button
             type="button"
-            class="w-full py-3 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm flex items-center justify-center gap-2 shadow transition-all"
+            class="w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow transition-all"
+            :class="
+              credModal.sent && !credModal.sending
+                ? 'bg-emerald-600 text-white'
+                : 'bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950'
+            "
             :disabled="credModal.sending"
             @click="doSendCredentials"
           >
             <span v-if="credModal.sending" class="material-icons animate-spin text-base">sync</span>
+            <span v-else-if="credModal.sent" class="material-icons text-base">check_circle</span>
             <span v-else class="material-icons text-base">mark_email_read</span>
-            <span>{{ credModal.sending ? t('taifa.admin.credSending') : t('taifa.admin.credSendBtn') }}</span>
+            <span>{{
+              credModal.sending
+                ? t('taifa.admin.credSending')
+                : credModal.sent
+                  ? t('taifa.admin.credSent')
+                  : t('taifa.admin.credSendBtn')
+            }}</span>
           </button>
           <button
             type="button"

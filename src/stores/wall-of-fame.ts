@@ -1,11 +1,14 @@
 import { defineStore } from 'pinia'
 import { http } from '../services/api/http'
+import { resolveMediaUrl } from '../services/api/config'
 
 export interface WallOfFameInductee {
   id: string
   name: string
   university: string
-  universityCode: string
+  universityId?: string
+  universityCode?: string
+  universityBadge?: string
   competitionYear: number
   totalVotes: number
   bio: string
@@ -19,11 +22,13 @@ function normalizeBackendInductee(raw: any): WallOfFameInductee {
     id: raw.id,
     name: raw.name || '',
     university: raw.university || '',
+    universityId: raw.university_id || undefined,
     universityCode: raw.university_code || raw.universityCode || '',
+    universityBadge: raw.university_badge || undefined,
     competitionYear: raw.competition_year || raw.competitionYear || 0,
     totalVotes: raw.total_votes ?? raw.totalVotes ?? 0,
     bio: raw.bio || '',
-    photo: raw.photo || '/image/Kicheko.png',
+    photo: resolveMediaUrl(raw.photo) || '/image/Kicheko.png',
     featuredQuote: raw.featured_quote || raw.featuredQuote || '',
     awards: raw.awards || [],
   }
@@ -78,29 +83,31 @@ export const useWallOfFameStore = defineStore('wallOfFame', {
       this.selectedIndex = (this.selectedIndex - 1 + this.inductees.length) % this.inductees.length
     },
 
-    async addInductee(item: Omit<WallOfFameInductee, 'id'>) {
-      const { data } = await http.post('/wall-of-fame/', {
-        name: item.name,
-        university: item.university,
-        university_code: item.universityCode,
-        competition_year: item.competitionYear,
-        total_votes: item.totalVotes,
-        bio: item.bio,
-        photo: item.photo,
-        featured_quote: item.featuredQuote,
-      })
+    async addInductee(item: Omit<WallOfFameInductee, 'id'>, photoFile?: File) {
+      const fd = new FormData()
+      fd.append('name', item.name)
+      fd.append('university', item.university)
+      fd.append('competition_year', String(item.competitionYear))
+      fd.append('total_votes', String(item.totalVotes))
+      fd.append('bio', item.bio)
+      fd.append('featured_quote', item.featuredQuote || '')
+      if (photoFile) fd.append('photo', photoFile)
+      const { data } = await http.post('/wall-of-fame/', fd)
       const newEntry = normalizeBackendInductee(data)
       this.inductees.unshift(newEntry)
       return newEntry
     },
 
-    async updateInductee(id: string, updates: Partial<WallOfFameInductee>) {
-      const payload: Record<string, any> = { ...updates }
-      if (updates.universityCode) payload.university_code = updates.universityCode
-      if (updates.competitionYear) payload.competition_year = updates.competitionYear
-      if (updates.totalVotes !== undefined) payload.total_votes = updates.totalVotes
-      if (updates.featuredQuote !== undefined) payload.featured_quote = updates.featuredQuote
-      const { data } = await http.put(`/wall-of-fame/${id}/`, payload)
+    async updateInductee(id: string, updates: Partial<WallOfFameInductee>, photoFile?: File) {
+      const fd = new FormData()
+      if (updates.name !== undefined) fd.append('name', updates.name)
+      if (updates.university !== undefined) fd.append('university', updates.university)
+      if (updates.competitionYear !== undefined) fd.append('competition_year', String(updates.competitionYear))
+      if (updates.totalVotes !== undefined) fd.append('total_votes', String(updates.totalVotes))
+      if (updates.bio !== undefined) fd.append('bio', updates.bio)
+      if (updates.featuredQuote !== undefined) fd.append('featured_quote', updates.featuredQuote)
+      if (photoFile) fd.append('photo', photoFile)
+      const { data } = await http.put(`/wall-of-fame/${id}/`, fd)
       const updated = normalizeBackendInductee(data)
       const idx = this.inductees.findIndex((x) => x.id === id)
       if (idx !== -1) {

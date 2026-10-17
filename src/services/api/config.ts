@@ -25,3 +25,18 @@ export const apiConfig = {
 } as const
 
 export type ApiEndpoints = typeof apiConfig.endpoints
+
+/**
+ * Resolve backend media paths ("/media/...") to absolute URLs on the API host.
+ * Frontend asset paths ("/taifa/...", "/image/...") and absolute URLs pass through.
+ * Seeded "/media/taifa/..." rows point at assets already shipped in the
+ * frontend's public dir — remap them back so they render without a
+ * backend media-volume copy.
+ */
+export function resolveMediaUrl(path?: string | null): string {
+  if (!path) return ''
+  if (/^https?:\/\//i.test(path)) return path
+  if (path.startsWith('/media/taifa/')) return path.slice('/media'.length)
+  if (path.startsWith('/media/')) return `${env.VITE_API_PROXY_TARGET}${path}`
+  return path
+}

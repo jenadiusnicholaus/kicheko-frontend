@@ -153,30 +153,20 @@
             />
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-                t('taifa.admin.universityTh')
-              }}</label>
-              <input
-                v-model="modalForm.university"
-                type="text"
-                required
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
-              />
-            </div>
-            <div>
-              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-                t('taifa.admin.manageFame.codeLabel')
-              }}</label>
-              <input
-                v-model="modalForm.universityCode"
-                type="text"
-                required
-                :placeholder="t('taifa.admin.manageFame.codePlaceholder')"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white font-mono"
-              />
-            </div>
+          <div>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.universityTh')
+            }}</label>
+            <select
+              v-model="modalForm.university"
+              required
+              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
+            >
+              <option value="" disabled>{{ t('taifa.register.selectUniversity') }}</option>
+              <option v-for="u in uniStore.universities" :key="u.id" :value="u.code">
+                {{ u.code }} — {{ u.name }}
+              </option>
+            </select>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -223,9 +213,31 @@
             <input
               v-model="modalForm.featuredQuote"
               type="text"
+              required
               class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
             />
           </div>
+
+          <div>
+            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+              t('taifa.admin.manageFame.photoLabel')
+            }}</label>
+            <input
+              type="file"
+              accept="image/*"
+              :required="!isEditing"
+              class="w-full text-xs text-gray-600 dark:text-gray-300 file:mr-3 file:px-3.5 file:py-2 file:rounded-xl file:border-0 file:bg-[#FEBF01] file:text-gray-950 file:font-black file:text-xs file:cursor-pointer"
+              @change="onPhotoChange"
+            />
+            <img
+              v-if="photoPreview"
+              :src="photoPreview"
+              :alt="modalForm.name"
+              class="mt-2 h-20 w-auto rounded-xl object-cover border border-gray-200 dark:border-zinc-700"
+            />
+          </div>
+
+          <p v-if="saveError" class="text-xs font-semibold text-red-600 dark:text-red-400">{{ saveError }}</p>
 
           <div class="pt-3 flex items-center justify-end gap-2">
             <button
@@ -237,9 +249,11 @@
             </button>
             <button
               type="submit"
-              class="px-5 py-2.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black shadow-md cursor-pointer"
+              :disabled="isSaving"
+              class="px-5 py-2.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black shadow-md cursor-pointer disabled:opacity-60 flex items-center gap-2"
             >
-              {{ t('taifa.admin.manageFame.saveBtn') }}
+              <span v-if="isSaving" class="material-icons animate-spin text-base">sync</span>
+              {{ isSaving ? t('taifa.admin.universities.savingBtn') : t('taifa.admin.manageFame.saveBtn') }}
             </button>
           </div>
         </form>
@@ -252,12 +266,16 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useWallOfFameStore, type WallOfFameInductee } from '../../../stores/wall-of-fame'
+import { useUniversitiesStore } from '../../../stores/universities'
+import { compressImage } from '../../../utils/image'
 
 const { t } = useI18n()
 const fameStore = useWallOfFameStore()
+const uniStore = useUniversitiesStore()
 
 onMounted(() => {
   fameStore.fetchInducteesFromBackend()
+  uniStore.fetchUniversities()
 })
 
 const showModal = ref(false)
@@ -267,25 +285,38 @@ const editingId = ref('')
 const modalForm = reactive({
   name: '',
   university: '',
-  universityCode: '',
   competitionYear: 2026,
-  totalVotes: 10000,
+  totalVotes: 0,
   bio: '',
   featuredQuote: '',
-  photo: '/taifa/frank_mollel_square.png',
+  photo: '',
 })
+
+const photoFile = ref<File | null>(null)
+const photoPreview = ref('')
+
+const onPhotoChange = async (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0] || null
+  if (!file) {
+    photoFile.value = null
+    return
+  }
+  photoFile.value = await compressImage(file)
+  photoPreview.value = URL.createObjectURL(photoFile.value)
+}
 
 const openAddModal = () => {
   isEditing.value = false
   editingId.value = ''
   modalForm.name = ''
   modalForm.university = ''
-  modalForm.universityCode = ''
   modalForm.competitionYear = 2026
-  modalForm.totalVotes = 10000
+  modalForm.totalVotes = 0
   modalForm.bio = ''
   modalForm.featuredQuote = ''
-  modalForm.photo = '/taifa/frank_mollel_square.png'
+  modalForm.photo = ''
+  photoFile.value = null
+  photoPreview.value = ''
   showModal.value = true
 }
 
@@ -293,23 +324,42 @@ const openEditModal = (item: WallOfFameInductee) => {
   isEditing.value = true
   editingId.value = item.id
   modalForm.name = item.name
-  modalForm.university = item.university
-  modalForm.universityCode = item.universityCode
+  modalForm.university = item.universityCode || item.universityId || item.university
   modalForm.competitionYear = item.competitionYear
   modalForm.totalVotes = item.totalVotes
   modalForm.bio = item.bio
   modalForm.featuredQuote = item.featuredQuote || ''
   modalForm.photo = item.photo
+  photoFile.value = null
+  photoPreview.value = item.photo
   showModal.value = true
 }
 
+const isSaving = ref(false)
+const saveError = ref('')
+
 const saveInductee = async () => {
-  if (isEditing.value) {
-    await fameStore.updateInductee(editingId.value, { ...modalForm })
-  } else {
-    await fameStore.addInductee({ ...modalForm })
+  isSaving.value = true
+  saveError.value = ''
+  try {
+    if (isEditing.value) {
+      await fameStore.updateInductee(editingId.value, { ...modalForm }, photoFile.value || undefined)
+    } else {
+      await fameStore.addInductee({ ...modalForm }, photoFile.value || undefined)
+    }
+    showModal.value = false
+  } catch (e: any) {
+    const detail = e?.response?.data
+    if (detail && typeof detail === 'object') {
+      saveError.value = Object.entries(detail)
+        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
+        .join(' ')
+    } else {
+      saveError.value = e?.message || 'Save failed'
+    }
+  } finally {
+    isSaving.value = false
   }
-  showModal.value = false
 }
 
 const deleteItem = async (id: string) => {

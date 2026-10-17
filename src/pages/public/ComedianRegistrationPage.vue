@@ -96,8 +96,8 @@
                 class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 text-sm text-gray-900 dark:text-white focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] focus:border-[#FEBF01] transition-all appearance-none cursor-pointer"
               >
                 <option value="" disabled>{{ t('taifa.register.selectUniversity') }}</option>
-                <option v-for="uni in uniStore.universityNames" :key="uni" :value="uni">
-                  {{ uni }}
+                <option v-for="uni in uniStore.universities" :key="uni.id" :value="uni.name">
+                  {{ uni.code }} - {{ uni.name }}
                 </option>
               </select>
               <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">

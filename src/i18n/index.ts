@@ -1,3 +1,4 @@
+import { watch } from 'vue'
 import { createI18n } from 'vue-i18n'
 
 const fileNameToLocaleModuleDict = import.meta.glob<{ default: Record<string, string> }>('./locales/*.json', {
@@ -17,9 +18,19 @@ Object.entries(fileNameToLocaleModuleDict)
     messages[localeNameLocaleMessagesTuple[0]] = localeNameLocaleMessagesTuple[1]
   })
 
-export default createI18n({
+const LOCALE_KEY = 'kicheko-locale'
+const savedLocale = localStorage.getItem(LOCALE_KEY)
+
+const i18n = createI18n({
   legacy: false,
-  locale: 'sw',
+  locale: savedLocale || 'sw',
   fallbackLocale: 'gb',
   messages,
 })
+
+// Persist the selected language so it survives reloads.
+watch(i18n.global.locale, (l) => {
+  localStorage.setItem(LOCALE_KEY, l)
+})
+
+export default i18n

@@ -17,6 +17,9 @@ export const setOnSessionExpired = (handler: () => void) => {
 http.interceptors.request.use((config) => {
   const access = tokenStorage.getAccess()
   if (access) config.headers.Authorization = `Bearer ${access}`
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type']
+  }
   return config
 })
 
