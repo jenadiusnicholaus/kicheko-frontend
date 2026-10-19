@@ -167,12 +167,14 @@
       </form>
     </div>
 
-    <!-- PayIt Hosted Checkout (redirect mode bypasses embed 404) -->
+    <!-- Application & PayIt Payment Step Modal -->
     <PayItCheckout
       :open="showPayModal"
-      mode="redirect"
+      :application-id="createdAppId"
+      :applicant-name="`${form.firstName} ${form.lastName}`.trim()"
+      :applicant-phone="form.phone"
+      :applicant-university="form.university"
       @success="onPaymentSuccess"
-      @failure="onPaymentFailure"
       @close="onCheckoutClose"
     />
 
@@ -311,22 +313,12 @@ const handleSubmit = async () => {
 
 const onPaymentSuccess = async (result: PayItResult) => {
   paymentRef.value = result.payment_id
-  showPayModal.value = false
-  confirmingPayment.value = true
+  paymentDone.value = true
   try {
     await applicationsStore.recordPayment(createdAppId.value, result.payment_id)
   } catch {
     // Reference failed to save — the PayIt webhook still confirms the payment.
   }
-  // Wait for the signed webhook to mark the payment confirmed before
-  // declaring success; on timeout show the pending-confirmation copy.
-  paymentDone.value = await applicationsStore.waitForPaymentConfirmation(createdAppId.value)
-  confirmingPayment.value = false
-  showSuccessModal.value = true
-}
-
-const onPaymentFailure = () => {
-  // Keep the checkout's own failure panel visible; the user can retry there.
 }
 
 const onCheckoutClose = () => {

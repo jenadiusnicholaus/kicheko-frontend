@@ -1,349 +1,424 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  loadPayItSdk,
-  PAYIT_SLUG,
-  PAYIT_STANDALONE_URL,
-  type PayItCheckoutInstance,
-  type PayItResult,
-} from '../lib/payit'
+import { useRouter } from 'vue-router'
+import { PAYIT_STANDALONE_URL, type PayItResult } from '../lib/payit'
+import { useComedianApplicationsStore } from '../stores/comedian-applications'
 
 const props = withDefaults(
   defineProps<{
     open: boolean
     slug?: string
-    mode?: 'modal' | 'inline' | 'redirect'
-    title?: string
-    description?: string
+    applicationId?: string
+    applicantName?: string
+    applicantPhone?: string
+    applicantUniversity?: string
+    amount?: string
+    currency?: string
+    checkoutUrl?: string
   }>(),
   {
-    slug: PAYIT_SLUG,
-    mode: 'modal',
-    title: '',
-    description: '',
+    slug: 'taifa-house',
+    applicationId: '',
+    applicantName: '',
+    applicantPhone: '',
+    applicantUniversity: '',
+    amount: '10,000',
+    currency: 'TZS',
+    checkoutUrl: PAYIT_STANDALONE_URL,
   },
 )
 
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'success', result: PayItResult): void
-  (e: 'failure', result: PayItResult): void
 }>()
 
 const { t } = useI18n()
+const router = useRouter()
+const applicationsStore = useComedianApplicationsStore()
 
-type Phase = 'loading' | 'ready' | 'processing' | 'succeeded' | 'failed' | 'error'
+type Step = 'payment' | 'success'
+const currentStep = ref<Step>('payment')
+const isCheckingStatus = ref(false)
+const hasOpenedCheckout = ref(false)
+let pollingInterval: ReturnType<typeof setInterval> | null = null
 
-const containerRef = ref<HTMLElement | null>(null)
-const phase = ref<Phase>('loading')
-const errorMessage = ref('')
-const paymentId = ref('')
-const failureStatus = ref('')
-
-let checkout: PayItCheckoutInstance | null = null
-let readyTimer: ReturnType<typeof setTimeout> | null = null
-
-// An unauthorized origin (e.g. missing in AllowedOrigins) or disabled embed answers 404
-// and onReady never fires.
-const READY_TIMEOUT_MS = 12_000
-
-function clearReadyTimer(): void {
-  if (!readyTimer) return
-  clearTimeout(readyTimer)
-  readyTimer = null
+function stopPolling(): void {
+  if (pollingInterval) {
+    clearInterval(pollingInterval)
+    pollingInterval = null
+  }
 }
 
-const isInline = computed(() => props.mode === 'inline')
-const isRedirect = computed(() => props.mode === 'redirect')
-
-// In modal mode the SDK renders its own overlay; our shell only shows surrounding states.
-// In inline mode, our shell hosts the iframe container across ready/processing states.
-// In redirect mode, our shell displays a loading/redirecting message until navigation occurs.
-const showShell = computed(() => {
-  if (!props.open) return false
-  if (isInline.value || isRedirect.value) return true
-  return phase.value !== 'ready' && phase.value !== 'processing'
-})
-
-function teardown(): void {
-  clearReadyTimer()
-  if (!checkout) return
+async function checkPaymentStatus(): Promise<boolean> {
+  if (!props.applicationId) return false
+  isCheckingStatus.value = true
   try {
-    checkout.destroy()
-  } catch {
-    /* SDK already torn down */
-  }
-  checkout = null
-}
-
-async function mountCheckout(): Promise<void> {
-  phase.value = 'loading'
-  errorMessage.value = ''
-  paymentId.value = ''
-  failureStatus.value = ''
-
-  if (isRedirect.value) {
-    try {
-      const sdk = await loadPayItSdk()
-      checkout = sdk.checkout({
-        slug: props.slug,
-        mode: 'redirect',
-      })
-      checkout.open()
-    } catch {
-      window.location.assign(PAYIT_STANDALONE_URL)
-    }
-    return
-  }
-
-  let sdk
-  try {
-    sdk = await loadPayItSdk()
-  } catch {
-    phase.value = 'error'
-    errorMessage.value = t('taifa.payment.loadError')
-    return
-  }
-
-  if (!props.open) return
-
-  await nextTick()
-
-  let container: HTMLElement | undefined
-  if (isInline.value) {
-    if (!containerRef.value) return
-    container = containerRef.value
-  }
-
-  teardown()
-
-  const closeSdkModal = (): void => {
-    if (isInline.value) return
-    try {
-      checkout?.close()
-    } catch {
-      /* already closed */
-    }
-  }
-
-  try {
-    checkout = sdk.checkout({
-      slug: props.slug,
-      mode: isInline.value ? 'inline' : 'modal',
-      ...(container ? { container } : {}),
-      onReady: () => {
-        clearReadyTimer()
-        phase.value = 'ready'
-      },
-      onProcessing: (result) => {
-        clearReadyTimer()
-        phase.value = 'processing'
-        paymentId.value = result.payment_id
-      },
-      onSuccess: (result) => {
-        clearReadyTimer()
-        phase.value = 'succeeded'
-        paymentId.value = result.payment_id
-        closeSdkModal()
-        emit('success', result)
-      },
-      onFailure: (result) => {
-        clearReadyTimer()
-        phase.value = 'failed'
-        paymentId.value = result.payment_id
-        failureStatus.value = result.status
-        closeSdkModal()
-        emit('failure', result)
-      },
-      onClose: () => {
-        emit('close')
-      },
+    const isPaid = await applicationsStore.waitForPaymentConfirmation(props.applicationId, {
+      intervalMs: 1500,
+      timeoutMs: 5000,
     })
-    checkout.open()
-
-    clearReadyTimer()
-    readyTimer = setTimeout(() => {
-      if (phase.value !== 'loading') return
-      teardown()
-      phase.value = 'error'
-      errorMessage.value = t('taifa.payment.timeoutError')
-    }, READY_TIMEOUT_MS)
+    if (isPaid) {
+      stopPolling()
+      currentStep.value = 'success'
+      emit('success', {
+        payment_id: props.applicationId,
+        status: 'SUCCEEDED',
+      })
+      return true
+    }
   } catch {
-    phase.value = 'error'
-    errorMessage.value = t('taifa.payment.startError')
+    /* ignore network error */
+  } finally {
+    isCheckingStatus.value = false
   }
+  return false
+}
+
+function startPolling(): void {
+  stopPolling()
+  pollingInterval = setInterval(async () => {
+    if (currentStep.value !== 'payment' || !props.open) {
+      stopPolling()
+      return
+    }
+    const paid = await checkPaymentStatus()
+    if (paid) stopPolling()
+  }, 4000)
+}
+
+function openPayItCheckout(): void {
+  hasOpenedCheckout.value = true
+  try {
+    sessionStorage.setItem('pending_application_id', props.applicationId)
+  } catch {
+    /* ignore */
+  }
+  window.open(props.checkoutUrl, '_blank', 'noopener,noreferrer')
+  startPolling()
+}
+
+function payInSameTab(): void {
+  try {
+    sessionStorage.setItem('pending_application_id', props.applicationId)
+  } catch {
+    /* ignore */
+  }
+  window.location.assign(props.checkoutUrl)
 }
 
 function close(): void {
+  stopPolling()
   emit('close')
 }
 
-function retry(): void {
-  teardown()
-  void mountCheckout()
+function goToNani(): void {
+  close()
+  router.push('/nani-ni-nani')
 }
 
-function onKeydown(event: KeyboardEvent): void {
-  if (event.key === 'Escape' && showShell.value) close()
+function goHome(): void {
+  close()
+  router.push('/')
 }
+
+const displayAmount = computed(() => `${props.currency} ${props.amount}`)
 
 watch(
   () => props.open,
   (isOpen) => {
     if (isOpen) {
-      document.addEventListener('keydown', onKeydown)
+      currentStep.value = 'payment'
+      hasOpenedCheckout.value = false
       document.body.style.overflow = 'hidden'
-      void mountCheckout()
-      return
+      startPolling()
+    } else {
+      document.body.style.overflow = ''
+      stopPolling()
     }
-    document.removeEventListener('keydown', onKeydown)
-    document.body.style.overflow = ''
-    teardown()
   },
   { immediate: true },
 )
 
 onBeforeUnmount(() => {
-  document.removeEventListener('keydown', onKeydown)
   document.body.style.overflow = ''
-  teardown()
+  stopPolling()
 })
-
-const failureCopy: Record<string, string> = {
-  ATTEMPTS_EXHAUSTED: t('taifa.payment.failExhausted'),
-  EXPIRED: t('taifa.payment.failExpired'),
-  CANCELLED: t('taifa.payment.failCancelled'),
-}
-
-const failureMessage = computed(() => failureCopy[failureStatus.value.toUpperCase()] ?? t('taifa.payment.failGeneric'))
 </script>
 
 <template>
   <Teleport to="body">
     <div
-      v-if="showShell"
-      class="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+      v-if="open"
+      class="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
       role="dialog"
       aria-modal="true"
       @click.self="close"
     >
       <div
-        class="w-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl relative text-center overflow-hidden flex flex-col"
-        :class="isInline ? 'max-w-lg max-h-[92vh]' : 'max-w-sm p-6 sm:p-7'"
+        class="w-full max-w-lg bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh] animate-fade-in"
       >
-        <!-- Modal header if inline -->
-        <div
-          v-if="isInline"
-          class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-zinc-800 text-left"
-        >
+        <!-- Modal Header -->
+        <div class="px-6 pt-6 pb-4 border-b border-gray-100 dark:border-zinc-800 flex items-start justify-between">
           <div>
-            <h3 class="font-black text-gray-900 dark:text-white text-base">
-              {{ title || t('taifa.register.title') }}
+            <h3 class="text-lg sm:text-xl font-black text-gray-900 dark:text-white tracking-tight">
+              {{ currentStep === 'success' ? t('taifa.register.successTitle') : t('taifa.register.confirmTitle') }}
             </h3>
-            <p v-if="description" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              {{ description }}
+            <p v-if="currentStep !== 'success'" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {{ t('taifa.register.confirmFeeDesc') }}
             </p>
           </div>
           <button
             type="button"
             class="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-            :aria-label="t('taifa.nani.cancel')"
+            :aria-label="t('taifa.register.cancel')"
             @click="close"
           >
-            <span class="material-icons text-lg">close</span>
+            <span class="material-icons text-xl">close</span>
           </button>
         </div>
 
-        <!-- Close button if modal status shell -->
-        <button
-          v-else
-          type="button"
-          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-          :aria-label="t('taifa.nani.cancel')"
-          @click="close"
+        <!-- Two-Step Progress Pill Indicator -->
+        <div
+          class="px-6 py-3 bg-gray-50/70 dark:bg-zinc-800/40 border-b border-gray-100 dark:border-zinc-800 flex items-center gap-3"
         >
-          <span class="material-icons text-lg">close</span>
-        </button>
-
-        <div :class="isInline ? 'p-6 flex-1 overflow-y-auto' : ''">
-          <!-- Loading -->
-          <div v-if="phase === 'loading'" class="py-8">
-            <span class="material-icons animate-spin text-3xl text-[#FEBF01]">sync</span>
-            <p class="mt-4 text-sm font-bold text-gray-600 dark:text-gray-300">
-              {{ isRedirect ? t('taifa.payment.redirecting') : t('taifa.payment.loading') }}
-            </p>
-          </div>
-
-          <!-- SDK / mount error (e.g. 404 when origin is not yet allowed in PayIt) -->
-          <div v-else-if="phase === 'error'" class="py-6">
-            <span class="material-icons text-4xl text-red-500 mb-3">error_outline</span>
-            <p class="text-sm font-bold text-gray-800 dark:text-gray-200 mb-5">{{ errorMessage }}</p>
-            <div class="space-y-2">
-              <button
-                type="button"
-                class="w-full py-3 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm transition-all cursor-pointer"
-                @click="retry"
-              >
-                {{ t('taifa.payment.tryAgain') }}
-              </button>
-              <a
-                :href="PAYIT_STANDALONE_URL"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
-              >
-                {{ t('taifa.payment.openPayit') }}
-              </a>
-            </div>
-          </div>
-
-          <!-- Succeeded -->
-          <div v-else-if="phase === 'succeeded'" class="py-6">
-            <div
-              class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-3"
+          <!-- Step 1: Application -->
+          <div class="flex-1 flex items-center gap-2">
+            <span
+              class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold"
             >
-              <span class="material-icons text-3xl">check_circle</span>
-            </div>
-            <p class="text-lg font-black text-gray-900 dark:text-white">{{ t('taifa.payment.successTitle') }}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ t('taifa.payment.successDesc') }}</p>
-            <p v-if="paymentId" class="mt-3 text-[11px] text-gray-400 font-mono">Ref: {{ paymentId }}</p>
+              ✓
+            </span>
+            <span class="text-xs font-bold text-gray-700 dark:text-gray-300 truncate">
+              {{ t('taifa.register.step1Title') }}
+            </span>
           </div>
 
-          <!-- Failed -->
-          <div v-else-if="phase === 'failed'" class="py-6">
-            <div
-              class="w-14 h-14 rounded-full bg-red-100 text-red-600 dark:bg-red-950/60 dark:text-red-400 flex items-center justify-center mx-auto mb-3"
-            >
-              <span class="material-icons text-3xl">cancel</span>
-            </div>
-            <p class="text-lg font-black text-gray-900 dark:text-white">{{ t('taifa.payment.failedTitle') }}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-5">{{ failureMessage }}</p>
-            <button
-              type="button"
-              class="w-full py-3 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm transition-all cursor-pointer"
-              @click="retry"
-            >
-              {{ t('taifa.payment.tryAgain') }}
-            </button>
-          </div>
+          <span class="material-icons text-gray-300 dark:text-zinc-600 text-sm">arrow_forward</span>
 
-          <!-- Inline mode only: PayIt SDK mounts its iframe here -->
-          <div
-            v-if="isInline"
-            v-show="phase === 'ready' || phase === 'processing'"
-            ref="containerRef"
-            class="w-full payit-inline-frame"
-          ></div>
+          <!-- Step 2: Payment -->
+          <div class="flex-1 flex items-center gap-2">
+            <span
+              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+              :class="
+                currentStep === 'success'
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-[#FEBF01] text-gray-950 ring-2 ring-[#FEBF01]/30'
+              "
+            >
+              {{ currentStep === 'success' ? '✓' : '2' }}
+            </span>
+            <span
+              class="text-xs font-bold truncate"
+              :class="currentStep === 'success' ? 'text-gray-700 dark:text-gray-300' : 'text-gray-900 dark:text-white'"
+            >
+              {{ t('taifa.register.step2Title') }}
+            </span>
+          </div>
         </div>
 
-        <!-- Footnote for inline -->
+        <!-- Modal Body -->
+        <div class="p-6 overflow-y-auto flex-1 space-y-5">
+          <!-- SUCCESS STATE -->
+          <div v-if="currentStep === 'success'" class="text-center py-4 space-y-4">
+            <div
+              class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto text-3xl font-black shadow-inner"
+            >
+              ✓
+            </div>
+            <div>
+              <h4 class="text-xl font-black text-gray-900 dark:text-white">
+                {{ t('taifa.register.successTitle') }}
+              </h4>
+              <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-sm mx-auto leading-relaxed">
+                {{ t('taifa.register.successDesc') }}
+              </p>
+            </div>
+
+            <!-- Application Reference ID -->
+            <div
+              v-if="applicationId"
+              class="p-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-xs text-gray-500 dark:text-gray-400 inline-block px-5"
+            >
+              {{ t('taifa.register.appRef') }}
+              <span class="font-mono font-bold text-gray-900 dark:text-white ml-1">{{ applicationId }}</span>
+            </div>
+
+            <div class="space-y-2.5 pt-2">
+              <button
+                type="button"
+                class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm shadow transition-all cursor-pointer"
+                @click="goToNani"
+              >
+                {{ t('taifa.register.viewNani') }}
+              </button>
+              <button
+                type="button"
+                class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                @click="goHome"
+              >
+                {{ t('taifa.register.returnHome') }}
+              </button>
+            </div>
+          </div>
+
+          <!-- PAYMENT STEP (STEP 1 SUMMARY + STEP 2 PAYMENT) -->
+          <template v-else>
+            <!-- Step 1 Summary Card -->
+            <div class="bg-gray-50 dark:bg-zinc-800/60 rounded-2xl p-4 border border-gray-100 dark:border-zinc-800">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                  {{ t('taifa.register.step1Title') }}
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400"
+                >
+                  <span class="material-icons text-sm">check_circle</span>
+                  <span>Tayari</span>
+                </span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span class="text-gray-400 block">{{ t('taifa.register.applicant') }}:</span>
+                  <span class="font-bold text-gray-800 dark:text-gray-200">{{ applicantName || '—' }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-400 block">{{ t('taifa.register.phone') }}:</span>
+                  <span class="font-bold text-gray-800 dark:text-gray-200">+255 {{ applicantPhone || '—' }}</span>
+                </div>
+                <div
+                  v-if="applicantUniversity"
+                  class="col-span-2 pt-1 border-t border-gray-200/50 dark:border-zinc-700/50"
+                >
+                  <span class="text-gray-400 block">{{ t('taifa.register.university') }}:</span>
+                  <span class="font-bold text-gray-800 dark:text-gray-200">{{ applicantUniversity }}</span>
+                </div>
+                <div v-if="applicationId" class="col-span-2 text-[11px] font-mono text-gray-400">
+                  Ref: <span class="font-bold text-gray-700 dark:text-gray-300">{{ applicationId }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2 Payment Box -->
+            <div
+              class="border-2 border-[#FEBF01]/40 bg-[#FEBF01]/5 dark:bg-[#FEBF01]/10 rounded-2xl p-5 text-center relative"
+            >
+              <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-1">
+                {{ t('taifa.register.feeBoxTitle') }}
+              </span>
+              <div class="text-3xl sm:text-4xl font-black text-gray-950 dark:text-white tracking-tight">
+                {{ displayAmount }}
+              </div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {{ t('taifa.register.paymentProvider') }}
+              </p>
+
+              <!-- Supported Networks Badge Pills -->
+              <div
+                class="flex items-center justify-center gap-1.5 flex-wrap mt-3 pt-3 border-t border-gray-200/60 dark:border-zinc-700/60"
+              >
+                <span
+                  class="px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 text-[10px] font-black text-red-600 border border-red-200 dark:border-red-900/40"
+                >
+                  M-Pesa
+                </span>
+                <span
+                  class="px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 text-[10px] font-black text-blue-600 border border-blue-200 dark:border-blue-900/40"
+                >
+                  Mixx by Yas
+                </span>
+                <span
+                  class="px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 text-[10px] font-black text-red-700 border border-red-200 dark:border-red-900/40"
+                >
+                  Airtel Money
+                </span>
+                <span
+                  class="px-2 py-0.5 rounded-md bg-white dark:bg-zinc-800 text-[10px] font-black text-orange-600 border border-orange-200 dark:border-orange-900/40"
+                >
+                  Halopesa
+                </span>
+              </div>
+            </div>
+
+            <!-- Primary Action Button: Pay via PayIt -->
+            <div class="space-y-2.5">
+              <button
+                type="button"
+                class="w-full py-4 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-base font-black flex items-center justify-center gap-2 shadow-lg hover:shadow-[#FEBF01]/30 transition-all active:scale-98 cursor-pointer"
+                @click="openPayItCheckout"
+              >
+                <span class="material-icons text-xl">payments</span>
+                <span>{{ t('taifa.register.payViaPayit') }}</span>
+                <span class="material-icons text-base">open_in_new</span>
+              </button>
+
+              <button
+                type="button"
+                class="w-full py-2 text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors cursor-pointer"
+                @click="payInSameTab"
+              >
+                {{ t('taifa.register.payInThisTab') }} →
+              </button>
+            </div>
+
+            <!-- Live Status Listener Card -->
+            <div
+              class="rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/40 p-4 text-left"
+            >
+              <div class="flex items-start gap-3">
+                <span class="material-icons animate-spin text-[#FEBF01] text-xl shrink-0 mt-0.5">sync</span>
+                <div class="flex-1">
+                  <p class="text-xs font-bold text-amber-900 dark:text-amber-200 leading-snug">
+                    {{ t('taifa.register.waitingPayment') }}
+                  </p>
+                  <p class="text-[11px] text-amber-700 dark:text-amber-300 mt-1">
+                    {{
+                      t(
+                        'taifa.register.openInNewTab',
+                        'Once you approve the prompt on your phone, this modal updates automatically.',
+                      )
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Manual Status Refresh Button -->
+              <div
+                class="mt-3 pt-3 border-t border-amber-200/50 dark:border-amber-900/40 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-amber-800/80 dark:text-amber-300/80">
+                  {{ isCheckingStatus ? 'Checking status…' : 'Paid already?' }}
+                </span>
+                <button
+                  type="button"
+                  :disabled="isCheckingStatus"
+                  class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800 hover:bg-amber-100 dark:hover:bg-zinc-700 text-xs font-bold text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60"
+                  @click="checkPaymentStatus"
+                >
+                  <span v-if="isCheckingStatus" class="material-icons animate-spin text-xs">sync</span>
+                  <span>{{ t('taifa.register.checkStatus') }}</span>
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Footnote -->
         <footer
-          v-if="isInline"
-          class="flex items-center justify-center gap-1.5 py-3 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-800/40 text-[11px] text-gray-400"
+          class="px-6 py-3 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-800/40 flex items-center justify-between text-[11px] text-gray-400"
         >
-          <span class="material-icons text-xs">lock</span>
-          {{ t('taifa.payment.secureFooter', 'Payments are processed securely by PayIt.') }}
+          <span class="flex items-center gap-1">
+            <span class="material-icons text-xs">lock</span>
+            <span>PayIt Secure Checkout</span>
+          </span>
+          <button
+            type="button"
+            class="hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
+            @click="close"
+          >
+            {{ t('taifa.register.cancel') }}
+          </button>
         </footer>
       </div>
     </div>
@@ -351,9 +426,17 @@ const failureMessage = computed(() => failureCopy[failureStatus.value.toUpperCas
 </template>
 
 <style scoped>
-.payit-inline-frame :deep(iframe) {
-  width: 100%;
-  border: 0;
-  display: block;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 </style>
