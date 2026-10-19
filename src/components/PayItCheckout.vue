@@ -13,7 +13,7 @@ const props = withDefaults(
   defineProps<{
     open: boolean
     slug?: string
-    mode?: 'modal' | 'inline'
+    mode?: 'modal' | 'inline' | 'redirect'
     title?: string
     description?: string
   }>(),

@@ -374,7 +374,8 @@
       "viewNani": "Watch Nani ni Nani?",
       "returnHome": "Back to Home",
       "confirmingTitle": "Confirming your payment…",
-      "confirmingDesc": "Please wait — we are confirming your payment with the provider. Do not close this page."
+      "confirmingDesc": "Please wait — we are confirming your payment with the provider. Do not close this page.",
+      "title": "Comedian Registration"
     },
     "nani": {
       "title": "Nani ni Nani?",
@@ -414,7 +415,8 @@
       "pageSuccessTitle": "Payment Complete",
       "pageSuccessDesc": "Thank you! Your payment was received and your application awaits admin review.",
       "pageFailedTitle": "Payment Not Completed",
-      "pageFailedDesc": "The payment did not complete. You can try again from the application form."
+      "pageFailedDesc": "The payment did not complete. You can try again from the application form.",
+      "secureFooter": "Payments are processed securely by PayIt. Amounts are in TSh."
     },
     "wall": {
       "title": "Wall of Fame",

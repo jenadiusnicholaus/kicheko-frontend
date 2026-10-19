@@ -266,7 +266,8 @@
       "viewNani": "Tazama Nani ni Nani?",
       "returnHome": "Rudi Nyumbani",
       "confirmingTitle": "Tunathibitisha malipo yako…",
-      "confirmingDesc": "Tafadhali subiri — tunathibitisha malipo yako na mtoa huduma. Usifunge ukurasa huu."
+      "confirmingDesc": "Tafadhali subiri — tunathibitisha malipo yako na mtoa huduma. Usifunge ukurasa huu.",
+      "title": "Usajili wa Comedian"
     },
     "nani": {
       "title": "Nani ni Nani?",
@@ -306,7 +307,8 @@
       "pageSuccessTitle": "Malipo Yamekamilika",
       "pageSuccessDesc": "Asante! Malipo yako yamepokelewa na ombi lako linasubiri uhakiki wa Usimamizi.",
       "pageFailedTitle": "Malipo Hayakukamilika",
-      "pageFailedDesc": "Malipo hayakukamilika. Unaweza kujaribu tena kupitia fomu ya maombi."
+      "pageFailedDesc": "Malipo hayakukamilika. Unaweza kujaribu tena kupitia fomu ya maombi.",
+      "secureFooter": "Malipo yanashughulikiwa kwa usalama na PayIt. Kiasi ni kwa TSh."
     },
     "wall": {
       "title": "Wall of Fame",
