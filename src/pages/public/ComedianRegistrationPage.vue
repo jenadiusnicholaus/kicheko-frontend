@@ -175,6 +175,24 @@
       @close="onCheckoutClose"
     />
 
+    <!-- Payment Confirmation Modal — waits for the Pay-IT webhook -->
+    <div
+      v-if="confirmingPayment"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+    >
+      <div
+        class="w-full max-w-md bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 sm:p-8 text-center"
+      >
+        <span class="material-icons animate-spin text-4xl text-[#FEBF01]">sync</span>
+        <h3 class="text-xl font-black text-gray-900 dark:text-white mt-4 mb-2">
+          {{ t('taifa.register.confirmingTitle') }}
+        </h3>
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+          {{ t('taifa.register.confirmingDesc') }}
+        </p>
+      </div>
+    </div>
+
     <!-- Success Screen Modal -->
     <div
       v-if="showSuccessModal"
@@ -258,6 +276,7 @@ const form = reactive({
 
 const showSuccessModal = ref(false)
 const showPayModal = ref(false)
+const confirmingPayment = ref(false)
 const paymentDone = ref(false)
 const paymentRef = ref('')
 const isSubmitting = ref(false)
@@ -286,13 +305,17 @@ const handleSubmit = async () => {
 
 const onPaymentSuccess = async (result: PayItResult) => {
   paymentRef.value = result.payment_id
-  paymentDone.value = true
+  showPayModal.value = false
+  confirmingPayment.value = true
   try {
     await applicationsStore.recordPayment(createdAppId.value, result.payment_id)
   } catch {
     // Reference failed to save — the PayIt webhook still confirms the payment.
   }
-  showPayModal.value = false
+  // Wait for the signed webhook to mark the payment confirmed before
+  // declaring success; on timeout show the pending-confirmation copy.
+  paymentDone.value = await applicationsStore.waitForPaymentConfirmation(createdAppId.value)
+  confirmingPayment.value = false
   showSuccessModal.value = true
 }
 

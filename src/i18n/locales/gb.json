@@ -368,11 +368,13 @@
       "cancel": "Cancel",
       "successTitle": "Congratulations, Application Submitted!",
       "successDesc": "Your application and payment were received — it is pending Admin confirmation before appearing on Nani ni Nani or Wall of Fame.",
-      "successDescPending": "Your application is registered. Payment is not complete yet — you can finish it later.",
+      "successDescPending": "Your application is registered and your payment is being confirmed — it will appear after admin review.",
       "paymentRef": "Application Reference:",
       "appRef": "Application Reference:",
       "viewNani": "Watch Nani ni Nani?",
-      "returnHome": "Back to Home"
+      "returnHome": "Back to Home",
+      "confirmingTitle": "Confirming your payment…",
+      "confirmingDesc": "Please wait — we are confirming your payment with the provider. Do not close this page."
     },
     "nani": {
       "title": "Nani ni Nani?",

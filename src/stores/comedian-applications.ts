@@ -106,6 +106,24 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       return newApp
     },
 
+    /** Poll until the Pay-IT webhook confirms the payment (or timeout). */
+    async waitForPaymentConfirmation(
+      id: string,
+      { intervalMs = 2500, timeoutMs = 60_000 }: { intervalMs?: number; timeoutMs?: number } = {},
+    ): Promise<boolean> {
+      const deadline = Date.now() + timeoutMs
+      while (Date.now() < deadline) {
+        try {
+          const { data } = await http.get(`/applications/${id}/payment-status/`)
+          if (data?.payment_confirmed || data?.payment_status === 'paid') return true
+        } catch {
+          // Transient errors — keep polling until the deadline.
+        }
+        await new Promise((resolve) => setTimeout(resolve, intervalMs))
+      }
+      return false
+    },
+
     /** Link a Pay-IT payment_id reported by hosted checkout to the application. */
     async recordPayment(id: string, paymentId: string): Promise<ComedianApplication> {
       const { data } = await http.post(`/applications/${id}/payment/`, { payment_id: paymentId })

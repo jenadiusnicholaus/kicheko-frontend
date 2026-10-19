@@ -260,11 +260,13 @@
       "cancel": "Ghairi",
       "successTitle": "Hongera, Maombi Yametumwa!",
       "successDesc": "Ombi lako na malipo yamepokelewa — linasubiri idhini ya Usimamizi kabla ya kuonekana kwenye Nani ni Nani au Wall of Fame.",
-      "successDescPending": "Ombi lako limesajiliwa. Malipo bado hayajakamilika — unaweza kukamilisha baadaye.",
+      "successDescPending": "Ombi lako limesajiliwa na malipo yako yanathibitishwa — litaonekana baada ya ukaguzi wa usimamizi.",
       "paymentRef": "Kumbukumbu ya Ombi:",
       "appRef": "Kumbukumbu ya Ombi:",
       "viewNani": "Tazama Nani ni Nani?",
-      "returnHome": "Rudi Nyumbani"
+      "returnHome": "Rudi Nyumbani",
+      "confirmingTitle": "Tunathibitisha malipo yako…",
+      "confirmingDesc": "Tafadhali subiri — tunathibitisha malipo yako na mtoa huduma. Usifunge ukurasa huu."
     },
     "nani": {
       "title": "Nani ni Nani?",
