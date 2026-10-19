@@ -471,6 +471,8 @@
       "feeRevenueTitle": "Fee Revenue (10,000 TSh)",
       "feeRevenueDesc": "Via M-Pesa / Tigo / Airtel",
       "feePaidLabel": "TSh 10,000 (Paid)",
+      "feeProcessingLabel": "Processing",
+      "feePendingLabel": "Not Paid",
       "statusPendingAdmin": "Awaiting Admin Approval",
       "statusPendingFee": "Awaiting Registration Fee",
       "statusRejected": "Rejected",

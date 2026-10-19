@@ -302,9 +302,5 @@ const onPaymentFailure = () => {
 
 const onCheckoutClose = () => {
   showPayModal.value = false
-  if (createdAppId.value && !paymentDone.value) {
-    // Application created but not paid yet — still acknowledge it.
-    showSuccessModal.value = true
-  }
 }
 </script>

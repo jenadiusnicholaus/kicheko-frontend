@@ -363,6 +363,8 @@
       "feeRevenueTitle": "Mapato ya Ada (10,000 TSh)",
       "feeRevenueDesc": "Kupitia M-Pesa / Tigo / Airtel",
       "feePaidLabel": "TSh 10,000 (Imelipwa)",
+      "feeProcessingLabel": "Inachakatwa",
+      "feePendingLabel": "Haijalipwa",
       "statusPendingAdmin": "Inasubiri Idhini ya Admin",
       "statusPendingFee": "Inasubiri Ada ya Usajili",
       "statusRejected": "Imekataliwa",

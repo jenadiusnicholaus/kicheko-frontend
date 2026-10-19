@@ -13,7 +13,7 @@ export interface ComedianApplication {
   bio?: string
   status: 'pending' | 'pending_payment' | 'paid_pending_review' | 'approved' | 'rejected'
   feeAmount: number
-  paymentStatus: 'pending' | 'paid' | 'n/a'
+  paymentStatus: 'pending' | 'processing' | 'paid' | 'n/a'
   paymentMethod: string
   paymentRef: string
   appliedAt: string

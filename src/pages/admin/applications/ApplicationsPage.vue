@@ -201,7 +201,20 @@
                     {{ app.paymentMethod }} • {{ app.paymentRef }}
                   </span>
                 </div>
-                <span v-else class="text-gray-400 font-semibold">—</span>
+                <div v-else-if="app.paymentStatus === 'processing'" class="flex flex-col">
+                  <span class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
+                    <span class="material-icons text-sm animate-spin">sync</span>
+                    <span>{{ t('taifa.admin.feeProcessingLabel') }}</span>
+                  </span>
+                  <span class="text-[10px] text-gray-400 font-mono">{{ app.paymentRef }}</span>
+                </div>
+                <div v-else class="flex flex-col">
+                  <span class="inline-flex items-center gap-1 text-gray-500 dark:text-gray-400 font-bold">
+                    <span class="material-icons text-sm">schedule</span>
+                    <span>{{ t('taifa.admin.feePendingLabel') }}</span>
+                  </span>
+                  <span class="text-[10px] text-gray-400">TSh {{ app.feeAmount.toLocaleString() }}</span>
+                </div>
               </td>
 
               <!-- Application Status -->
