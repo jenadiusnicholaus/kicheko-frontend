@@ -106,6 +106,17 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       return newApp
     },
 
+    /** Link a Pay-IT payment_id reported by hosted checkout to the application. */
+    async recordPayment(id: string, paymentId: string): Promise<ComedianApplication> {
+      const { data } = await http.post(`/applications/${id}/payment/`, { payment_id: paymentId })
+      const updated = normalizeBackendApplication(data)
+      const idx = this.applications.findIndex((a) => a.id === id)
+      if (idx !== -1) {
+        this.applications[idx] = updated
+      }
+      return updated
+    },
+
     async approveApplication(id: string): Promise<boolean> {
       const { data } = await http.post(`/applications/${id}/approve/`)
       const updated = normalizeBackendApplication(data)

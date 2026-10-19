@@ -51,6 +51,16 @@ const routes: Array<RouteRecordRaw> = [
         path: 'comedians',
         redirect: { name: 'nani-ni-nani' },
       },
+      {
+        name: 'payment-success',
+        path: 'payment/success',
+        component: () => import('../pages/public/PaymentResultPage.vue'),
+      },
+      {
+        name: 'payment-failed',
+        path: 'payment/failed',
+        component: () => import('../pages/public/PaymentResultPage.vue'),
+      },
     ],
   },
 

@@ -167,6 +167,14 @@
       </form>
     </div>
 
+    <!-- PayIt Hosted Checkout -->
+    <PayItCheckout
+      :open="showPayModal"
+      @success="onPaymentSuccess"
+      @failure="onPaymentFailure"
+      @close="onCheckoutClose"
+    />
+
     <!-- Success Screen Modal -->
     <div
       v-if="showSuccessModal"
@@ -185,14 +193,22 @@
           {{ t('taifa.register.successTitle') }}
         </h3>
         <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-5 leading-relaxed">
-          {{ t('taifa.register.successDesc') }}
+          {{ paymentDone ? t('taifa.register.successDesc') : t('taifa.register.successDescPending') }}
         </p>
 
         <!-- Reference badge -->
-        <div class="p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl mb-6 text-xs text-gray-500 dark:text-gray-400">
+        <div class="p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl mb-3 text-xs text-gray-500 dark:text-gray-400">
           {{ t('taifa.register.appRef') }}
           <span class="font-mono font-bold text-gray-900 dark:text-white">{{ createdAppId }}</span>
         </div>
+        <div
+          v-if="paymentRef"
+          class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl mb-6 text-xs text-emerald-700 dark:text-emerald-400"
+        >
+          {{ t('taifa.payment.paymentRef') }}
+          <span class="font-mono font-bold">{{ paymentRef }}</span>
+        </div>
+        <div v-else class="mb-6" />
 
         <div class="space-y-2.5">
           <RouterLink
@@ -220,6 +236,8 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 import { useUniversitiesStore } from '../../stores/universities'
+import PayItCheckout from '../../components/PayItCheckout.vue'
+import type { PayItResult } from '../../lib/payit'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -239,6 +257,9 @@ const form = reactive({
 })
 
 const showSuccessModal = ref(false)
+const showPayModal = ref(false)
+const paymentDone = ref(false)
+const paymentRef = ref('')
 const isSubmitting = ref(false)
 const createdAppId = ref('')
 const submitError = ref('')
@@ -255,11 +276,35 @@ const handleSubmit = async () => {
       phone: form.phone,
     })
     createdAppId.value = app.id
-    showSuccessModal.value = true
+    showPayModal.value = true
   } catch (e: any) {
     submitError.value = e?.response?.data?.detail || e?.message || 'Submission failed'
   } finally {
     isSubmitting.value = false
+  }
+}
+
+const onPaymentSuccess = async (result: PayItResult) => {
+  paymentRef.value = result.payment_id
+  paymentDone.value = true
+  try {
+    await applicationsStore.recordPayment(createdAppId.value, result.payment_id)
+  } catch {
+    // Reference failed to save — the PayIt webhook still confirms the payment.
+  }
+  showPayModal.value = false
+  showSuccessModal.value = true
+}
+
+const onPaymentFailure = () => {
+  // Keep the checkout's own failure panel visible; the user can retry there.
+}
+
+const onCheckoutClose = () => {
+  showPayModal.value = false
+  if (createdAppId.value && !paymentDone.value) {
+    // Application created but not paid yet — still acknowledge it.
+    showSuccessModal.value = true
   }
 }
 </script>
