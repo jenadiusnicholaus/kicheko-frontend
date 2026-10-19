@@ -1,7 +1,7 @@
 export const PAYIT_ORIGIN = 'https://payit.co.tz'
 export const PAYIT_SDK_URL = `${PAYIT_ORIGIN}/sdk/checkout-v1.js`
 
-export const PAYIT_SLUG = (import.meta.env.VITE_PAYIT_SLUG as string | undefined) || 'kicheko-pro'
+export const PAYIT_SLUG = (import.meta.env.VITE_PAYIT_SLUG as string | undefined) || 'taifa-house'
 
 export const PAYIT_STANDALONE_URL = `${PAYIT_ORIGIN}/pay/${PAYIT_SLUG}`
 
