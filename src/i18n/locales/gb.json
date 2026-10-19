@@ -397,6 +397,7 @@
     },
     "payment": {
       "loading": "Loading secure checkout…",
+      "redirecting": "Redirecting to PayIt secure checkout…",
       "loadError": "We could not load the secure payment form.",
       "timeoutError": "The secure payment form did not load. You can still pay on the PayIt page.",
       "startError": "We could not start the secure payment form.",

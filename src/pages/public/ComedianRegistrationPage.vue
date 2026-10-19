@@ -167,9 +167,10 @@
       </form>
     </div>
 
-    <!-- PayIt Hosted Checkout -->
+    <!-- PayIt Hosted Checkout (redirect mode bypasses embed 404) -->
     <PayItCheckout
       :open="showPayModal"
+      mode="redirect"
       @success="onPaymentSuccess"
       @failure="onPaymentFailure"
       @close="onCheckoutClose"
@@ -295,6 +296,11 @@ const handleSubmit = async () => {
       phone: form.phone,
     })
     createdAppId.value = app.id
+    try {
+      sessionStorage.setItem('pending_application_id', app.id)
+    } catch {
+      /* ignore storage access error */
+    }
     showPayModal.value = true
   } catch (e: any) {
     submitError.value = e?.response?.data?.detail || e?.message || 'Submission failed'

@@ -47,12 +47,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 
 const route = useRoute()
 const { t } = useI18n()
+const applicationsStore = useComedianApplicationsStore()
 
 // PayIt appends payit_payment_id + payit_status to the configured redirect URL.
 const isSuccess = computed(() => {
@@ -62,4 +64,17 @@ const isSuccess = computed(() => {
 })
 
 const paymentId = computed(() => String(route.query.payit_payment_id || ''))
+
+onMounted(async () => {
+  try {
+    const pendingId = sessionStorage.getItem('pending_application_id')
+    const pId = paymentId.value
+    if (isSuccess.value && pendingId && pId) {
+      await applicationsStore.recordPayment(pendingId, pId)
+      sessionStorage.removeItem('pending_application_id')
+    }
+  } catch {
+    // The PayIt webhook still confirms the payment on the backend
+  }
+})
 </script>

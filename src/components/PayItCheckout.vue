@@ -55,12 +55,14 @@ function clearReadyTimer(): void {
 }
 
 const isInline = computed(() => props.mode === 'inline')
+const isRedirect = computed(() => props.mode === 'redirect')
 
 // In modal mode the SDK renders its own overlay; our shell only shows surrounding states.
 // In inline mode, our shell hosts the iframe container across ready/processing states.
+// In redirect mode, our shell displays a loading/redirecting message until navigation occurs.
 const showShell = computed(() => {
   if (!props.open) return false
-  if (isInline.value) return true
+  if (isInline.value || isRedirect.value) return true
   return phase.value !== 'ready' && phase.value !== 'processing'
 })
 
@@ -80,6 +82,20 @@ async function mountCheckout(): Promise<void> {
   errorMessage.value = ''
   paymentId.value = ''
   failureStatus.value = ''
+
+  if (isRedirect.value) {
+    try {
+      const sdk = await loadPayItSdk()
+      checkout = sdk.checkout({
+        slug: props.slug,
+        mode: 'redirect',
+      })
+      checkout.open()
+    } catch {
+      window.location.assign(PAYIT_STANDALONE_URL)
+    }
+    return
+  }
 
   let sdk
   try {
@@ -255,7 +271,7 @@ const failureMessage = computed(() => failureCopy[failureStatus.value.toUpperCas
           <div v-if="phase === 'loading'" class="py-8">
             <span class="material-icons animate-spin text-3xl text-[#FEBF01]">sync</span>
             <p class="mt-4 text-sm font-bold text-gray-600 dark:text-gray-300">
-              {{ t('taifa.payment.loading') }}
+              {{ isRedirect ? t('taifa.payment.redirecting') : t('taifa.payment.loading') }}
             </p>
           </div>
 
