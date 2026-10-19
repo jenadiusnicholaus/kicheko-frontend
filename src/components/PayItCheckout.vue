@@ -41,7 +41,23 @@ const applicationsStore = useComedianApplicationsStore()
 type Step = 'payment' | 'success'
 const currentStep = ref<Step>('payment')
 const isCheckingStatus = ref(false)
+const hasOpenedPopup = ref(false)
 let pollingInterval: ReturnType<typeof setInterval> | null = null
+
+function openPayItPopup(): void {
+  hasOpenedPopup.value = true
+  const width = 500
+  const height = 750
+  const left = window.screenX + Math.max(0, (window.outerWidth - width) / 2)
+  const top = window.screenY + Math.max(0, (window.outerHeight - height) / 2)
+  const features = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
+
+  const popup = window.open(props.checkoutUrl, 'PayItCheckout', features)
+  if (!popup || popup.closed) {
+    // If popup is blocked by the browser, open in new tab
+    window.open(props.checkoutUrl, '_blank')
+  }
+}
 
 function stopPolling(): void {
   if (pollingInterval) {
@@ -107,6 +123,7 @@ watch(
   (isOpen) => {
     if (isOpen) {
       currentStep.value = 'payment'
+      hasOpenedPopup.value = false
       document.body.style.overflow = 'hidden'
       startPolling()
     } else {
@@ -238,10 +255,10 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <!-- STEP 2: EMBEDDED PAYIT CHECKOUT PAGE -->
+          <!-- STEP 2: PAYIT PAYMENT POPUP FLOW -->
           <template v-else>
             <!-- Compact Application Summary -->
-            <div class="px-5 py-3 border-b border-gray-100 dark:border-zinc-800">
+            <div class="px-5 py-3 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/40">
               <div class="flex items-center justify-between mb-1.5">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">
                   {{ t('taifa.register.step1Title') }}
@@ -272,35 +289,100 @@ onBeforeUnmount(() => {
               </div>
             </div>
 
-            <!-- PayIt Embedded iframe -->
-            <div class="flex-1 min-h-0 relative">
-              <iframe
-                :src="checkoutUrl"
-                class="w-full border-0 payit-iframe"
-                title="PayIt Checkout"
-                allow="payment"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"
-              />
-            </div>
+            <!-- PayIt Payment Action Box -->
+            <div class="p-6 flex flex-col items-center text-center space-y-4">
+              <div
+                class="w-14 h-14 rounded-2xl bg-[#FEBF01]/20 text-gray-950 dark:text-[#FEBF01] flex items-center justify-center shadow-inner"
+              >
+                <span class="material-icons text-3xl">payments</span>
+              </div>
 
-            <!-- Payment Status Listener -->
-            <div class="px-5 py-3 border-t border-gray-100 dark:border-zinc-800 bg-amber-50/60 dark:bg-amber-950/20">
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-2 flex-1 min-w-0">
-                  <span class="material-icons animate-spin text-[#FEBF01] text-base shrink-0">sync</span>
-                  <p class="text-[11px] text-amber-800 dark:text-amber-300 font-medium truncate">
-                    {{ t('taifa.register.waitingPayment') }}
-                  </p>
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                  {{ t('taifa.register.feeBoxTitle') }}
+                </span>
+                <div class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+                  {{ currency }} {{ amount }}
                 </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto">
+                  Lipa ada ya usajili kupitia mfumo salama wa PayIt kwa kutumia simu au kadi.
+                </p>
+              </div>
+
+              <!-- Supported Networks Badge Row -->
+              <div class="flex flex-wrap items-center justify-center gap-1.5 py-1">
+                <span
+                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20"
+                >
+                  M-Pesa
+                </span>
+                <span
+                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20"
+                >
+                  Tigo Pesa
+                </span>
+                <span
+                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20"
+                >
+                  Airtel Money
+                </span>
+                <span
+                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-500/20"
+                >
+                  HaloPesa
+                </span>
+              </div>
+
+              <!-- Primary Action: Open PayIt -->
+              <div class="w-full space-y-2 pt-1">
                 <button
                   type="button"
-                  :disabled="isCheckingStatus"
-                  class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800 hover:bg-amber-100 dark:hover:bg-zinc-700 text-xs font-bold text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60 shrink-0"
-                  @click="checkPaymentStatus"
+                  class="w-full py-3.5 rounded-2xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-lg hover:shadow-[#FEBF01]/30 transition-all active:scale-98 cursor-pointer"
+                  @click="openPayItPopup"
                 >
-                  <span v-if="isCheckingStatus" class="material-icons animate-spin text-xs">sync</span>
-                  <span>{{ t('taifa.register.checkStatus') }}</span>
+                  <span class="material-icons text-lg">open_in_new</span>
+                  <span>{{ t('taifa.register.payViaPayit') }}</span>
                 </button>
+
+                <p
+                  v-if="hasOpenedPopup"
+                  class="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-pulse"
+                >
+                  ✓ Dirisha la PayIt limefunguliwa. Kamilisha malipo kwenye PayIt kisha subiri uthibitisho hapa chini.
+                </p>
+              </div>
+
+              <!-- Real-time Status / Polling Listener Box -->
+              <div
+                class="w-full p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 text-left space-y-2"
+              >
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="relative flex h-3 w-3 shrink-0">
+                      <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FEBF01] opacity-75"
+                      ></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-[#FEBF01]"></span>
+                    </span>
+                    <span class="text-xs font-bold text-amber-950 dark:text-amber-200 truncate">
+                      {{ t('taifa.register.waitingPayment') }}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    :disabled="isCheckingStatus"
+                    class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800 hover:bg-amber-100 dark:hover:bg-zinc-700 text-xs font-bold text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60 shrink-0"
+                    @click="checkPaymentStatus"
+                  >
+                    <span v-if="isCheckingStatus" class="material-icons animate-spin text-xs">sync</span>
+                    <span>{{ t('taifa.register.checkStatus') }}</span>
+                  </button>
+                </div>
+
+                <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                  Mara tu utakapolipa kwenye PayIt, mfumo utathibitisha na kufungua ukurasa wa ushindi kiotomatiki.
+                </p>
               </div>
             </div>
           </template>
@@ -335,14 +417,9 @@ onBeforeUnmount(() => {
   }
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
 .animate-fade-in {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.payit-iframe {
-  height: 520px;
-  min-height: 420px;
 }
 </style>
