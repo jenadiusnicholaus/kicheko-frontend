@@ -254,6 +254,24 @@
                 <option value="ended">{{ t('taifa.admin.nani.statusEnded') }}</option>
               </select>
             </div>
+            <div>
+              <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
+                t('taifa.admin.nani.themeColorLabel')
+              }}</label>
+              <div class="flex items-center gap-2.5">
+                <input
+                  v-model="form.themeColor"
+                  type="color"
+                  class="w-12 h-10 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 cursor-pointer p-1"
+                />
+                <input
+                  v-model="form.themeColor"
+                  type="text"
+                  maxlength="7"
+                  class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white font-mono"
+                />
+              </div>
+            </div>
           </div>
 
           <!-- Contestant A -->
@@ -461,6 +479,7 @@ const form = reactive({
   title: '',
   roundNumber: 1,
   voteFee: 1000,
+  themeColor: '#FEBF01',
   status: 'draft' as 'draft' | 'active' | 'ended',
   category: '',
   contestantA: emptyContestant(),
@@ -498,6 +517,7 @@ const openAddModal = () => {
   form.title = ''
   form.roundNumber = naniStore.battles.length + 1
   form.voteFee = 1000
+  form.themeColor = '#FEBF01'
   form.status = 'draft'
   form.category = ''
   form.contestantA = emptyContestant()
@@ -513,6 +533,7 @@ const openEditModal = (b: BattleRound) => {
   form.title = b.title
   form.roundNumber = b.roundNumber
   form.voteFee = b.voteFee
+  form.themeColor = b.themeColor || '#FEBF01'
   form.status = b.status
   form.category = b.category || ''
   form.contestantA = { ...b.contestantA }
@@ -530,6 +551,7 @@ const saveBattle = async () => {
       title: form.title,
       roundNumber: form.roundNumber,
       voteFee: form.voteFee,
+      themeColor: form.themeColor,
       status: form.status,
       category: form.category || null,
       contestantA: { ...form.contestantA },

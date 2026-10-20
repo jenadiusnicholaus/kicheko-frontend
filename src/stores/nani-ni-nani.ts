@@ -19,6 +19,7 @@ export interface BattleRound {
   title: string
   roundNumber: number
   voteFee: number
+  themeColor: string
   status: 'draft' | 'active' | 'ended'
   isActive: boolean
   category: string | null
@@ -49,6 +50,7 @@ function normalizeBackendBattle(raw: any): BattleRound {
     title: raw.title,
     roundNumber: raw.round_number || raw.roundNumber,
     voteFee: raw.vote_fee || raw.voteFee,
+    themeColor: raw.theme_color || raw.themeColor || '#FEBF01',
     status: raw.status || (raw.is_active ? 'active' : 'ended'),
     isActive: raw.is_active ?? raw.isActive ?? false,
     category: raw.category || null,
@@ -66,6 +68,7 @@ function battleWritePayload(b: Partial<BattleRound>): Record<string, string> {
   if (b.title !== undefined) p.title = b.title
   if (b.roundNumber !== undefined) p.round_number = String(b.roundNumber)
   if (b.voteFee !== undefined) p.vote_fee = String(b.voteFee)
+  if (b.themeColor !== undefined) p.theme_color = b.themeColor
   if (b.status !== undefined) p.status = b.status
   if (b.category) p.category = b.category
   if (b.contestantA) {

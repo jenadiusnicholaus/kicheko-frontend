@@ -63,6 +63,7 @@
             <!-- Left Card: Contestant A (e.g. Frank Mollel) -->
             <div
               class="md:col-span-5 min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
+              :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
             >
               <!-- Photo Container -->
               <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
@@ -90,7 +91,8 @@
                 <div>
                   <!-- University Code Pill -->
                   <div
-                    class="inline-block px-3 py-0.5 rounded-md bg-[#183153] text-white text-[11px] font-black tracking-wider uppercase mb-1"
+                    class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
+                    :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
                   >
                     {{ b.contestantA.universityCode }}
                   </div>
@@ -114,10 +116,11 @@
                 <button
                   v-if="b.status === 'active'"
                   type="button"
-                  class="w-full mt-5 py-3.5 rounded-2xl bg-[#FEBF01] hover:bg-[#E5AC00] active:scale-98 text-gray-950 font-black text-base shadow-md hover:shadow-[#FEBF01]/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
+                  :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
                   @click="openVoteModal(b.contestantA, b)"
                 >
-                  <span class="material-icons text-xl text-gray-950">favorite</span>
+                  <span class="material-icons text-xl">favorite</span>
                   <span>{{ t('taifa.nani.vote') }}</span>
                 </button>
                 <div
@@ -133,9 +136,10 @@
                   class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
                   :class="
                     b.contestantA.videoUrl
-                      ? 'border-[#183153] dark:border-amber-400 text-[#183153] dark:text-amber-400 hover:bg-[#183153] hover:text-white dark:hover:bg-amber-400 dark:hover:text-gray-950 cursor-pointer'
+                      ? 'cursor-pointer hover:opacity-80'
                       : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                   "
+                  :style="b.contestantA.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
                   :disabled="!b.contestantA.videoUrl"
                   @click="openVideoModal(b.contestantA)"
                 >
@@ -157,6 +161,7 @@
             <!-- Right Card: Contestant B (e.g. Neema Juma) -->
             <div
               class="md:col-span-5 min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
+              :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
             >
               <!-- Photo Container -->
               <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
@@ -184,7 +189,8 @@
                 <div>
                   <!-- University Code Pill -->
                   <div
-                    class="inline-block px-3 py-0.5 rounded-md bg-[#FEBF01] text-gray-950 text-[11px] font-black tracking-wider uppercase mb-1"
+                    class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
+                    :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
                   >
                     {{ b.contestantB.universityCode }}
                   </div>
@@ -208,10 +214,11 @@
                 <button
                   v-if="b.status === 'active'"
                   type="button"
-                  class="w-full mt-5 py-3.5 rounded-2xl bg-[#FEBF01] hover:bg-[#E5AC00] active:scale-98 text-gray-950 font-black text-base shadow-md hover:shadow-[#FEBF01]/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
+                  :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
                   @click="openVoteModal(b.contestantB, b)"
                 >
-                  <span class="material-icons text-xl text-gray-950">favorite</span>
+                  <span class="material-icons text-xl">favorite</span>
                   <span>{{ t('taifa.nani.vote') }}</span>
                 </button>
                 <div
@@ -227,9 +234,10 @@
                   class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
                   :class="
                     b.contestantB.videoUrl
-                      ? 'border-[#FEBF01] text-gray-950 dark:text-amber-400 hover:bg-[#FEBF01] hover:text-gray-950 cursor-pointer'
+                      ? 'cursor-pointer hover:opacity-80'
                       : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                   "
+                  :style="b.contestantB.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
                   :disabled="!b.contestantB.videoUrl"
                   @click="openVideoModal(b.contestantB)"
                 >
@@ -510,6 +518,16 @@ const displayTotalVotes = computed(() =>
 const pctOf = (b: BattleRound, votes: number) => {
   const total = b.contestantA.votes + b.contestantB.votes
   return total === 0 ? 50 : Math.round((votes / total) * 100)
+}
+
+/** Readable text color on top of the battle's theme color. */
+const contrastText = (hex: string): string => {
+  const c = (hex || '').replace('#', '')
+  if (c.length < 6) return '#111827'
+  const r = parseInt(c.slice(0, 2), 16)
+  const g = parseInt(c.slice(2, 4), 16)
+  const bl = parseInt(c.slice(4, 6), 16)
+  return 0.299 * r + 0.587 * g + 0.114 * bl > 150 ? '#111827' : '#ffffff'
 }
 
 /** Badge comes from the universities directory; battle's own badge field is the fallback. */

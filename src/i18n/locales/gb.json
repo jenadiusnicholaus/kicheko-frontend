@@ -595,7 +595,8 @@
         "videoUrlLabel": "Video URL (YouTube)",
         "activateBtn": "Activate",
         "emptyBattles": "No battles yet — create your first battle.",
-        "deleteBattleConfirm": "Are you sure you want to delete this battle?"
+        "deleteBattleConfirm": "Are you sure you want to delete this battle?",
+        "themeColorLabel": "Theme Color"
       },
       "videos": {
         "title": "Kicheko Video Management & Upload",

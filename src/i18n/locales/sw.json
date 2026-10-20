@@ -487,7 +487,8 @@
         "videoUrlLabel": "Kiungo cha Video (YouTube)",
         "activateBtn": "Wezesha",
         "emptyBattles": "Hakuna mapambano bado — tengeneza pambano jipya.",
-        "deleteBattleConfirm": "Una uhakika unataka kufuta pambano hili?"
+        "deleteBattleConfirm": "Una uhakika unataka kufuta pambano hili?",
+        "themeColorLabel": "Rangi ya Pambano"
       },
       "videos": {
         "title": "Usimamizi na Upakiaji wa Video za Kicheko",
