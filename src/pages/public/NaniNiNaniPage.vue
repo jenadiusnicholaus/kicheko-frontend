@@ -42,10 +42,11 @@
       <div
         ref="carouselRef"
         class="nani-carousel w-full max-w-5xl mx-auto overflow-x-auto flex mb-8 snap-x snap-mandatory"
+        @scroll.passive="syncIndex"
         @mouseenter="stopAutoScroll"
         @mouseleave="startAutoScroll"
       >
-        <div v-for="(b, i) in loopBattles" :key="`${b.id}-${i}`" class="w-full shrink-0 snap-center">
+        <div v-for="(b, i) in loopBattles" :key="`${b.id}-${i}`" class="w-full shrink-0 snap-center overflow-hidden">
           <!-- Battle Title -->
           <div class="text-center mb-5">
             <h2 class="text-lg sm:text-xl font-black text-gray-900 dark:text-white">
@@ -61,7 +62,7 @@
           <div class="grid grid-cols-1 md:grid-cols-11 gap-6 items-center relative">
             <!-- Left Card: Contestant A (e.g. Frank Mollel) -->
             <div
-              class="md:col-span-5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
+              class="md:col-span-5 min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
             >
               <!-- Photo Container -->
               <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
@@ -155,7 +156,7 @@
 
             <!-- Right Card: Contestant B (e.g. Neema Juma) -->
             <div
-              class="md:col-span-5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
+              class="md:col-span-5 min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
             >
               <!-- Photo Container -->
               <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
@@ -455,6 +456,7 @@ onUnmounted(() => {
 
 const carouselRef = ref<HTMLElement | null>(null)
 let autoScrollTimer: number | undefined
+let currentIndex = 0
 
 const stopAutoScroll = () => {
   if (autoScrollTimer !== undefined) {
@@ -463,19 +465,28 @@ const stopAutoScroll = () => {
   }
 }
 
+/** Keep our slide index in sync when the user swipes manually. */
+const syncIndex = () => {
+  const el = carouselRef.value
+  const slideW = el?.children[0] ? (el.children[0] as HTMLElement).offsetWidth : 0
+  if (el && slideW) currentIndex = Math.round(el.scrollLeft / slideW)
+}
+
 const startAutoScroll = () => {
   stopAutoScroll()
   autoScrollTimer = window.setInterval(() => {
     const el = carouselRef.value
-    if (!el || el.children.length <= 2) return
-    const slideWidth = (el.children[0] as HTMLElement).offsetWidth
-    if (!slideWidth) return
-    const half = el.scrollWidth / 2
-    if (el.scrollLeft >= half - 1) {
-      // Second copy of the list is identical — snap back invisibly, keep looping
-      el.scrollLeft -= half
+    const count = displayBattles.value.length
+    if (!el || count <= 1 || el.children.length <= 1) return
+    const slideW = (el.children[0] as HTMLElement).offsetWidth
+    if (!slideW) return
+    if (currentIndex >= count) {
+      // On a duplicate slide — identical to the real one, jump back invisibly
+      el.scrollLeft = 0
+      currentIndex = 0
     }
-    el.scrollTo({ left: el.scrollLeft + slideWidth, behavior: 'smooth' })
+    currentIndex += 1
+    el.scrollTo({ left: currentIndex * slideW, behavior: 'smooth' })
   }, 5000)
 }
 
