@@ -55,99 +55,83 @@
         <span class="text-xs text-gray-500">{{ t('taifa.admin.videos.videoCount', { count: videos.length }) }}</span>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-          <thead
-            class="bg-gray-50 dark:bg-gray-800/60 text-xs font-bold text-gray-700 dark:text-gray-400 uppercase tracking-wider"
+      <VaDataTable :columns="videoColumns" :items="videos" items-track-by="id">
+        <!-- Video / Title -->
+        <template #cell(video)="{ rowData: v }">
+          <div class="flex items-center gap-3 py-1">
+            <img
+              :src="v.thumbnail"
+              :alt="v.title"
+              class="w-16 h-10 rounded-lg object-cover bg-gray-900 flex-shrink-0"
+            />
+            <div class="min-w-0 max-w-xs">
+              <p class="font-bold text-gray-900 dark:text-white text-xs truncate" :title="v.title">
+                {{ v.title }}
+              </p>
+              <span
+                v-if="v.is_short"
+                class="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold dark:bg-amber-950 dark:text-amber-400"
+              >
+                Short
+              </span>
+              <span v-else class="text-[10px] text-gray-400">
+                {{ t('taifa.admin.videos.durationLabel', { duration: v.duration_formatted }) }}
+              </span>
+            </div>
+          </div>
+        </template>
+
+        <!-- Comedian -->
+        <template #cell(artist)="{ rowData: v }">
+          <div class="flex items-center gap-1.5 text-xs font-semibold text-gray-800 dark:text-gray-200">
+            <img :src="v.comedian.avatar" class="w-5 h-5 rounded-full object-cover" />
+            <span>{{ v.comedian.stage_name }}</span>
+          </div>
+        </template>
+
+        <!-- Category -->
+        <template #cell(category)="{ rowData: v }">
+          <span
+            class="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-medium text-xs"
           >
-            <tr>
-              <th class="py-3 px-4">{{ t('taifa.admin.videos.thVideo') }}</th>
-              <th class="py-3 px-4">{{ t('taifa.admin.videos.thArtist') }}</th>
-              <th class="py-3 px-4">{{ t('taifa.admin.videos.thCategory') }}</th>
-              <th class="py-3 px-4">{{ t('taifa.admin.videos.thAccess') }}</th>
-              <th class="py-3 px-4">{{ t('taifa.admin.videos.thViews') }}</th>
-              <th class="py-3 px-4 text-right">{{ t('taifa.admin.actionsTh') }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-            <tr v-for="v in videos" :key="v.id" class="hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
-              <!-- Video / Title -->
-              <td class="py-3 px-4">
-                <div class="flex items-center gap-3">
-                  <img
-                    :src="v.thumbnail"
-                    :alt="v.title"
-                    class="w-16 h-10 rounded-lg object-cover bg-gray-900 flex-shrink-0"
-                  />
-                  <div class="min-w-0 max-w-xs">
-                    <p class="font-bold text-gray-900 dark:text-white text-xs truncate" :title="v.title">
-                      {{ v.title }}
-                    </p>
-                    <span
-                      v-if="v.is_short"
-                      class="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold dark:bg-amber-950 dark:text-amber-400"
-                    >
-                      Short
-                    </span>
-                    <span v-else class="text-[10px] text-gray-400">
-                      {{ t('taifa.admin.videos.durationLabel', { duration: v.duration_formatted }) }}
-                    </span>
-                  </div>
-                </div>
-              </td>
+            {{ v.category }}
+          </span>
+        </template>
 
-              <!-- Comedian -->
-              <td class="py-3 px-4 text-xs font-semibold text-gray-800 dark:text-gray-200">
-                <div class="flex items-center gap-1.5">
-                  <img :src="v.comedian.avatar" class="w-5 h-5 rounded-full object-cover" />
-                  <span>{{ v.comedian.stage_name }}</span>
-                </div>
-              </td>
+        <!-- Access Type -->
+        <template #cell(access)="{ rowData: v }">
+          <span
+            v-if="v.access_type === 'paid'"
+            class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 text-xs font-bold"
+          >
+            {{ t('taifa.admin.videos.paidBadge', { price: v.price_amount.toLocaleString() }) }}
+          </span>
+          <span
+            v-else
+            class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 text-xs font-bold"
+          >
+            {{ t('kicheko.home.free') }}
+          </span>
+        </template>
 
-              <!-- Category -->
-              <td class="py-3 px-4 text-xs">
-                <span
-                  class="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-medium"
-                >
-                  {{ v.category }}
-                </span>
-              </td>
+        <!-- Views -->
+        <template #cell(views)="{ rowData: v }">
+          <span class="text-xs font-medium text-gray-800 dark:text-gray-200">
+            {{ v.views_count.toLocaleString() }}
+          </span>
+        </template>
 
-              <!-- Access Type -->
-              <td class="py-3 px-4 text-xs font-bold">
-                <span
-                  v-if="v.access_type === 'paid'"
-                  class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
-                >
-                  {{ t('taifa.admin.videos.paidBadge', { price: v.price_amount.toLocaleString() }) }}
-                </span>
-                <span
-                  v-else
-                  class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
-                >
-                  {{ t('kicheko.home.free') }}
-                </span>
-              </td>
-
-              <!-- Views -->
-              <td class="py-3 px-4 text-xs font-medium">
-                {{ v.views_count.toLocaleString() }}
-              </td>
-
-              <!-- Actions -->
-              <td class="py-3 px-4 text-right">
-                <RouterLink
-                  :to="{ name: v.is_short ? 'short-detail' : 'watch', params: { id: v.id } }"
-                  class="text-xs font-bold text-amber-600 hover:text-amber-700 underline"
-                  target="_blank"
-                >
-                  {{ t('taifa.admin.videos.viewLink') }}
-                </RouterLink>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <!-- Actions -->
+        <template #cell(actions)="{ rowData: v }">
+          <RouterLink
+            :to="{ name: v.is_short ? 'short-detail' : 'watch', params: { id: v.id } }"
+            class="text-xs font-bold text-amber-600 hover:text-amber-700 underline"
+            target="_blank"
+          >
+            {{ t('taifa.admin.videos.viewLink') }}
+          </RouterLink>
+        </template>
+      </VaDataTable>
     </div>
 
     <!-- Video Upload Modal (Workflow as defined in docs/youtube_ui.md Phase 5) -->
@@ -328,11 +312,22 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useToast } from 'vuestic-ui'
+import { useToast, defineVaDataTableColumns } from 'vuestic-ui'
 import { videoApi, type Video, type Comedian, type VideoUploadPayload } from '../../services/api/video.api'
 
 const { t } = useI18n()
 const { init: toast } = useToast()
+
+const videoColumns = computed(() =>
+  defineVaDataTableColumns([
+    { label: t('taifa.admin.videos.thVideo'), key: 'video' },
+    { label: t('taifa.admin.videos.thArtist'), key: 'artist' },
+    { label: t('taifa.admin.videos.thCategory'), key: 'category' },
+    { label: t('taifa.admin.videos.thAccess'), key: 'access' },
+    { label: t('taifa.admin.videos.thViews'), key: 'views' },
+    { label: ' ', key: 'actions', thAlign: 'right', tdAlign: 'right' },
+  ]),
+)
 
 const videos = ref<Video[]>([])
 const comedians = ref<Comedian[]>([])

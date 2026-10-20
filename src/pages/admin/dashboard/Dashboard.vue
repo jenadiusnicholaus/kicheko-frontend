@@ -228,74 +228,53 @@
         </RouterLink>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr
-              class="text-gray-400 font-bold uppercase tracking-wider text-[11px] border-b border-gray-100 dark:border-zinc-800"
-            >
-              <th class="py-3 px-3">{{ t('taifa.dashboard.applicantTh') }}</th>
-              <th class="py-3 px-3">{{ t('taifa.dashboard.universityTh') }}</th>
-              <th class="py-3 px-3">{{ t('taifa.dashboard.feeTh') }}</th>
-              <th class="py-3 px-3">{{ t('taifa.dashboard.statusTh') }}</th>
-              <th class="py-3 px-3 text-right">{{ t('taifa.dashboard.actionsTh') }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-100 dark:divide-zinc-800 text-gray-700 dark:text-gray-300">
-            <tr
-              v-for="app in applicationsStore.applications.slice(0, 5)"
-              :key="app.id"
-              class="hover:bg-gray-50/60 dark:hover:bg-zinc-800/40 transition-colors"
-            >
-              <td class="py-3 px-3">
-                <div class="font-black text-gray-900 dark:text-white">{{ app.firstName }} {{ app.lastName }}</div>
-                <div class="text-[11px] text-gray-400">@{{ app.username }} • {{ app.phone }}</div>
-              </td>
+      <VaDataTable :columns="recentAppColumns" :items="recentApplications" items-track-by="id">
+        <template #cell(applicant)="{ rowData: app }">
+          <div class="font-black text-gray-900 dark:text-white text-xs">{{ app.firstName }} {{ app.lastName }}</div>
+          <div class="text-[11px] text-gray-400">@{{ app.username }} • {{ app.phone }}</div>
+        </template>
 
-              <td class="py-3 px-3">
-                <span class="font-medium text-gray-800 dark:text-gray-200">{{ app.university }}</span>
-              </td>
+        <template #cell(university)="{ rowData: app }">
+          <span class="font-medium text-gray-800 dark:text-gray-200 text-xs">{{ app.university }}</span>
+        </template>
 
-              <td class="py-3 px-3">
-                <span v-if="app.paymentStatus === 'paid'" class="text-emerald-600 font-bold">
-                  ✓ {{ t('taifa.dashboard.paid') }} ({{ app.paymentMethod }})
-                </span>
-                <span v-else class="text-amber-600 font-semibold"> ⏳ {{ t('taifa.dashboard.unpaid') }} </span>
-              </td>
+        <template #cell(fee)="{ rowData: app }">
+          <span v-if="app.paymentStatus === 'paid'" class="text-emerald-600 font-bold text-xs">
+            ✓ {{ t('taifa.dashboard.paid') }} ({{ app.paymentMethod }})
+          </span>
+          <span v-else class="text-amber-600 font-semibold text-xs"> ⏳ {{ t('taifa.dashboard.unpaid') }} </span>
+        </template>
 
-              <td class="py-3 px-3">
-                <span
-                  v-if="app.status === 'approved'"
-                  class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold"
-                >
-                  {{ t('taifa.dashboard.statusApproved') }}
-                </span>
-                <span
-                  v-else-if="app.status === 'paid_pending_review'"
-                  class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold"
-                >
-                  {{ t('taifa.dashboard.statusPendingReview') }}
-                </span>
-                <span v-else class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px]">
-                  {{ app.status }}
-                </span>
-              </td>
+        <template #cell(status)="{ rowData: app }">
+          <span
+            v-if="app.status === 'approved'"
+            class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold"
+          >
+            {{ t('taifa.dashboard.statusApproved') }}
+          </span>
+          <span
+            v-else-if="app.status === 'paid_pending_review'"
+            class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold"
+          >
+            {{ t('taifa.dashboard.statusPendingReview') }}
+          </span>
+          <span v-else class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px]">
+            {{ app.status }}
+          </span>
+        </template>
 
-              <td class="py-3 px-3 text-right">
-                <button
-                  v-if="app.status !== 'approved'"
-                  type="button"
-                  class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] transition-all"
-                  @click="applicationsStore.approveApplication(app.id)"
-                >
-                  {{ t('taifa.dashboard.approveBtn') }}
-                </button>
-                <span v-else class="text-emerald-600 text-xs font-bold"> {{ t('taifa.dashboard.complete') }} </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <template #cell(actions)="{ rowData: app }">
+          <button
+            v-if="app.status !== 'approved'"
+            type="button"
+            class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] transition-all"
+            @click="applicationsStore.approveApplication(app.id)"
+          >
+            {{ t('taifa.dashboard.approveBtn') }}
+          </button>
+          <span v-else class="text-emerald-600 text-xs font-bold"> {{ t('taifa.dashboard.complete') }} </span>
+        </template>
+      </VaDataTable>
     </div>
   </div>
 </template>
@@ -303,6 +282,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { defineVaDataTableColumns } from 'vuestic-ui'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
 import { useNaniNiNaniStore } from '../../../stores/nani-ni-nani'
 import { useWallOfFameStore } from '../../../stores/wall-of-fame'
@@ -313,6 +293,18 @@ const naniStore = useNaniNiNaniStore()
 const fameStore = useWallOfFameStore()
 
 const battle = computed(() => naniStore.activeBattle)
+
+const recentApplications = computed(() => applicationsStore.applications.slice(0, 5))
+
+const recentAppColumns = computed(() =>
+  defineVaDataTableColumns([
+    { label: t('taifa.dashboard.applicantTh'), key: 'applicant' },
+    { label: t('taifa.dashboard.universityTh'), key: 'university' },
+    { label: t('taifa.dashboard.feeTh'), key: 'fee' },
+    { label: t('taifa.dashboard.statusTh'), key: 'status' },
+    { label: ' ', key: 'actions', thAlign: 'right', tdAlign: 'right' },
+  ]),
+)
 
 onMounted(() => {
   naniStore.fetchActiveBattle()
