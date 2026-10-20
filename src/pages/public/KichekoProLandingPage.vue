@@ -96,30 +96,30 @@
             {{ initials(applicant.name) }}
           </div>
 
-          <!-- Name + meter -->
-          <div class="min-w-0 flex-1">
-            <div class="flex items-baseline justify-between gap-3">
-              <div class="min-w-0">
-                <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ applicant.name }}</p>
-                <p class="truncate text-[11px] text-gray-500 dark:text-gray-400">
-                  {{ applicant.university || applicant.universityCode }}
-                </p>
-              </div>
-              <span
-                class="shrink-0 text-sm sm:text-base font-bold tabular-nums"
-                :class="isLeader(index) ? 'text-[#B58800] dark:text-[#FEBF01]' : 'text-gray-900 dark:text-white'"
-              >
-                {{ sharePercent(applicant.votes) }}%
-              </span>
-            </div>
-            <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
-              <div
-                class="h-full rounded-full transition-all duration-700 ease-out"
-                :class="isLeader(index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
-                :style="{ width: `${barWidth(applicant.votes)}%` }"
-              ></div>
-            </div>
+          <!-- Name -->
+          <div class="w-24 sm:w-44 shrink-0 min-w-0">
+            <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ applicant.name }}</p>
+            <p class="truncate text-[11px] text-gray-500 dark:text-gray-400">
+              {{ applicant.university || applicant.universityCode }}
+            </p>
           </div>
+
+          <!-- Progress bar (true vote share) -->
+          <div class="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
+            <div
+              class="h-full rounded-full transition-all duration-700 ease-out"
+              :class="isLeader(index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
+              :style="{ width: `${sharePercent(applicant.votes)}%` }"
+            ></div>
+          </div>
+
+          <!-- Percentage -->
+          <span
+            class="w-14 shrink-0 text-right text-sm sm:text-base font-bold tabular-nums"
+            :class="isLeader(index) ? 'text-[#B58800] dark:text-[#FEBF01]' : 'text-gray-900 dark:text-white'"
+          >
+            {{ sharePercent(applicant.votes) }}%
+          </span>
 
           <!-- Vote -->
           <button
@@ -267,9 +267,6 @@ const applicationsStore = useComedianApplicationsStore()
 const isLoading = ref(true)
 
 const totalVotes = computed(() => applicationsStore.voteList.reduce((sum, a) => sum + a.votes, 0))
-const maxVotes = computed(() => Math.max(0, ...applicationsStore.voteList.map((a) => a.votes)))
-
-const barWidth = (votes: number) => (maxVotes.value > 0 ? Math.max(1.5, (votes / maxVotes.value) * 100) : 1.5)
 const sharePercent = (votes: number) => (totalVotes.value > 0 ? ((votes / totalVotes.value) * 100).toFixed(1) : '0.0')
 
 /** Competition ranking — tied vote counts share the same rank. */
