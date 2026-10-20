@@ -46,10 +46,7 @@
             type="button"
             class="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/90 dark:bg-zinc-800/90 shadow-lg border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:scale-110 transition-transform"
             :aria-label="t('taifa.nani.prevBattle')"
-            @click="
-              prev()
-              startAutoScroll()
-            "
+            @click="manualPrev"
           >
             <span class="material-icons">chevron_left</span>
           </button>
@@ -57,10 +54,7 @@
             type="button"
             class="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/90 dark:bg-zinc-800/90 shadow-lg border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:scale-110 transition-transform"
             :aria-label="t('taifa.nani.nextBattle')"
-            @click="
-              next()
-              startAutoScroll()
-            "
+            @click="manualNext"
           >
             <span class="material-icons">chevron_right</span>
           </button>
@@ -573,6 +567,16 @@ const prev = () => {
   }
   animate.value = true
   slideIndex.value -= 1
+}
+
+const manualPrev = () => {
+  prev()
+  startAutoScroll()
+}
+
+const manualNext = () => {
+  next()
+  startAutoScroll()
 }
 
 const goTo = (i: number) => {
