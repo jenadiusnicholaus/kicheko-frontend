@@ -185,14 +185,14 @@
                   </div>
                 </div>
 
-                <!-- Center: Taifa House logo + live vote graph in the battle's colors
+                <!-- Center: live vote graph in the battle's colors
                  (vertical between the cards on desktop, horizontal when stacked) -->
                 <div class="flex md:flex-col items-center justify-center gap-2 md:gap-2.5 z-20 md:self-stretch md:py-6">
                   <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorA(b) }">
                     {{ pctOf(b, b.contestantA.votes) }}%
                   </span>
                   <div
-                    class="relative flex-1 self-stretch md:self-auto md:w-16 flex items-center justify-center min-h-[3.5rem]"
+                    class="relative flex-1 self-stretch md:self-auto md:w-6 flex items-center justify-center min-h-[1.5rem]"
                   >
                     <!-- Split bar: A then B, sized by vote share -->
                     <div
@@ -207,17 +207,6 @@
                         class="transition-all duration-700 ease-out"
                         :style="{ flex: `${pctOf(b, b.contestantB.votes)} 1 0%`, backgroundColor: colorB(b) }"
                       ></div>
-                    </div>
-                    <!-- Logo on top of the bar's midpoint -->
-                    <div
-                      class="relative w-12 h-12 md:w-16 md:h-16 rounded-full bg-white dark:bg-zinc-900 shadow-xl flex items-center justify-center p-1.5 border-[3px] animate-bounce-subtle"
-                      :style="{ borderColor: b.themeColor }"
-                    >
-                      <img
-                        src="/taifa/taifa_icon.png"
-                        alt="Taifa House"
-                        class="w-full h-full object-contain rounded-full"
-                      />
                     </div>
                   </div>
                   <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorB(b) }">
