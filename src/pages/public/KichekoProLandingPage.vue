@@ -63,7 +63,7 @@
           <div
             v-for="(applicant, index) in applicationsStore.voteList"
             :key="applicant.id"
-            class="grid grid-cols-[2rem_minmax(0,7rem)_1fr_auto] sm:grid-cols-[2.25rem_minmax(0,10rem)_1fr_3.5rem_3.75rem_auto] items-center gap-2 sm:gap-3"
+            class="grid grid-cols-[2rem_minmax(0,7rem)_1fr_3rem_auto] sm:grid-cols-[2.25rem_minmax(0,10rem)_1fr_4rem_auto] items-center gap-2 sm:gap-3"
           >
             <!-- Rank chip -->
             <div
@@ -87,7 +87,7 @@
               </div>
             </div>
 
-            <!-- Bar (relative to leader) + mobile figures -->
+            <!-- Bar (relative to leader) -->
             <div class="min-w-0">
               <div class="h-8 rounded-md bg-gray-100 dark:bg-zinc-800 overflow-hidden">
                 <div
@@ -95,29 +95,15 @@
                   :style="{ width: `${barWidth(applicant.votes)}%`, backgroundColor: barColor(index) }"
                 ></div>
               </div>
-              <div class="sm:hidden mt-0.5 text-[10px] text-gray-500 font-bold tabular-nums">
-                {{ applicant.votes.toLocaleString() }} {{ t('taifa.home.votes') }} ·
-                {{ sharePercent(applicant.votes) }}%
-              </div>
             </div>
 
-            <!-- Votes -->
-            <div class="hidden sm:block text-right font-black text-gray-900 dark:text-white text-sm tabular-nums">
-              {{ applicant.votes.toLocaleString() }}
-            </div>
-
-            <!-- Share chip -->
-            <div class="hidden sm:flex justify-end">
-              <span
-                class="px-1.5 py-0.5 rounded-md text-[11px] font-bold tabular-nums"
-                :class="
-                  index === 0
-                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400'
-                    : 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-400'
-                "
-              >
-                {{ sharePercent(applicant.votes) }}%
-              </span>
+            <!-- Vote share (percentage only — no raw counts) -->
+            <div
+              class="text-right font-black text-sm sm:text-base tabular-nums"
+              :style="{ color: index === 0 ? '#059669' : undefined }"
+              :class="index === 0 ? '' : 'text-gray-900 dark:text-white'"
+            >
+              {{ sharePercent(applicant.votes) }}%
             </div>
 
             <!-- Vote button -->
@@ -138,13 +124,11 @@
           class="mt-6 inline-flex items-center gap-3 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-3"
         >
           <span class="px-2 py-1 rounded-md bg-[#1B2A4A] text-white text-sm font-black tabular-nums">
-            {{ totalVotes.toLocaleString() }}
+            {{ applicationsStore.voteList.length }}
           </span>
           <div>
-            <div class="text-sm font-black text-gray-900 dark:text-white">{{ t('taifa.home.totalVotes') }}</div>
-            <div class="text-[11px] text-gray-500">
-              {{ t('taifa.home.contestantsCount', { n: applicationsStore.voteList.length }) }}
-            </div>
+            <div class="text-sm font-black text-gray-900 dark:text-white">{{ t('taifa.home.contestantsLabel') }}</div>
+            <div class="text-[11px] text-gray-500">{{ t('taifa.home.shareNote') }}</div>
           </div>
         </div>
       </div>
@@ -255,7 +239,7 @@
         <div v-else-if="voteModal.step === 'done'" class="text-center py-4">
           <span class="material-icons text-5xl text-emerald-500 mb-3">check_circle</span>
           <p class="font-black text-gray-900 dark:text-white text-sm mb-4">
-            {{ t('taifa.home.votesAdded', { n: voteModal.count, name: voteModal.applicant.name }) }}
+            {{ t('taifa.home.votesAdded', { name: voteModal.applicant.name, pct: currentShare }) }}
           </p>
           <button
             type="button"
@@ -320,6 +304,12 @@ const voteModal = reactive({
   phone: '',
   submitting: false,
   error: '',
+})
+
+/** The voted applicant's share after the vote list refreshes. */
+const currentShare = computed(() => {
+  const a = applicationsStore.voteList.find((x) => x.id === voteModal.applicant?.id)
+  return sharePercent(a?.votes ?? 0)
 })
 
 const totalAmount = computed(() => Math.max(0, Number(voteModal.count) || 0) * applicationsStore.voteFee)

@@ -239,8 +239,6 @@
       "votes": "kura",
       "vote": "Piga Kura",
       "voteEmpty": "Hakuna washindani kwenye orodha ya kura bado.",
-      "totalVotes": "Jumla ya kura zilizolipiwa",
-      "contestantsCount": "Washindani {n} kwenye orodha",
       "voteFor": "Mpigie kura {name}",
       "feePerVote": "TSh {fee} kwa kila kura",
       "howManyVotes": "Idadi ya kura",
@@ -249,10 +247,12 @@
       "payAndVote": "Lipa TSh {amount} & piga kura",
       "approveOnPhone": "Thibitisha malipo kwenye simu yako",
       "approveOnPhoneDesc": "Weka PIN kwenye ujumbe wa malipo. Kura zako zitaongezwa malipo yakithibitishwa.",
-      "votesAdded": "Kura {n} zimeongezwa kwa {name}!",
+      "votesAdded": "Kura zako kwa {name} zimeongezwa — sasa ana {pct}%!",
       "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
       "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika.",
-      "done": "Sawa"
+      "done": "Sawa",
+      "contestantsLabel": "Washindani kwenye orodha",
+      "shareNote": "Asilimia zinaonyesha sehemu ya kila mshindani katika kura zote"
     },
     "register": {
       "createAccount": "Tuma Maombi Sasa",
@@ -312,7 +312,7 @@
     "nani": {
       "title": "Nani ni Nani?",
       "subtitle": "Tazama, linganisha na pigia kura mchekeshaji bora!",
-      "roundOngoing": "Mzunguko #{round} Unaendelea • Jumla ya Kura: {votes}",
+      "roundOngoing": "Mzunguko #{round} Unaendelea",
       "votes": "Kura",
       "vote": "Piga Kura",
       "completeVote": "Kamilisha Kura Yako",
@@ -321,14 +321,15 @@
       "payVoteBtn": "Lipa TSh {fee}",
       "verifyingVote": "Inathibitisha Kura...",
       "cancel": "Ghairi",
-      "votedSuccess": "UmemPigia Kura {name} kwa TSh {fee}! Kura sasa ni {votes}",
+      "votedSuccess": "UmemPigia Kura {name} kwa TSh {fee}! Sasa ana {pct}% ya kura",
       "loading": "Inapakia mashindano...",
       "endedPill": "Mzunguko #{round} • Imekwisha",
       "battleEnded": "Pambano Limekwisha",
       "battlesTitle": "Mapambano",
       "watchClip": "Tazama Video",
       "prevBattle": "Pambano lililopita",
-      "nextBattle": "Pambano linalofuata"
+      "nextBattle": "Pambano linalofuata",
+      "ofVotes": "ya kura"
     },
     "payment": {
       "loading": "Inapakia malipo salama...",

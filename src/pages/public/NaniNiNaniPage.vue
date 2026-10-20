@@ -26,9 +26,7 @@
           class="inline-flex items-center gap-2 px-3 py-1 mt-2.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 text-xs font-bold border border-emerald-200 dark:border-emerald-800"
         >
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span>{{
-            t('taifa.nani.roundOngoing', { round: battle.roundNumber, votes: displayTotalVotes.toLocaleString() })
-          }}</span>
+          <span>{{ t('taifa.nani.roundOngoing', { round: battle.roundNumber }) }}</span>
         </div>
         <div
           v-else
@@ -97,7 +95,7 @@
                 <!-- Left Card: Contestant A (e.g. Frank Mollel) -->
                 <div
                   class="min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-                  :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
+                  :style="cardStyle(colorA(b))"
                 >
                   <!-- Photo Container -->
                   <div
@@ -128,7 +126,7 @@
                       <!-- University Code Pill -->
                       <div
                         class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
-                        :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                        :style="{ backgroundColor: colorA(b), color: contrastText(colorA(b)) }"
                       >
                         {{ b.contestantA.universityCode }}
                       </div>
@@ -143,8 +141,10 @@
                         class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
                       >
                         <span class="material-icons text-base" :style="{ color: colorA(b) }">favorite</span>
-                        <span>{{ b.contestantA.votes.toLocaleString() }} {{ t('taifa.nani.votes') }}</span>
-                        <span class="text-gray-400 font-normal">({{ pctOf(b, b.contestantA.votes) }}%)</span>
+                        <span class="text-base font-black tabular-nums" :style="{ color: colorA(b) }"
+                          >{{ pctOf(b, b.contestantA.votes) }}%</span
+                        >
+                        <span class="text-gray-400 font-normal">{{ t('taifa.nani.ofVotes') }}</span>
                       </div>
                     </div>
 
@@ -153,7 +153,7 @@
                       v-if="b.status === 'active'"
                       type="button"
                       class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
-                      :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                      :style="{ backgroundColor: colorA(b), color: contrastText(colorA(b)) }"
                       @click="openVoteModal(b.contestantA, b)"
                     >
                       <span class="material-icons text-xl">favorite</span>
@@ -175,7 +175,7 @@
                           ? 'cursor-pointer hover:opacity-80'
                           : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                       "
-                      :style="b.contestantA.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
+                      :style="b.contestantA.videoUrl ? { borderColor: colorA(b), color: colorA(b) } : {}"
                       :disabled="!b.contestantA.videoUrl"
                       @click="openVideoModal(b.contestantA)"
                     >
@@ -228,7 +228,7 @@
                 <!-- Right Card: Contestant B (e.g. Neema Juma) -->
                 <div
                   class="min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-                  :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
+                  :style="cardStyle(colorB(b))"
                 >
                   <!-- Photo Container -->
                   <div
@@ -259,7 +259,7 @@
                       <!-- University Code Pill -->
                       <div
                         class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
-                        :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                        :style="{ backgroundColor: colorB(b), color: contrastText(colorB(b)) }"
                       >
                         {{ b.contestantB.universityCode }}
                       </div>
@@ -274,8 +274,10 @@
                         class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
                       >
                         <span class="material-icons text-base" :style="{ color: colorB(b) }">favorite</span>
-                        <span>{{ b.contestantB.votes.toLocaleString() }} {{ t('taifa.nani.votes') }}</span>
-                        <span class="text-gray-400 font-normal">({{ pctOf(b, b.contestantB.votes) }}%)</span>
+                        <span class="text-base font-black tabular-nums" :style="{ color: colorB(b) }"
+                          >{{ pctOf(b, b.contestantB.votes) }}%</span
+                        >
+                        <span class="text-gray-400 font-normal">{{ t('taifa.nani.ofVotes') }}</span>
                       </div>
                     </div>
 
@@ -284,7 +286,7 @@
                       v-if="b.status === 'active'"
                       type="button"
                       class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
-                      :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                      :style="{ backgroundColor: colorB(b), color: contrastText(colorB(b)) }"
                       @click="openVoteModal(b.contestantB, b)"
                     >
                       <span class="material-icons text-xl">favorite</span>
@@ -306,7 +308,7 @@
                           ? 'cursor-pointer hover:opacity-80'
                           : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                       "
-                      :style="b.contestantB.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
+                      :style="b.contestantB.videoUrl ? { borderColor: colorB(b), color: colorB(b) } : {}"
                       :disabled="!b.contestantB.videoUrl"
                       @click="openVideoModal(b.contestantB)"
                     >
@@ -682,10 +684,6 @@ const loopBattles = computed<BattleRound[]>(() =>
   displayBattles.value.length > 1 ? [...displayBattles.value, displayBattles.value[0]] : displayBattles.value,
 )
 
-const displayTotalVotes = computed(() =>
-  battle.value ? battle.value.contestantA.votes + battle.value.contestantB.votes : 0,
-)
-
 const pctOf = (b: BattleRound, votes: number) => {
   const total = b.contestantA.votes + b.contestantB.votes
   return total === 0 ? 50 : Math.round((votes / total) * 100)
@@ -719,6 +717,13 @@ const shade = (hex: string, amount: number): string => {
 const colorA = (b: BattleRound) => b.themeColor
 const colorB = (b: BattleRound) =>
   contrastText(b.themeColor) === '#ffffff' ? shade(b.themeColor, -0.55) : shade(b.themeColor, 0.6)
+
+/** Each contestant's card: thick top border + a light tint of their color. */
+const cardStyle = (color: string) => ({
+  borderTopColor: color,
+  borderTopWidth: '6px',
+  backgroundImage: `linear-gradient(to bottom, ${color}1F, transparent 55%)`,
+})
 
 /** Badge comes from the universities directory; battle's own badge field is the fallback. */
 const badgeFor = (c: Contestant): string => {
@@ -769,9 +774,10 @@ const submitVote = async () => {
     })
 
     showVoteModal.value = false
+    const vb = naniStore.battles.find((x) => x.id === votingBattle.value?.id) || votingBattle.value
     voteSuccessMessage.value = t('taifa.nani.votedSuccess', {
       name: res.contestantName,
-      votes: res.newVotes.toLocaleString(),
+      pct: vb ? pctOf(vb, res.newVotes) : 0,
       fee: (votingBattle.value?.voteFee || 0).toLocaleString(),
     })
     setTimeout(() => {

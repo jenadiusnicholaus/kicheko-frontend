@@ -347,8 +347,6 @@
       "votes": "votes",
       "vote": "Vote",
       "voteEmpty": "No contestants on the vote list yet.",
-      "totalVotes": "Total paid votes",
-      "contestantsCount": "{n} contestants on the list",
       "voteFor": "Vote for {name}",
       "feePerVote": "TSh {fee} per vote",
       "howManyVotes": "Number of votes",
@@ -357,10 +355,12 @@
       "payAndVote": "Pay TSh {amount} & vote",
       "approveOnPhone": "Approve the payment on your phone",
       "approveOnPhoneDesc": "Enter your PIN in the mobile money prompt. Your votes are added once payment is confirmed.",
-      "votesAdded": "{n} vote(s) added for {name}!",
+      "votesAdded": "Your votes for {name} were added — now at {pct}%!",
       "voteFailed": "Payment failed — no votes were added.",
       "votePending": "Payment is still being confirmed. Your votes will appear once it completes.",
-      "done": "Done"
+      "done": "Done",
+      "contestantsLabel": "Contestants on the list",
+      "shareNote": "Percentages show each contestant's share of all votes"
     },
     "register": {
       "createAccount": "Apply Now",
@@ -420,7 +420,7 @@
     "nani": {
       "title": "Nani ni Nani?",
       "subtitle": "Watch, compare and vote for the better comedian!",
-      "roundOngoing": "Round #{round} in Progress • Total Votes: {votes}",
+      "roundOngoing": "Round #{round} in Progress",
       "votes": "Votes",
       "vote": "Vote",
       "completeVote": "Complete Your Vote",
@@ -429,14 +429,15 @@
       "payVoteBtn": "Pay TSh {fee}",
       "verifyingVote": "Casting Vote...",
       "cancel": "Cancel",
-      "votedSuccess": "You voted for {name} with TSh {fee}! Current votes: {votes}",
+      "votedSuccess": "You voted for {name} with TSh {fee}! Now at {pct}% of the votes",
       "loading": "Loading battle...",
       "endedPill": "Round #{round} • Ended",
       "battleEnded": "Battle Ended",
       "battlesTitle": "Battles",
       "watchClip": "Watch Clip",
       "prevBattle": "Previous battle",
-      "nextBattle": "Next battle"
+      "nextBattle": "Next battle",
+      "ofVotes": "of the votes"
     },
     "payment": {
       "loading": "Loading secure checkout…",
