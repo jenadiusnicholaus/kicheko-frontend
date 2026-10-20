@@ -210,46 +210,40 @@ export const useNaniNiNaniStore = defineStore('naniNiNani', {
       if (idx !== -1) this.battles.splice(idx, 1)
     },
 
-    async castVote(payload: {
+    /** Buy votes: the backend pushes a Pay-IT mobile-money prompt for
+     * votesCount x TSh 1,000. Votes are only counted once the webhook
+     * confirms the payment — poll with fetchVoteStatus. */
+    async buyVotes(payload: {
+      battleId: string
       contestantId: string
-      paymentMethod: string
-      phone: string
-      votesCount?: number
-      battleId?: string
-    }): Promise<{ success: boolean; newVotes: number; contestantName: string }> {
-      const count = payload.votesCount || 1
-
+      votesCount: number
+      mobileNumber: string
+    }): Promise<{ vote_id: string; amount: number; votes_count: number; contestantName: string }> {
       const { data } = await http.post('/nani-ni-nani/vote/', {
+        battle_id: payload.battleId,
         contestant_id: payload.contestantId,
-        payment_method: payload.paymentMethod,
-        phone_number: payload.phone,
-        votes_count: count,
-        ...(payload.battleId ? { battle_id: payload.battleId } : {}),
+        votes_count: payload.votesCount,
+        mobile_number: payload.mobileNumber,
       })
+      return data
+    },
 
-      if (data && data.success) {
-        const applyVotes = (b: BattleRound | null | undefined) => {
-          if (!b) return
-          if (b.contestantA.id === payload.contestantId) b.contestantA.votes = data.newVotes
-          else if (b.contestantB.id === payload.contestantId) b.contestantB.votes = data.newVotes
+    /** Single read of a vote purchase; on confirmation, updates the battle tallies. */
+    async fetchVoteStatus(voteId: string): Promise<{ confirmed: boolean; payment_status: string } | null> {
+      try {
+        const { data } = await http.get(`/nani-ni-nani/vote-status/${voteId}/`)
+        if (data?.confirmed) {
+          for (const b of [this.activeBattle, ...this.battles]) {
+            if (b && b.id === data.battle_id) {
+              b.contestantA.votes = data.contestant_a_votes
+              b.contestantB.votes = data.contestant_b_votes
+            }
+          }
         }
-        applyVotes(this.activeBattle)
-        applyVotes(this.battles.find((b) => b.id === (payload.battleId || this.activeBattle?.id)))
-
-        this.recentVotes.unshift({
-          contestantId: payload.contestantId,
-          contestantName: data.contestantName,
-          amount: count * (this.activeBattle?.voteFee || 0),
-          phone: payload.phone,
-          paymentMethod: payload.paymentMethod,
-          timestamp: new Date().toLocaleTimeString(),
-        })
-        if (this.recentVotes.length > 50) this.recentVotes.pop()
-
-        return { success: true, newVotes: data.newVotes, contestantName: data.contestantName }
+        return data
+      } catch {
+        return null
       }
-
-      return { success: false, newVotes: 0, contestantName: '' }
     },
 
     async updateContestants(data: { contestantA: Partial<Contestant>; contestantB: Partial<Contestant> }) {

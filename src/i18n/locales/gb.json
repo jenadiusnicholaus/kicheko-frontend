@@ -424,7 +424,7 @@
       "votes": "Votes",
       "vote": "Vote",
       "completeVote": "Complete Your Vote",
-      "payVoteDesc": "Pay TSh {fee} to cast your vote for {name}.",
+      "payVoteDesc": "TSh {fee} per vote for {name} — paid securely via Pay-IT mobile money.",
       "amount": "Amount",
       "payVoteBtn": "Pay TSh {fee}",
       "verifyingVote": "Casting Vote...",
@@ -437,7 +437,13 @@
       "watchClip": "Watch Clip",
       "prevBattle": "Previous battle",
       "nextBattle": "Next battle",
-      "ofVotes": "of the votes"
+      "ofVotes": "of the votes",
+      "howManyVotes": "Number of votes",
+      "phonePlaceholder": "Mobile money number e.g. 0712 345 678",
+      "approveOnPhone": "Approve the payment on your phone",
+      "approveOnPhoneDesc": "Enter your PIN in the mobile money prompt. Your votes are counted once the payment is confirmed.",
+      "voteFailed": "Payment failed — no votes were added.",
+      "votePending": "Payment is still being confirmed. Your votes will appear once it completes."
     },
     "payment": {
       "loading": "Loading secure checkout…",
@@ -618,7 +624,8 @@
         "activateBtn": "Activate",
         "emptyBattles": "No battles yet — create your first battle.",
         "deleteBattleConfirm": "Are you sure you want to delete this battle?",
-        "themeColorLabel": "Theme Color"
+        "themeColorLabel": "Theme Color",
+        "feeFixed": "The vote fee is fixed at TSh 1,000"
       },
       "videos": {
         "title": "Kicheko Video Management & Upload",

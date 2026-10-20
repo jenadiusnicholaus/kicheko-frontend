@@ -347,9 +347,10 @@
         >
           <!-- Close 'X' Button -->
           <button
+            v-if="voteStep !== 'waiting'"
             type="button"
             class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
-            @click="showVoteModal = false"
+            @click="closeVoteModal"
           >
             <span class="material-icons text-lg">close</span>
           </button>
@@ -368,77 +369,100 @@
             {{ t('taifa.nani.completeVote') }}
           </h3>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-4">
-            {{
-              t('taifa.nani.payVoteDesc', {
-                name: selectedContestant.name,
-                fee: votingBattle?.voteFee.toLocaleString(),
-              })
-            }}
+            {{ t('taifa.nani.payVoteDesc', { name: selectedContestant.name, fee: VOTE_FEE.toLocaleString() }) }}
           </p>
 
-          <!-- Amount Box -->
-          <div
-            class="p-4 rounded-2xl bg-[#EBF4FE] dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 mb-4 text-center"
-          >
-            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{{
-              t('taifa.nani.amount')
-            }}</span>
-            <span class="text-2xl sm:text-3xl font-black text-[#183153] dark:text-blue-300">
-              TSh {{ votingBattle?.voteFee.toLocaleString() }}
-            </span>
-          </div>
-
-          <!-- Payment Method Row Selector -->
-          <div class="mb-5">
-            <div class="relative">
-              <select
-                v-model="paymentMethod"
-                class="w-full py-3 pl-11 pr-10 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs sm:text-sm font-semibold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01] appearance-none cursor-pointer"
+          <!-- Step 1: number of votes + payer phone -->
+          <template v-if="voteStep === 'form'">
+            <div class="grid grid-cols-4 gap-2 mb-2">
+              <button
+                v-for="n in [1, 5, 10, 20]"
+                :key="n"
+                type="button"
+                class="py-2 rounded-xl text-sm font-black border transition-colors"
+                :class="
+                  votesCount === n
+                    ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
+                    : 'border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                "
+                @click="votesCount = n"
               >
-                <option value="M-Pesa">Vodacom M-Pesa</option>
-                <option value="Tigo Pesa">Tigo Pesa / Mixx</option>
-                <option value="Airtel Money">Airtel Money</option>
-                <option value="Credit / Debit Card">{{ t('taifa.pages.nani.cardOption') }}</option>
-              </select>
-              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                <span class="material-icons text-lg">payment</span>
-              </span>
-              <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">
-                <span class="material-icons text-lg">chevron_right</span>
+                {{ n }}
+              </button>
+            </div>
+            <input
+              v-model.number="votesCount"
+              type="number"
+              min="1"
+              max="1000"
+              :aria-label="t('taifa.nani.howManyVotes')"
+              class="w-full mb-4 px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/80 text-sm font-bold text-center text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+            />
+
+            <!-- Amount Box -->
+            <div
+              class="p-4 rounded-2xl bg-[#EBF4FE] dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 mb-4 text-center"
+            >
+              <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{{
+                t('taifa.nani.amount')
+              }}</span>
+              <span class="text-2xl sm:text-3xl font-black text-[#183153] dark:text-blue-300 tabular-nums">
+                TSh {{ voteTotal.toLocaleString() }}
               </span>
             </div>
 
-            <!-- Phone Number input if Mobile Money -->
-            <div class="mt-2.5">
-              <input
-                v-model="voterPhone"
-                type="tel"
-                placeholder="0712 345 678"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/80 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
-              />
+            <input
+              v-model="voterPhone"
+              type="tel"
+              inputmode="tel"
+              :placeholder="t('taifa.nani.phonePlaceholder')"
+              class="w-full mb-4 px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/80 text-sm font-mono text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+            />
+
+            <p v-if="voteError" class="text-xs text-red-600 font-bold mb-3">{{ voteError }}</p>
+
+            <div class="space-y-2">
+              <button
+                type="button"
+                :disabled="isVoting || !canPayVote"
+                class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                @click="submitVote"
+              >
+                <span v-if="isVoting" class="material-icons animate-spin text-base">sync</span>
+                <span>{{ t('taifa.nani.payVoteBtn', { fee: voteTotal.toLocaleString() }) }}</span>
+              </button>
+              <button
+                type="button"
+                class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                @click="closeVoteModal"
+              >
+                {{ t('taifa.nani.cancel') }}
+              </button>
             </div>
+          </template>
+
+          <!-- Step 2: waiting for the Pay-IT webhook -->
+          <div v-else-if="voteStep === 'waiting'" class="py-4">
+            <span class="material-icons text-5xl text-[#FEBF01] animate-pulse mb-3">phone_iphone</span>
+            <p class="font-black text-gray-900 dark:text-white text-sm mb-1">{{ t('taifa.nani.approveOnPhone') }}</p>
+            <p class="text-xs text-gray-500">{{ t('taifa.nani.approveOnPhoneDesc') }}</p>
           </div>
 
-          <!-- Action Buttons matching PDF -->
-          <div class="space-y-2">
-            <button
-              type="button"
-              :disabled="isVoting"
-              class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 disabled:opacity-60 cursor-pointer"
-              @click="submitVote"
+          <!-- Step 3: failed / still pending -->
+          <div v-else class="py-4">
+            <span
+              class="material-icons text-5xl mb-3"
+              :class="voteStep === 'failed' ? 'text-red-500' : 'text-amber-500'"
             >
-              <span v-if="isVoting" class="material-icons animate-spin text-base">sync</span>
-              <span>{{
-                isVoting
-                  ? t('taifa.nani.verifyingVote')
-                  : t('taifa.nani.payVoteBtn', { fee: votingBattle?.voteFee.toLocaleString() })
-              }}</span>
-            </button>
-
+              {{ voteStep === 'failed' ? 'error' : 'schedule' }}
+            </span>
+            <p class="font-black text-gray-900 dark:text-white text-sm mb-4">
+              {{ voteStep === 'failed' ? t('taifa.nani.voteFailed') : t('taifa.nani.votePending') }}
+            </p>
             <button
               type="button"
-              class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-              @click="showVoteModal = false"
+              class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 font-bold text-sm"
+              @click="closeVoteModal"
             >
               {{ t('taifa.nani.cancel') }}
             </button>
@@ -531,6 +555,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   stopAutoScroll()
+  stopVotePoll()
 })
 
 // ── Carousel: translateX track, one full battle per frame ─────
@@ -747,42 +772,89 @@ const embedUrl = (url: string): string => {
   return m ? `https://www.youtube.com/embed/${m[1]}?autoplay=1&rel=0` : ''
 }
 
+// ── Paid voting (Pay-IT) — fixed TSh 1,000 per vote ───────────
+const VOTE_FEE = 1000
+
 const showVoteModal = ref(false)
 const selectedContestant = ref<Contestant | null>(null)
 const votingBattle = ref<BattleRound | null>(null)
-const paymentMethod = ref('M-Pesa')
-const voterPhone = ref('0712 345 678')
+const voteStep = ref<'form' | 'waiting' | 'failed' | 'pending'>('form')
+const votesCount = ref(1)
+const voterPhone = ref('')
+const voteError = ref('')
 const isVoting = ref(false)
 const voteSuccessMessage = ref('')
+
+const voteTotal = computed(() => Math.max(0, Number(votesCount.value) || 0) * VOTE_FEE)
+const canPayVote = computed(() => {
+  const n = Number(votesCount.value)
+  return Number.isInteger(n) && n >= 1 && n <= 1000 && voterPhone.value.replace(/\D/g, '').length >= 9
+})
+
+let votePollTimer: ReturnType<typeof setTimeout> | undefined
+const stopVotePoll = () => {
+  if (votePollTimer) clearTimeout(votePollTimer)
+  votePollTimer = undefined
+}
 
 const openVoteModal = (contestant: Contestant, b: BattleRound) => {
   selectedContestant.value = contestant
   votingBattle.value = b
+  voteStep.value = 'form'
+  votesCount.value = 1
+  voteError.value = ''
   showVoteModal.value = true
 }
 
+const closeVoteModal = () => {
+  stopVotePoll()
+  showVoteModal.value = false
+}
+
+const showVoteSuccess = () => {
+  const c = selectedContestant.value
+  const b = naniStore.battles.find((x) => x.id === votingBattle.value?.id) || votingBattle.value
+  if (!c || !b) return
+  const votes = b.contestantA.id === c.id ? b.contestantA.votes : b.contestantB.votes
+  voteSuccessMessage.value = t('taifa.nani.votedSuccess', {
+    name: c.name,
+    pct: pctOf(b, votes),
+    fee: voteTotal.value.toLocaleString(),
+  })
+  setTimeout(() => (voteSuccessMessage.value = ''), 5000)
+}
+
+const pollVote = (voteId: string, deadline: number) => {
+  votePollTimer = setTimeout(async () => {
+    const s = await naniStore.fetchVoteStatus(voteId)
+    if (s?.confirmed) {
+      showVoteModal.value = false
+      showVoteSuccess()
+    } else if (s && ['failed', 'underpaid'].includes(s.payment_status)) {
+      voteStep.value = 'failed'
+    } else if (Date.now() > deadline) {
+      voteStep.value = 'pending'
+    } else {
+      pollVote(voteId, deadline)
+    }
+  }, 3000)
+}
+
 const submitVote = async () => {
-  if (!selectedContestant.value) return
+  if (!selectedContestant.value || !votingBattle.value || !canPayVote.value) return
   isVoting.value = true
-
+  voteError.value = ''
   try {
-    const res = await naniStore.castVote({
+    const res = await naniStore.buyVotes({
+      battleId: votingBattle.value.id,
       contestantId: selectedContestant.value.id,
-      paymentMethod: paymentMethod.value,
-      phone: voterPhone.value,
-      battleId: votingBattle.value?.id,
+      votesCount: Number(votesCount.value),
+      mobileNumber: voterPhone.value,
     })
-
-    showVoteModal.value = false
-    const vb = naniStore.battles.find((x) => x.id === votingBattle.value?.id) || votingBattle.value
-    voteSuccessMessage.value = t('taifa.nani.votedSuccess', {
-      name: res.contestantName,
-      pct: vb ? pctOf(vb, res.newVotes) : 0,
-      fee: (votingBattle.value?.voteFee || 0).toLocaleString(),
-    })
-    setTimeout(() => {
-      voteSuccessMessage.value = ''
-    }, 4000)
+    voteStep.value = 'waiting'
+    pollVote(res.vote_id, Date.now() + 120_000)
+  } catch (e: any) {
+    voteError.value = e?.response?.data?.detail || e?.message || t('taifa.nani.voteFailed')
   } finally {
     isVoting.value = false
   }

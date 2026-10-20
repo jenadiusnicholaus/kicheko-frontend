@@ -222,11 +222,12 @@
                 t('taifa.admin.nani.feeLabel')
               }}</label>
               <input
-                v-model.number="form.voteFee"
-                type="number"
-                min="0"
-                required
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white font-mono"
+                value="TSh 1,000"
+                type="text"
+                readonly
+                disabled
+                :title="t('taifa.admin.nani.feeFixed')"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 font-mono cursor-not-allowed"
               />
             </div>
             <div>

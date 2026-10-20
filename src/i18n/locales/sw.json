@@ -316,7 +316,7 @@
       "votes": "Kura",
       "vote": "Piga Kura",
       "completeVote": "Kamilisha Kura Yako",
-      "payVoteDesc": "Lipa TSh {fee} kumpigia kura {name}.",
+      "payVoteDesc": "TSh {fee} kwa kila kura kwa {name} — malipo salama kupitia Pay-IT.",
       "amount": "Kiasi",
       "payVoteBtn": "Lipa TSh {fee}",
       "verifyingVote": "Inathibitisha Kura...",
@@ -329,7 +329,13 @@
       "watchClip": "Tazama Video",
       "prevBattle": "Pambano lililopita",
       "nextBattle": "Pambano linalofuata",
-      "ofVotes": "ya kura"
+      "ofVotes": "ya kura",
+      "howManyVotes": "Idadi ya kura",
+      "phonePlaceholder": "Namba ya simu ya malipo mf. 0712 345 678",
+      "approveOnPhone": "Thibitisha malipo kwenye simu yako",
+      "approveOnPhoneDesc": "Weka PIN kwenye ujumbe wa malipo. Kura zako zitahesabiwa malipo yakithibitishwa.",
+      "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
+      "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika."
     },
     "payment": {
       "loading": "Inapakia malipo salama...",
@@ -510,7 +516,8 @@
         "activateBtn": "Wezesha",
         "emptyBattles": "Hakuna mapambano bado — tengeneza pambano jipya.",
         "deleteBattleConfirm": "Una uhakika unataka kufuta pambano hili?",
-        "themeColorLabel": "Rangi ya Pambano"
+        "themeColorLabel": "Rangi ya Pambano",
+        "feeFixed": "Bei ya kura ni TSh 1,000 (haibadiliki)"
       },
       "videos": {
         "title": "Usimamizi na Upakiaji wa Video za Kicheko",
