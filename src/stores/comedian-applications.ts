@@ -66,7 +66,6 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
 }
 
 const VOTER_KEY_STORAGE = 'kicheko_voter_key'
-const VOTED_STORAGE = 'kicheko_voted_ids'
 
 function getVoterKey(): string {
   let key = localStorage.getItem(VOTER_KEY_STORAGE)
@@ -77,26 +76,11 @@ function getVoterKey(): string {
   return key
 }
 
-export function getVotedIds(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(VOTED_STORAGE) || '[]')
-  } catch {
-    return []
-  }
-}
-
-function markVoted(id: string) {
-  const ids = getVotedIds()
-  if (!ids.includes(id)) {
-    ids.push(id)
-    localStorage.setItem(VOTED_STORAGE, JSON.stringify(ids))
-  }
-}
-
 export const useComedianApplicationsStore = defineStore('comedianApplications', {
   state: () => ({
     applications: [] as ComedianApplication[],
     applicationsOpen: true,
+    voteFee: 1000,
     voteList: [] as VoteListApplicant[],
     isLoading: false,
     error: null as string | null,
@@ -208,6 +192,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       try {
         const { data } = await http.get('/application-config/')
         this.applicationsOpen = !!data?.applications_open
+        this.voteFee = data?.vote_fee ?? this.voteFee
       } catch {
         // Default to open if the config endpoint is unreachable.
       }
@@ -218,6 +203,12 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     async setApplicationsOpen(open: boolean): Promise<void> {
       const { data } = await http.patch('/application-config/', { applications_open: open })
       this.applicationsOpen = !!data?.applications_open
+    },
+
+    /** Admin: set the price of one public vote (TZS). */
+    async setVoteFee(fee: number): Promise<void> {
+      const { data } = await http.patch('/application-config/', { vote_fee: fee })
+      this.voteFee = data?.vote_fee ?? this.voteFee
     },
 
     /** Admin: move an application through audition levels 1-4. */
@@ -248,6 +239,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     async fetchVoteList(): Promise<void> {
       const { data } = await http.get('/applications/vote-list/')
       this.applicationsOpen = !!data?.applications_open
+      this.voteFee = data?.vote_fee ?? this.voteFee
       this.voteList = (data?.applicants || []).map((a: any) => ({
         id: String(a.id),
         name: a.name || '',
@@ -260,15 +252,34 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       }))
     },
 
-    /** Cast one vote for an applicant; returns the new tally. */
-    async castVote(id: string): Promise<number | null> {
+    /** Buy votes: pushes a Pay-IT mobile-money prompt for votesCount x voteFee.
+     * Votes are only added once the webhook confirms the payment. */
+    async buyVotes(
+      id: string,
+      votesCount: number,
+      mobileNumber: string,
+    ): Promise<{ vote_id: number; amount: number; votes_count: number }> {
       const { data } = await http.post(`/applications/${id}/vote/`, {
+        votes_count: votesCount,
+        mobile_number: mobileNumber,
         voter_key: getVoterKey(),
       })
-      markVoted(id)
-      const item = this.voteList.find((a) => a.id === id)
-      if (item) item.votes = data?.votes ?? item.votes
-      return data?.votes ?? null
+      return data
+    },
+
+    /** Single read of a vote purchase's payment state. */
+    async fetchVoteStatus(voteId: number): Promise<{
+      confirmed: boolean
+      payment_status: string
+      votes_count: number
+      applicant_votes: number
+    } | null> {
+      try {
+        const { data } = await http.get(`/applications/vote-status/${voteId}/`)
+        return data
+      } catch {
+        return null
+      }
     },
 
     async approveApplication(id: string): Promise<boolean> {

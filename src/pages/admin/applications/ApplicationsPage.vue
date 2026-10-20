@@ -27,8 +27,29 @@
         </div>
       </div>
 
-      <!-- Quick Actions: Open/Close window + Refresh -->
-      <div class="flex items-center gap-2">
+      <!-- Quick Actions: Vote fee + Open/Close window + Refresh -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div
+          class="flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-xl border border-gray-200 dark:border-zinc-700"
+          :title="t('taifa.admin.voteFeeLabel')"
+        >
+          <span class="text-[11px] font-bold text-gray-500">{{ t('taifa.admin.voteFeeLabel') }}</span>
+          <input
+            v-model.number="voteFeeInput"
+            type="number"
+            min="100"
+            step="100"
+            class="w-20 px-2 py-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+          />
+          <button
+            type="button"
+            class="px-2.5 py-1.5 rounded-lg bg-[#FEBF01] hover:bg-[#E5AC00] disabled:opacity-40 text-gray-950 text-[11px] font-black"
+            :disabled="savingFee || voteFeeInput === applicationsStore.voteFee || voteFeeInput < 100"
+            @click="saveVoteFee"
+          >
+            {{ t('taifa.admin.saveBtn') }}
+          </button>
+        </div>
         <button
           type="button"
           class="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
@@ -539,10 +560,24 @@ import type { ComedianApplication } from '../../../stores/comedian-applications'
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 
-onMounted(() => {
+const voteFeeInput = ref(applicationsStore.voteFee)
+const savingFee = ref(false)
+
+onMounted(async () => {
   applicationsStore.fetchApplicationsFromBackend()
-  applicationsStore.fetchConfig()
+  await applicationsStore.fetchConfig()
+  voteFeeInput.value = applicationsStore.voteFee
 })
+
+const saveVoteFee = async () => {
+  savingFee.value = true
+  try {
+    await applicationsStore.setVoteFee(voteFeeInput.value)
+  } finally {
+    voteFeeInput.value = applicationsStore.voteFee
+    savingFee.value = false
+  }
+}
 
 const togglingOpen = ref(false)
 const levelUpdating = ref<string | null>(null)

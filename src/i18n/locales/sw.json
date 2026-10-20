@@ -234,12 +234,25 @@
       "step2Desc": "Tazama mapambano ya wachekeshaji wa vyuo na piga kura kwa TSh 1,000 kumuinua unayempenda.",
       "step3Title": "3. Wall of Fame",
       "step3Desc": "Kutana na mabingwa wa vichekesho waliowahi kutikisa majukwaa ya vyuo Tanzania.",
-      "voteTitle": "Piga kura mchekeshaji wako unayempenda",
-      "voteDesc": "Usajili umefungwa — piga kura waendelee kiwango kichacho cha usaili.",
+      "voteTitle": "Kicheko Pro: Mwenendo wa Kura",
+      "voteDesc": "Usajili umefungwa. Mistari inaonyesha kila mshindani dhidi ya anayeongoza; kila kura ni TSh {fee}.",
       "votes": "kura",
       "vote": "Piga Kura",
-      "voted": "Umepiga",
-      "voteEmpty": "Hakuna washindani kwenye orodha ya kura bado."
+      "voteEmpty": "Hakuna washindani kwenye orodha ya kura bado.",
+      "totalVotes": "Jumla ya kura zilizolipiwa",
+      "contestantsCount": "Washindani {n} kwenye orodha",
+      "voteFor": "Mpigie kura {name}",
+      "feePerVote": "TSh {fee} kwa kila kura",
+      "howManyVotes": "Idadi ya kura",
+      "payerPhone": "Namba ya simu ya malipo",
+      "totalToPay": "Jumla ya kulipa",
+      "payAndVote": "Lipa TSh {amount} & piga kura",
+      "approveOnPhone": "Thibitisha malipo kwenye simu yako",
+      "approveOnPhoneDesc": "Weka PIN kwenye ujumbe wa malipo. Kura zako zitaongezwa malipo yakithibitishwa.",
+      "votesAdded": "Kura {n} zimeongezwa kwa {name}!",
+      "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
+      "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika.",
+      "done": "Sawa"
     },
     "register": {
       "createAccount": "Tuma Maombi Sasa",
@@ -547,7 +560,9 @@
       "bulkClear": "Futa",
       "bulkSelectAll": "Chagua wote walioidhinishwa",
       "levelNeedsApproval": "Idhinisha ombi kwanza — viwango vinatumika kwa walioidhinishwa tu.",
-      "bulkSkipped": "Maombi {n} yamerukwa kwa sababu hayakuwa yameidhinishwa."
+      "bulkSkipped": "Maombi {n} yamerukwa kwa sababu hayakuwa yameidhinishwa.",
+      "voteFeeLabel": "Bei ya kura (TSh)",
+      "saveBtn": "Hifadhi"
     },
     "dashboard": {
       "liveOnline": "Live Mtandaoni",

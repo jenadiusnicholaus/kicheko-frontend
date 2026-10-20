@@ -342,12 +342,25 @@
       "step2Desc": "Watch campus comedy battles and vote for TSh 1,000 for your favorite.",
       "step3Title": "3. Wall of Fame",
       "step3Desc": "Meet legendary university comedy champions across Tanzania.",
-      "voteTitle": "Vote for your favourite comedian",
-      "voteDesc": "Applications are closed — vote for who should make it to the next audition level.",
+      "voteTitle": "Kicheko Pro: Current Vote Standing",
+      "voteDesc": "Applications are closed. Bars show each contestant against the leader; each vote costs TSh {fee}.",
       "votes": "votes",
       "vote": "Vote",
-      "voted": "Voted",
-      "voteEmpty": "No contestants on the vote list yet."
+      "voteEmpty": "No contestants on the vote list yet.",
+      "totalVotes": "Total paid votes",
+      "contestantsCount": "{n} contestants on the list",
+      "voteFor": "Vote for {name}",
+      "feePerVote": "TSh {fee} per vote",
+      "howManyVotes": "Number of votes",
+      "payerPhone": "Mobile money number",
+      "totalToPay": "Total to pay",
+      "payAndVote": "Pay TSh {amount} & vote",
+      "approveOnPhone": "Approve the payment on your phone",
+      "approveOnPhoneDesc": "Enter your PIN in the mobile money prompt. Your votes are added once payment is confirmed.",
+      "votesAdded": "{n} vote(s) added for {name}!",
+      "voteFailed": "Payment failed — no votes were added.",
+      "votePending": "Payment is still being confirmed. Your votes will appear once it completes.",
+      "done": "Done"
     },
     "register": {
       "createAccount": "Apply Now",
@@ -655,7 +668,9 @@
       "bulkClear": "Clear",
       "bulkSelectAll": "Select all approved",
       "levelNeedsApproval": "Approve the application first — levels apply to approved applicants only.",
-      "bulkSkipped": "{n} application(s) were skipped because they are not approved."
+      "bulkSkipped": "{n} application(s) were skipped because they are not approved.",
+      "voteFeeLabel": "Vote fee (TSh)",
+      "saveBtn": "Save"
     },
     "dashboard": {
       "liveOnline": "Live Online",
