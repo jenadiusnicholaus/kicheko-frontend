@@ -24,7 +24,6 @@ export interface ComedianApplication {
   auditionStatus?: string
   auditionLevel: number
   voteCount: number
-  tempPassword?: string
 }
 
 export interface VoteListApplicant {
@@ -61,7 +60,6 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
     auditionStatus: raw.audition_status || 'pending',
     auditionLevel: raw.audition_level ?? 1,
     voteCount: raw.vote_count ?? 0,
-    tempPassword: raw.temp_password || '',
   }
 }
 
@@ -301,18 +299,6 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
         app.rejectedReason = reason
       }
       return true
-    },
-
-    async sendCredentials(id: string) {
-      const { data } = await http.post(`/applications/${id}/send_credentials/`)
-      if (data && data.application) {
-        const updated = normalizeBackendApplication(data.application)
-        const idx = this.applications.findIndex((a) => a.id === id)
-        if (idx !== -1) {
-          this.applications[idx] = updated
-        }
-      }
-      return data
     },
 
     async deleteApplication(id: string): Promise<boolean> {

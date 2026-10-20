@@ -385,18 +385,6 @@
               <span>{{ t('taifa.admin.approveBtn') }}</span>
             </button>
 
-            <!-- Send Credentials Button (approved only) -->
-            <button
-              v-if="app.status === 'approved'"
-              type="button"
-              class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs flex items-center gap-1 shadow-sm transition-all"
-              :title="t('taifa.admin.sendCredBtn')"
-              @click="openCredentials(app)"
-            >
-              <span class="material-icons text-sm">send</span>
-              <span>{{ t('taifa.admin.sendCredBtn') }}</span>
-            </button>
-
             <!-- Reject Button -->
             <button
               v-if="app.status !== 'rejected'"
@@ -430,104 +418,11 @@
         </template>
       </VaDataTable>
     </div>
-
-    <!-- ───── Send Credentials Modal ───── -->
-    <div
-      v-if="credModal.show"
-      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-      @click.self="credModal.show = false"
-    >
-      <div
-        class="w-full max-w-md bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 sm:p-7"
-      >
-        <!-- Modal Header -->
-        <div class="flex items-center gap-3 mb-5">
-          <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow">
-            <span class="material-icons text-xl">vpn_key</span>
-          </div>
-          <div>
-            <h2 class="text-base font-black text-gray-900 dark:text-white">
-              {{ t('taifa.admin.credModalTitle') }}
-            </h2>
-            <p class="text-xs text-gray-500">{{ credModal.app?.firstName }} {{ credModal.app?.lastName }}</p>
-          </div>
-          <button type="button" class="ml-auto p-1 text-gray-400 hover:text-gray-600" @click="credModal.show = false">
-            <span class="material-icons">close</span>
-          </button>
-        </div>
-
-        <!-- Credentials Card -->
-        <div class="bg-gray-50 dark:bg-zinc-800 rounded-2xl p-4 space-y-3 mb-5 font-mono text-sm">
-          <div class="flex justify-between items-center">
-            <span class="text-gray-500 text-xs font-sans font-bold uppercase tracking-wide">{{
-              t('taifa.admin.credUsername')
-            }}</span>
-            <span class="font-bold text-gray-900 dark:text-white">{{ credModal.app?.username }}</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-gray-500 text-xs font-sans font-bold uppercase tracking-wide">{{
-              t('taifa.admin.credPassword')
-            }}</span>
-            <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ credModal.tempPassword || '—' }}</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-gray-500 text-xs font-sans font-bold uppercase tracking-wide">{{
-              t('taifa.admin.credPhone')
-            }}</span>
-            <span class="font-bold text-gray-900 dark:text-white">{{ credModal.app?.phone }}</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-gray-500 text-xs font-sans font-bold uppercase tracking-wide">{{
-              t('taifa.admin.credStatus')
-            }}</span>
-            <span
-              :class="credModal.sent ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-amber-600 font-bold'"
-            >
-              {{ credModal.sent ? t('taifa.admin.credSent') : t('taifa.admin.credNotSent') }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex flex-col gap-2.5">
-          <button
-            type="button"
-            class="w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow transition-all"
-            :class="
-              credModal.sent && !credModal.sending
-                ? 'bg-emerald-600 text-white'
-                : 'bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950'
-            "
-            :disabled="credModal.sending"
-            @click="doSendCredentials"
-          >
-            <span v-if="credModal.sending" class="material-icons animate-spin text-base">sync</span>
-            <span v-else-if="credModal.sent" class="material-icons text-base">check_circle</span>
-            <span v-else class="material-icons text-base">mark_email_read</span>
-            <span>{{
-              credModal.sending
-                ? t('taifa.admin.credSending')
-                : credModal.sent
-                  ? t('taifa.admin.credSent')
-                  : t('taifa.admin.credSendBtn')
-            }}</span>
-          </button>
-          <button
-            type="button"
-            class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
-            @click="copyCredentials"
-          >
-            <span class="material-icons text-sm align-middle mr-1">content_copy</span>
-            {{ t('taifa.admin.credCopyBtn') }}
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { defineVaDataTableColumns } from 'vuestic-ui'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
@@ -677,58 +572,5 @@ const deleteApp = async (id: string) => {
   if (confirm(t('taifa.admin.deleteConfirm'))) {
     await applicationsStore.deleteApplication(id)
   }
-}
-
-// ── Credentials Modal ──────────────────────────────────────────
-interface CredModal {
-  show: boolean
-  app: ComedianApplication | null
-  tempPassword: string
-  sent: boolean
-  sending: boolean
-}
-
-const credModal = reactive<CredModal>({
-  show: false,
-  app: null,
-  tempPassword: '',
-  sent: false,
-  sending: false,
-})
-
-const openCredentials = (app: ComedianApplication) => {
-  credModal.app = app
-  credModal.tempPassword = app.tempPassword || ''
-  credModal.sent = !!app.tempPassword
-  credModal.sending = false
-  credModal.show = true
-}
-
-const doSendCredentials = async () => {
-  if (!credModal.app) return
-  credModal.sending = true
-  try {
-    const result = await applicationsStore.sendCredentials(credModal.app.id)
-    if (result?.temp_password) {
-      credModal.tempPassword = result.temp_password
-    }
-    credModal.sent = true
-  } finally {
-    credModal.sending = false
-  }
-}
-
-const copyCredentials = () => {
-  if (!credModal.app) return
-  const text = [
-    t('taifa.admin.credMsgGreeting', { name: credModal.app.firstName }),
-    t('taifa.admin.credMsgApproved'),
-    t('taifa.admin.credMsgUsername', { username: credModal.app.username }),
-    t('taifa.admin.credMsgPassword', {
-      password: credModal.tempPassword || t('taifa.admin.credMsgSendFirst'),
-    }),
-    t('taifa.admin.credMsgPhone', { phone: credModal.app.phone }),
-  ].join('\n')
-  navigator.clipboard.writeText(text).catch(() => {})
 }
 </script>
