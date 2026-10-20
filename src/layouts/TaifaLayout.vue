@@ -70,17 +70,20 @@
     <!-- Main Content Area with Background Watermarks -->
     <main class="flex-1 relative flex flex-col justify-between overflow-x-hidden">
       <!-- Watermark Background SVGs matching PDF -->
-      <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.035] dark:opacity-[0.05] z-0">
+      <div
+        class="pointer-events-none absolute inset-0 overflow-hidden z-0"
+        :class="route.path === '/' ? 'opacity-[0.14] dark:opacity-[0.12]' : 'opacity-[0.06] dark:opacity-[0.07]'"
+      >
         <img
-          src="/image/kicheko-icon.png"
+          src="/image/kicheko-transparent.png"
           alt=""
-          class="absolute -top-10 -left-10 w-72 h-72 object-contain rotate-[-15deg]"
+          class="absolute -top-6 -left-10 w-64 h-64 sm:w-80 sm:h-80 object-contain rotate-[-15deg]"
         />
         <img src="/taifa/taifa_icon.png" alt="" class="absolute top-1/4 -right-12 w-64 h-64 object-contain" />
         <img
-          src="/image/kicheko-icon.png"
+          src="/image/kicheko-transparent.png"
           alt=""
-          class="absolute -bottom-10 right-1/4 w-80 h-80 object-contain rotate-[15deg]"
+          class="absolute -bottom-6 right-1/4 w-72 h-72 sm:w-96 sm:h-96 object-contain rotate-[15deg]"
         />
         <img src="/taifa/taifa_icon.png" alt="" class="absolute bottom-1/3 -left-12 w-64 h-64 object-contain" />
       </div>
