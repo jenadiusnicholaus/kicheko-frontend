@@ -38,232 +38,270 @@
         </div>
       </div>
 
-      <!-- Battles Arena — each matchup is a snap slide, auto-scrolls, pauses on hover -->
+      <!-- Battles Arena — transform track: exactly one battle visible, auto-advances, pauses on hover -->
       <div
-        ref="carouselRef"
-        class="nani-carousel w-full max-w-5xl mx-auto overflow-x-auto flex mb-8 snap-x snap-mandatory"
-        @scroll.passive="syncIndex"
+        class="w-full max-w-5xl mx-auto overflow-hidden mb-4 touch-pan-y"
         @mouseenter="stopAutoScroll"
         @mouseleave="startAutoScroll"
+        @pointerdown="onPointerDown"
+        @pointerup="onPointerUp"
       >
-        <div v-for="(b, i) in loopBattles" :key="`${b.id}-${i}`" class="w-full shrink-0 snap-center overflow-hidden">
-          <!-- Battle Title -->
-          <div class="text-center mb-5">
-            <h2 class="text-lg sm:text-xl font-black text-gray-900 dark:text-white">
-              {{ b.title }}
-            </h2>
-            <p class="text-xs font-bold text-gray-400 mt-0.5">
-              {{ t('taifa.admin.nani.roundLabel') }} {{ b.roundNumber }}
-              <span v-if="b.categoryName"> • {{ b.categoryName }}</span>
-            </p>
-          </div>
-
-          <!-- Matchup Battle Arena (Two Cards + VS Star) -->
-          <div class="grid grid-cols-1 md:grid-cols-11 gap-6 items-center relative">
-            <!-- Left Card: Contestant A (e.g. Frank Mollel) -->
-            <div
-              class="md:col-span-5 min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-              :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
-            >
-              <!-- Photo Container -->
-              <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
-                <img
-                  :src="b.contestantA.photo"
-                  :alt="b.contestantA.name"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-
-                <!-- University Floating Badge -->
-                <div
-                  class="absolute -bottom-5 left-6 w-14 h-14 rounded-full bg-white dark:bg-zinc-800 shadow-lg p-1.5 border-2 border-white dark:border-zinc-700 flex items-center justify-center z-10"
-                >
-                  <img
-                    :src="badgeFor(b.contestantA)"
-                    :alt="b.contestantA.universityCode"
-                    class="w-full h-full object-contain"
-                  />
-                </div>
-              </div>
-
-              <!-- Card Body -->
-              <div class="p-6 pt-8 flex-1 flex flex-col justify-between">
-                <div>
-                  <!-- University Code Pill -->
-                  <div
-                    class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
-                    :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
-                  >
-                    {{ b.contestantA.universityCode }}
-                  </div>
-
-                  <!-- Name -->
-                  <h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
-                    {{ b.contestantA.name }}
-                  </h3>
-
-                  <!-- Votes Counter -->
-                  <div
-                    class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
-                  >
-                    <span class="material-icons text-red-500 text-base">favorite</span>
-                    <span>{{ b.contestantA.votes.toLocaleString() }} {{ t('taifa.nani.votes') }}</span>
-                    <span class="text-gray-400 font-normal">({{ pctOf(b, b.contestantA.votes) }}%)</span>
-                  </div>
-                </div>
-
-                <!-- Vote Button matching PDF -->
-                <button
-                  v-if="b.status === 'active'"
-                  type="button"
-                  class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
-                  :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
-                  @click="openVoteModal(b.contestantA, b)"
-                >
-                  <span class="material-icons text-xl">favorite</span>
-                  <span>{{ t('taifa.nani.vote') }}</span>
-                </button>
-                <div
-                  v-else
-                  class="w-full mt-5 py-3.5 rounded-2xl bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 font-black text-base flex items-center justify-center gap-2"
-                >
-                  <span>{{ t('taifa.nani.battleEnded') }}</span>
-                </div>
-
-                <!-- Watch Clip Button -->
-                <button
-                  type="button"
-                  class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
-                  :class="
-                    b.contestantA.videoUrl
-                      ? 'cursor-pointer hover:opacity-80'
-                      : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                  "
-                  :style="b.contestantA.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
-                  :disabled="!b.contestantA.videoUrl"
-                  @click="openVideoModal(b.contestantA)"
-                >
-                  <span class="material-icons text-lg">play_circle</span>
-                  <span>{{ t('taifa.nani.watchClip') }}</span>
-                </button>
-              </div>
+        <div
+          class="flex"
+          :class="{ 'transition-transform duration-700 ease-in-out': animate }"
+          :style="{ transform: `translateX(-${slideIndex * 100}%)` }"
+          @transitionend="onTransitionEnd"
+        >
+          <div v-for="(b, i) in loopBattles" :key="`${b.id}-${i}`" class="w-full shrink-0 px-1">
+            <!-- Battle Title -->
+            <div class="text-center mb-5">
+              <h2 class="text-lg sm:text-xl font-black text-gray-900 dark:text-white">
+                {{ b.title }}
+              </h2>
+              <p class="text-xs font-bold text-gray-400 mt-0.5">
+                {{ t('taifa.admin.nani.roundLabel') }} {{ b.roundNumber }}
+                <span v-if="b.categoryName"> • {{ b.categoryName }}</span>
+              </p>
             </div>
 
-            <!-- Center Taifa House Logo Graphic -->
-            <div class="md:col-span-1 flex items-center justify-center -my-3 md:my-0 z-20">
+            <!-- Matchup Battle Arena (Two Cards + VS Star) -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_5.5rem_minmax(0,1fr)] gap-4 md:gap-5 items-center relative"
+            >
+              <!-- Left Card: Contestant A (e.g. Frank Mollel) -->
               <div
-                class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center drop-shadow-xl animate-bounce-subtle hover:scale-110 transition-transform"
+                class="min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
+                :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
               >
-                <img src="/taifa/taifa_icon.png" alt="Taifa House" class="w-full h-full object-contain" />
-              </div>
-            </div>
-
-            <!-- Right Card: Contestant B (e.g. Neema Juma) -->
-            <div
-              class="md:col-span-5 min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-              :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
-            >
-              <!-- Photo Container -->
-              <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
-                <img
-                  :src="b.contestantB.photo"
-                  :alt="b.contestantB.name"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-
-                <!-- University Floating Badge -->
-                <div
-                  class="absolute -bottom-5 left-6 w-14 h-14 rounded-full bg-white dark:bg-zinc-800 shadow-lg p-1.5 border-2 border-white dark:border-zinc-700 flex items-center justify-center z-10"
-                >
+                <!-- Photo Container -->
+                <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
                   <img
-                    :src="badgeFor(b.contestantB)"
-                    :alt="b.contestantB.universityCode"
-                    class="w-full h-full object-contain"
+                    :src="b.contestantA.photo"
+                    :alt="b.contestantA.name"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+
+                  <!-- University Floating Badge -->
+                  <div
+                    class="absolute -bottom-5 left-6 w-14 h-14 rounded-full bg-white dark:bg-zinc-800 shadow-lg p-1.5 border-2 border-white dark:border-zinc-700 flex items-center justify-center z-10"
+                  >
+                    <img
+                      :src="badgeFor(b.contestantA)"
+                      :alt="b.contestantA.universityCode"
+                      class="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-6 pt-8 flex-1 flex flex-col justify-between">
+                  <div>
+                    <!-- University Code Pill -->
+                    <div
+                      class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
+                      :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                    >
+                      {{ b.contestantA.universityCode }}
+                    </div>
+
+                    <!-- Name -->
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
+                      {{ b.contestantA.name }}
+                    </h3>
+
+                    <!-- Votes Counter -->
+                    <div
+                      class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
+                    >
+                      <span class="material-icons text-base" :style="{ color: colorA(b) }">favorite</span>
+                      <span>{{ b.contestantA.votes.toLocaleString() }} {{ t('taifa.nani.votes') }}</span>
+                      <span class="text-gray-400 font-normal">({{ pctOf(b, b.contestantA.votes) }}%)</span>
+                    </div>
+                  </div>
+
+                  <!-- Vote Button matching PDF -->
+                  <button
+                    v-if="b.status === 'active'"
+                    type="button"
+                    class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
+                    :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                    @click="openVoteModal(b.contestantA, b)"
+                  >
+                    <span class="material-icons text-xl">favorite</span>
+                    <span>{{ t('taifa.nani.vote') }}</span>
+                  </button>
+                  <div
+                    v-else
+                    class="w-full mt-5 py-3.5 rounded-2xl bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 font-black text-base flex items-center justify-center gap-2"
+                  >
+                    <span>{{ t('taifa.nani.battleEnded') }}</span>
+                  </div>
+
+                  <!-- Watch Clip Button -->
+                  <button
+                    type="button"
+                    class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
+                    :class="
+                      b.contestantA.videoUrl
+                        ? 'cursor-pointer hover:opacity-80'
+                        : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    "
+                    :style="b.contestantA.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
+                    :disabled="!b.contestantA.videoUrl"
+                    @click="openVideoModal(b.contestantA)"
+                  >
+                    <span class="material-icons text-lg">play_circle</span>
+                    <span>{{ t('taifa.nani.watchClip') }}</span>
+                  </button>
                 </div>
               </div>
 
-              <!-- Card Body -->
-              <div class="p-6 pt-8 flex-1 flex flex-col justify-between">
-                <div>
-                  <!-- University Code Pill -->
-                  <div
-                    class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
-                    :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
-                  >
-                    {{ b.contestantB.universityCode }}
-                  </div>
-
-                  <!-- Name -->
-                  <h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
-                    {{ b.contestantB.name }}
-                  </h3>
-
-                  <!-- Votes Counter -->
-                  <div
-                    class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
-                  >
-                    <span class="material-icons text-red-500 text-base">favorite</span>
-                    <span>{{ b.contestantB.votes.toLocaleString() }} {{ t('taifa.nani.votes') }}</span>
-                    <span class="text-gray-400 font-normal">({{ pctOf(b, b.contestantB.votes) }}%)</span>
-                  </div>
-                </div>
-
-                <!-- Vote Button matching PDF -->
-                <button
-                  v-if="b.status === 'active'"
-                  type="button"
-                  class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
-                  :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
-                  @click="openVoteModal(b.contestantB, b)"
-                >
-                  <span class="material-icons text-xl">favorite</span>
-                  <span>{{ t('taifa.nani.vote') }}</span>
-                </button>
+              <!-- Center: Taifa House logo + live vote graph in the battle's colors
+                 (vertical between the cards on desktop, horizontal when stacked) -->
+              <div class="flex md:flex-col items-center justify-center gap-2 md:gap-2.5 z-20 md:self-stretch md:py-6">
+                <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorA(b) }">
+                  {{ pctOf(b, b.contestantA.votes) }}%
+                </span>
                 <div
-                  v-else
-                  class="w-full mt-5 py-3.5 rounded-2xl bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 font-black text-base flex items-center justify-center gap-2"
+                  class="relative flex-1 self-stretch md:self-auto md:w-16 flex items-center justify-center min-h-[3.5rem]"
                 >
-                  <span>{{ t('taifa.nani.battleEnded') }}</span>
+                  <!-- Split bar: A then B, sized by vote share -->
+                  <div
+                    class="absolute flex md:flex-col inset-x-0 md:inset-x-auto md:inset-y-0 h-3.5 md:h-auto md:w-3.5 rounded-full overflow-hidden bg-gray-200 dark:bg-zinc-800 shadow-inner"
+                    :title="`${b.contestantA.name}: ${pctOf(b, b.contestantA.votes)}% · ${b.contestantB.name}: ${pctOf(b, b.contestantB.votes)}%`"
+                  >
+                    <div
+                      class="transition-all duration-700 ease-out"
+                      :style="{ flex: `${pctOf(b, b.contestantA.votes)} 1 0%`, backgroundColor: colorA(b) }"
+                    ></div>
+                    <div
+                      class="transition-all duration-700 ease-out"
+                      :style="{ flex: `${pctOf(b, b.contestantB.votes)} 1 0%`, backgroundColor: colorB(b) }"
+                    ></div>
+                  </div>
+                  <!-- Logo on top of the bar's midpoint -->
+                  <div
+                    class="relative w-12 h-12 md:w-16 md:h-16 rounded-full bg-white dark:bg-zinc-900 shadow-xl flex items-center justify-center p-1.5 border-[3px] animate-bounce-subtle"
+                    :style="{ borderColor: b.themeColor }"
+                  >
+                    <img
+                      src="/taifa/taifa_icon.png"
+                      alt="Taifa House"
+                      class="w-full h-full object-contain rounded-full"
+                    />
+                  </div>
+                </div>
+                <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorB(b) }">
+                  {{ pctOf(b, b.contestantB.votes) }}%
+                </span>
+              </div>
+
+              <!-- Right Card: Contestant B (e.g. Neema Juma) -->
+              <div
+                class="min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
+                :style="{ borderTopColor: b.themeColor, borderTopWidth: '5px' }"
+              >
+                <!-- Photo Container -->
+                <div class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden">
+                  <img
+                    :src="b.contestantB.photo"
+                    :alt="b.contestantB.name"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+
+                  <!-- University Floating Badge -->
+                  <div
+                    class="absolute -bottom-5 left-6 w-14 h-14 rounded-full bg-white dark:bg-zinc-800 shadow-lg p-1.5 border-2 border-white dark:border-zinc-700 flex items-center justify-center z-10"
+                  >
+                    <img
+                      :src="badgeFor(b.contestantB)"
+                      :alt="b.contestantB.universityCode"
+                      class="w-full h-full object-contain"
+                    />
+                  </div>
                 </div>
 
-                <!-- Watch Clip Button -->
-                <button
-                  type="button"
-                  class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
-                  :class="
-                    b.contestantB.videoUrl
-                      ? 'cursor-pointer hover:opacity-80'
-                      : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                  "
-                  :style="b.contestantB.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
-                  :disabled="!b.contestantB.videoUrl"
-                  @click="openVideoModal(b.contestantB)"
-                >
-                  <span class="material-icons text-lg">play_circle</span>
-                  <span>{{ t('taifa.nani.watchClip') }}</span>
-                </button>
+                <!-- Card Body -->
+                <div class="p-6 pt-8 flex-1 flex flex-col justify-between">
+                  <div>
+                    <!-- University Code Pill -->
+                    <div
+                      class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
+                      :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                    >
+                      {{ b.contestantB.universityCode }}
+                    </div>
+
+                    <!-- Name -->
+                    <h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
+                      {{ b.contestantB.name }}
+                    </h3>
+
+                    <!-- Votes Counter -->
+                    <div
+                      class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
+                    >
+                      <span class="material-icons text-base" :style="{ color: colorB(b) }">favorite</span>
+                      <span>{{ b.contestantB.votes.toLocaleString() }} {{ t('taifa.nani.votes') }}</span>
+                      <span class="text-gray-400 font-normal">({{ pctOf(b, b.contestantB.votes) }}%)</span>
+                    </div>
+                  </div>
+
+                  <!-- Vote Button matching PDF -->
+                  <button
+                    v-if="b.status === 'active'"
+                    type="button"
+                    class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
+                    :style="{ backgroundColor: b.themeColor, color: contrastText(b.themeColor) }"
+                    @click="openVoteModal(b.contestantB, b)"
+                  >
+                    <span class="material-icons text-xl">favorite</span>
+                    <span>{{ t('taifa.nani.vote') }}</span>
+                  </button>
+                  <div
+                    v-else
+                    class="w-full mt-5 py-3.5 rounded-2xl bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 font-black text-base flex items-center justify-center gap-2"
+                  >
+                    <span>{{ t('taifa.nani.battleEnded') }}</span>
+                  </div>
+
+                  <!-- Watch Clip Button -->
+                  <button
+                    type="button"
+                    class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
+                    :class="
+                      b.contestantB.videoUrl
+                        ? 'cursor-pointer hover:opacity-80'
+                        : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                    "
+                    :style="b.contestantB.videoUrl ? { borderColor: b.themeColor, color: b.themeColor } : {}"
+                    :disabled="!b.contestantB.videoUrl"
+                    @click="openVideoModal(b.contestantB)"
+                  >
+                    <span class="material-icons text-lg">play_circle</span>
+                    <span>{{ t('taifa.nani.watchClip') }}</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-
-          <!-- Live Vote Comparison Bar -->
-          <div
-            class="w-full max-w-xl mx-auto mt-6 bg-gray-200 dark:bg-zinc-800 rounded-full h-3 overflow-hidden flex shadow-inner"
-          >
-            <div
-              class="bg-[#183153] h-full transition-all duration-500"
-              :style="{ width: `${pctOf(b, b.contestantA.votes)}%` }"
-              :title="`${b.contestantA.name}: ${pctOf(b, b.contestantA.votes)}%`"
-            ></div>
-            <div
-              class="bg-[#FEBF01] h-full transition-all duration-500"
-              :style="{ width: `${pctOf(b, b.contestantB.votes)}%` }"
-              :title="`${b.contestantB.name}: ${pctOf(b, b.contestantB.votes)}%`"
-            ></div>
           </div>
         </div>
+      </div>
+
+      <!-- Slide dots — each in its battle's color -->
+      <div v-if="displayBattles.length > 1" class="flex items-center justify-center gap-2 mb-8">
+        <button
+          v-for="(b, i) in displayBattles"
+          :key="`dot-${b.id}`"
+          type="button"
+          class="h-2.5 rounded-full transition-all duration-300"
+          :class="activeDot === i ? 'w-7' : 'w-2.5 opacity-40 hover:opacity-70'"
+          :style="{ backgroundColor: b.themeColor }"
+          :aria-label="b.title"
+          @click="goTo(i)"
+        ></button>
       </div>
 
       <!-- Vote Payment Modal matching Page 4 of PDF -->
@@ -462,9 +500,10 @@ onUnmounted(() => {
   stopAutoScroll()
 })
 
-const carouselRef = ref<HTMLElement | null>(null)
+// ── Carousel: translateX track, one full battle per frame ─────
 let autoScrollTimer: number | undefined
-let currentIndex = 0
+const slideIndex = ref(0)
+const animate = ref(true)
 
 const stopAutoScroll = () => {
   if (autoScrollTimer !== undefined) {
@@ -473,29 +512,54 @@ const stopAutoScroll = () => {
   }
 }
 
-/** Keep our slide index in sync when the user swipes manually. */
-const syncIndex = () => {
-  const el = carouselRef.value
-  const slideW = el?.children[0] ? (el.children[0] as HTMLElement).offsetWidth : 0
-  if (el && slideW) currentIndex = Math.round(el.scrollLeft / slideW)
+const next = () => {
+  const count = displayBattles.value.length
+  if (count <= 1) return
+  animate.value = true
+  slideIndex.value = Math.min(slideIndex.value + 1, count)
+}
+
+const prev = () => {
+  const count = displayBattles.value.length
+  if (count <= 1) return
+  animate.value = true
+  slideIndex.value = slideIndex.value <= 0 ? count - 1 : slideIndex.value - 1
+}
+
+const goTo = (i: number) => {
+  animate.value = true
+  slideIndex.value = i
+  startAutoScroll()
+}
+
+/** After sliding onto the cloned first battle, snap back to the real one invisibly. */
+const onTransitionEnd = (e: TransitionEvent) => {
+  if (e.target !== e.currentTarget) return
+  if (slideIndex.value >= displayBattles.value.length) {
+    animate.value = false
+    slideIndex.value = 0
+  }
+}
+
+const activeDot = computed(() => slideIndex.value % Math.max(1, displayBattles.value.length))
+
+let pointerStartX: number | null = null
+const onPointerDown = (e: PointerEvent) => {
+  pointerStartX = e.clientX
+}
+const onPointerUp = (e: PointerEvent) => {
+  if (pointerStartX === null) return
+  const dx = e.clientX - pointerStartX
+  pointerStartX = null
+  if (Math.abs(dx) < 50) return
+  if (dx < 0) next()
+  else prev()
+  startAutoScroll()
 }
 
 const startAutoScroll = () => {
   stopAutoScroll()
-  autoScrollTimer = window.setInterval(() => {
-    const el = carouselRef.value
-    const count = displayBattles.value.length
-    if (!el || count <= 1 || el.children.length <= 1) return
-    const slideW = (el.children[0] as HTMLElement).offsetWidth
-    if (!slideW) return
-    if (currentIndex >= count) {
-      // On a duplicate slide — identical to the real one, jump back invisibly
-      el.scrollLeft = 0
-      currentIndex = 0
-    }
-    currentIndex += 1
-    el.scrollTo({ left: currentIndex * slideW, behavior: 'smooth' })
-  }, 5000)
+  autoScrollTimer = window.setInterval(next, 6000)
 }
 
 const battle = computed<BattleRound | null>(() => naniStore.activeBattle)
@@ -506,9 +570,9 @@ const displayBattles = computed<BattleRound[]>(() =>
   visibleBattles.value.length > 0 ? visibleBattles.value : battle.value ? [battle.value] : [],
 )
 
-/** Duplicated list so the carousel can loop seamlessly. */
+/** Real battles plus a clone of the first, so the loop always moves forward. */
 const loopBattles = computed<BattleRound[]>(() =>
-  displayBattles.value.length > 1 ? [...displayBattles.value, ...displayBattles.value] : displayBattles.value,
+  displayBattles.value.length > 1 ? [...displayBattles.value, displayBattles.value[0]] : displayBattles.value,
 )
 
 const displayTotalVotes = computed(() =>
@@ -529,6 +593,25 @@ const contrastText = (hex: string): string => {
   const bl = parseInt(c.slice(4, 6), 16)
   return 0.299 * r + 0.587 * g + 0.114 * bl > 150 ? '#111827' : '#ffffff'
 }
+
+/** Mix a hex color toward black (amount > 0) or white (amount < 0). */
+const shade = (hex: string, amount: number): string => {
+  const c = (hex || '').replace('#', '')
+  if (c.length < 6) return hex
+  const target = amount > 0 ? 0 : 255
+  const a = Math.abs(amount)
+  const mix = (i: number) =>
+    Math.round(parseInt(c.slice(i, i + 2), 16) * (1 - a) + target * a)
+      .toString(16)
+      .padStart(2, '0')
+  return `#${mix(0)}${mix(2)}${mix(4)}`
+}
+
+/** Contestant A = the battle color; contestant B = a contrasting shade of it,
+ * so every battle's graph is drawn in its own color family. */
+const colorA = (b: BattleRound) => b.themeColor
+const colorB = (b: BattleRound) =>
+  contrastText(b.themeColor) === '#ffffff' ? shade(b.themeColor, -0.55) : shade(b.themeColor, 0.6)
 
 /** Badge comes from the universities directory; battle's own badge field is the fallback. */
 const badgeFor = (c: Contestant): string => {
@@ -605,12 +688,5 @@ const submitVote = async () => {
 }
 .animate-bounce-subtle {
   animation: bounceSubtle 2.5s infinite ease-in-out;
-}
-.nani-carousel {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.nani-carousel::-webkit-scrollbar {
-  display: none;
 }
 </style>
