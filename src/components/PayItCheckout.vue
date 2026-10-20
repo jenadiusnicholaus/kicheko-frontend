@@ -199,146 +199,142 @@ onBeforeUnmount(() => {
 
         <!-- Modal Body -->
         <div class="flex-1 overflow-y-auto flex flex-col">
-          <!-- STEP 2: PAYIT PAYMENT POPUP FLOW -->
-          <template>
-            <!-- Compact Application Summary -->
-            <div class="px-5 py-3 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/40">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                  {{ t('taifa.register.step1Title') }}
-                </span>
-                <span
-                  class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400"
-                >
-                  <span class="material-icons text-sm">check_circle</span>
-                  <span>Tayari</span>
-                </span>
-              </div>
-              <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                <div>
-                  <span class="text-gray-400">{{ t('taifa.register.applicant') }}:</span>
-                  <span class="font-bold text-gray-800 dark:text-gray-200 ml-1">{{ applicantName || '—' }}</span>
-                </div>
-                <div>
-                  <span class="text-gray-400">{{ t('taifa.register.phone') }}:</span>
-                  <span class="font-bold text-gray-800 dark:text-gray-200 ml-1">+255 {{ applicantPhone || '—' }}</span>
-                </div>
-                <div v-if="applicantUniversity" class="col-span-2">
-                  <span class="text-gray-400">{{ t('taifa.register.university') }}:</span>
-                  <span class="font-bold text-gray-800 dark:text-gray-200 ml-1">{{ applicantUniversity }}</span>
-                </div>
-                <div v-if="applicationId" class="col-span-2 text-[11px] font-mono text-gray-400 mt-0.5">
-                  Ref: <span class="font-bold text-gray-600 dark:text-gray-300">{{ applicationId }}</span>
-                </div>
-              </div>
+          <!-- STEP 2: PAYIT PAYMENT FLOW -->
+          <!-- Compact Application Summary -->
+          <div class="px-5 py-3 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/40">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                {{ t('taifa.register.step1Title') }}
+              </span>
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                <span class="material-icons text-sm">check_circle</span>
+                <span>Tayari</span>
+              </span>
             </div>
-
-            <!-- PayIt Payment Action Box -->
-            <div class="p-6 flex flex-col items-center text-center space-y-4">
-              <div
-                class="w-14 h-14 rounded-2xl bg-[#FEBF01]/20 text-gray-950 dark:text-[#FEBF01] flex items-center justify-center shadow-inner"
-              >
-                <span class="material-icons text-3xl">payments</span>
-              </div>
-
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">
-                  {{ t('taifa.register.feeBoxTitle') }}
-                </span>
-                <div class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-                  {{ currency }} {{ amount }}
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto">
-                  Lipa ada ya usajili kupitia mfumo salama wa PayIt kwa kutumia simu au kadi.
-                </p>
+                <span class="text-gray-400">{{ t('taifa.register.applicant') }}:</span>
+                <span class="font-bold text-gray-800 dark:text-gray-200 ml-1">{{ applicantName || '—' }}</span>
               </div>
-
-              <!-- Primary Action: push the mobile-money prompt to the payer's phone -->
-              <div class="w-full space-y-2 pt-1">
-                <template v-if="!paymentInitiated">
-                  <label class="block text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                    {{ t('taifa.payment.payerPhoneLabel') }}
-                  </label>
-                  <div
-                    class="flex rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 focus-within:ring-2 focus-within:ring-[#FEBF01] focus-within:border-[#FEBF01] transition-all overflow-hidden"
-                  >
-                    <span
-                      class="flex items-center gap-1.5 px-2.5 py-3 border-r border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-700 dark:text-gray-300"
-                    >
-                      <span class="text-base">🇹🇿</span>
-                      <span>+255</span>
-                    </span>
-                    <input
-                      v-model="payerPhone"
-                      type="tel"
-                      :placeholder="t('taifa.payment.payerPhonePlaceholder')"
-                      class="w-full px-3 py-3 bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none"
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    :disabled="isInitiating"
-                    class="w-full py-3.5 rounded-2xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-lg hover:shadow-[#FEBF01]/30 transition-all active:scale-98 cursor-pointer disabled:opacity-60"
-                    @click="initiatePayment"
-                  >
-                    <span v-if="isInitiating" class="material-icons animate-spin text-lg">sync</span>
-                    <span v-else class="material-icons text-lg">send_to_mobile</span>
-                    <span>{{ isInitiating ? t('taifa.payment.initiating') : t('taifa.register.payViaPayit') }}</span>
-                  </button>
-
-                  <p v-if="initiateError" class="text-xs font-semibold text-red-600 dark:text-red-400">
-                    {{ initiateError }}
-                  </p>
-
-                  <button
-                    type="button"
-                    class="text-[11px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline underline-offset-2 transition-colors cursor-pointer"
-                    @click="openPayItPopup"
-                  >
-                    {{ t('taifa.payment.openPayit') }}
-                  </button>
-                </template>
-
-                <p v-else class="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-pulse">
-                  {{ t('taifa.payment.promptSent') }}
-                </p>
+              <div>
+                <span class="text-gray-400">{{ t('taifa.register.phone') }}:</span>
+                <span class="font-bold text-gray-800 dark:text-gray-200 ml-1">+255 {{ applicantPhone || '—' }}</span>
               </div>
-
-              <!-- Real-time Status / Polling Listener Box -->
-              <div
-                class="w-full p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 text-left space-y-2"
-              >
-                <div class="flex items-center justify-between gap-3">
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    <span class="relative flex h-3 w-3 shrink-0">
-                      <span
-                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FEBF01] opacity-75"
-                      ></span>
-                      <span class="relative inline-flex rounded-full h-3 w-3 bg-[#FEBF01]"></span>
-                    </span>
-                    <span class="text-xs font-bold text-amber-950 dark:text-amber-200 truncate">
-                      {{ t('taifa.register.waitingPayment') }}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    :disabled="isCheckingStatus"
-                    class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800 hover:bg-amber-100 dark:hover:bg-zinc-700 text-xs font-bold text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60 shrink-0"
-                    @click="checkPaymentStatus"
-                  >
-                    <span v-if="isCheckingStatus" class="material-icons animate-spin text-xs">sync</span>
-                    <span>{{ t('taifa.register.checkStatus') }}</span>
-                  </button>
-                </div>
-
-                <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
-                  Mara tu utakapolipa kwenye PayIt, mfumo utathibitisha na kufungua ukurasa wa ushindi kiotomatiki.
-                </p>
+              <div v-if="applicantUniversity" class="col-span-2">
+                <span class="text-gray-400">{{ t('taifa.register.university') }}:</span>
+                <span class="font-bold text-gray-800 dark:text-gray-200 ml-1">{{ applicantUniversity }}</span>
+              </div>
+              <div v-if="applicationId" class="col-span-2 text-[11px] font-mono text-gray-400 mt-0.5">
+                Ref: <span class="font-bold text-gray-600 dark:text-gray-300">{{ applicationId }}</span>
               </div>
             </div>
-          </template>
+          </div>
+
+          <!-- PayIt Payment Action Box -->
+          <div class="p-6 flex flex-col items-center text-center space-y-4">
+            <div
+              class="w-14 h-14 rounded-2xl bg-[#FEBF01]/20 text-gray-950 dark:text-[#FEBF01] flex items-center justify-center shadow-inner"
+            >
+              <span class="material-icons text-3xl">payments</span>
+            </div>
+
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                {{ t('taifa.register.feeBoxTitle') }}
+              </span>
+              <div class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+                {{ currency }} {{ amount }}
+              </div>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto">
+                Lipa ada ya usajili kupitia mfumo salama wa PayIt kwa kutumia simu au kadi.
+              </p>
+            </div>
+
+            <!-- Primary Action: push the mobile-money prompt to the payer's phone -->
+            <div class="w-full space-y-2 pt-1">
+              <template v-if="!paymentInitiated">
+                <label class="block text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                  {{ t('taifa.payment.payerPhoneLabel') }}
+                </label>
+                <div
+                  class="flex rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 focus-within:ring-2 focus-within:ring-[#FEBF01] focus-within:border-[#FEBF01] transition-all overflow-hidden"
+                >
+                  <span
+                    class="flex items-center gap-1.5 px-2.5 py-3 border-r border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-700 dark:text-gray-300"
+                  >
+                    <span class="text-base">🇹🇿</span>
+                    <span>+255</span>
+                  </span>
+                  <input
+                    v-model="payerPhone"
+                    type="tel"
+                    :placeholder="t('taifa.payment.payerPhonePlaceholder')"
+                    class="w-full px-3 py-3 bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  :disabled="isInitiating"
+                  class="w-full py-3.5 rounded-2xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-lg hover:shadow-[#FEBF01]/30 transition-all active:scale-98 cursor-pointer disabled:opacity-60"
+                  @click="initiatePayment"
+                >
+                  <span v-if="isInitiating" class="material-icons animate-spin text-lg">sync</span>
+                  <span v-else class="material-icons text-lg">send_to_mobile</span>
+                  <span>{{ isInitiating ? t('taifa.payment.initiating') : t('taifa.register.payViaPayit') }}</span>
+                </button>
+
+                <p v-if="initiateError" class="text-xs font-semibold text-red-600 dark:text-red-400">
+                  {{ initiateError }}
+                </p>
+
+                <button
+                  type="button"
+                  class="text-[11px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline underline-offset-2 transition-colors cursor-pointer"
+                  @click="openPayItPopup"
+                >
+                  {{ t('taifa.payment.openPayit') }}
+                </button>
+              </template>
+
+              <p v-else class="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-pulse">
+                {{ t('taifa.payment.promptSent') }}
+              </p>
+            </div>
+
+            <!-- Real-time Status / Polling Listener Box -->
+            <div
+              class="w-full p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 text-left space-y-2"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="relative flex h-3 w-3 shrink-0">
+                    <span
+                      class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FEBF01] opacity-75"
+                    ></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-[#FEBF01]"></span>
+                  </span>
+                  <span class="text-xs font-bold text-amber-950 dark:text-amber-200 truncate">
+                    {{ t('taifa.register.waitingPayment') }}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  :disabled="isCheckingStatus"
+                  class="px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-800 hover:bg-amber-100 dark:hover:bg-zinc-700 text-xs font-bold text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60 shrink-0"
+                  @click="checkPaymentStatus"
+                >
+                  <span v-if="isCheckingStatus" class="material-icons animate-spin text-xs">sync</span>
+                  <span>{{ t('taifa.register.checkStatus') }}</span>
+                </button>
+              </div>
+
+              <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                Mara tu utakapolipa kwenye PayIt, mfumo utathibitisha na kufungua ukurasa wa ushindi kiotomatiki.
+              </p>
+            </div>
+          </div>
         </div>
 
         <!-- Footnote -->
