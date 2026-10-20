@@ -106,6 +106,21 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       return newApp
     },
 
+    /** Single payment-state read — includes the Pay-IT payment_reference. */
+    async fetchPaymentStatus(id: string): Promise<{
+      payment_confirmed: boolean
+      payment_status: string
+      payment_reference: string
+      status: string
+    } | null> {
+      try {
+        const { data } = await http.get(`/applications/${id}/payment-status/`)
+        return data
+      } catch {
+        return null
+      }
+    },
+
     /** Poll until the Pay-IT webhook confirms the payment (or timeout). */
     async waitForPaymentConfirmation(
       id: string,

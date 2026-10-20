@@ -395,7 +395,8 @@
       "returnHome": "Back to Home",
       "confirmingTitle": "Confirming your payment…",
       "confirmingDesc": "Please wait — we are confirming your payment with the provider. Do not close this page.",
-      "title": "Comedian Registration"
+      "title": "Comedian Registration",
+      "next": "Next"
     },
     "nani": {
       "title": "Nani ni Nani?",

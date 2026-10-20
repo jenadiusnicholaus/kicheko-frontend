@@ -159,7 +159,7 @@
               class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-md hover:shadow-[#FEBF01]/30 transition-all active:scale-98 disabled:opacity-60 cursor-pointer"
             >
               <span v-if="isSubmitting" class="material-icons animate-spin text-base">sync</span>
-              <span>{{ isSubmitting ? t('taifa.register.confirming') : t('taifa.register.submit') }}</span>
+              <span>{{ isSubmitting ? t('taifa.register.confirming') : t('taifa.register.next') }}</span>
               <span v-if="!isSubmitting" class="material-icons text-base">arrow_forward</span>
             </button>
           </div>

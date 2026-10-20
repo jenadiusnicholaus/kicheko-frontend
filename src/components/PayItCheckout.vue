@@ -38,8 +38,6 @@ const { t } = useI18n()
 const router = useRouter()
 const applicationsStore = useComedianApplicationsStore()
 
-type Step = 'payment' | 'success'
-const currentStep = ref<Step>('payment')
 const isCheckingStatus = ref(false)
 const hasOpenedPopup = ref(false)
 let pollingInterval: ReturnType<typeof setInterval> | null = null
@@ -70,16 +68,14 @@ async function checkPaymentStatus(): Promise<boolean> {
   if (!props.applicationId) return false
   isCheckingStatus.value = true
   try {
-    const isPaid = await applicationsStore.waitForPaymentConfirmation(props.applicationId, {
-      intervalMs: 1500,
-      timeoutMs: 5000,
-    })
-    if (isPaid) {
+    const s = await applicationsStore.fetchPaymentStatus(props.applicationId)
+    if (s && (s.payment_confirmed || s.payment_status === 'paid')) {
       stopPolling()
-      currentStep.value = 'success'
-      emit('success', {
-        payment_id: props.applicationId,
-        status: 'SUCCEEDED',
+      const paymentId = s.payment_reference || props.applicationId
+      emit('success', { payment_id: paymentId, status: 'SUCCEEDED' })
+      router.push({
+        name: 'payment-success',
+        query: { payit_payment_id: paymentId, payit_status: 'SUCCEEDED' },
       })
       return true
     }
@@ -94,7 +90,7 @@ async function checkPaymentStatus(): Promise<boolean> {
 function startPolling(): void {
   stopPolling()
   pollingInterval = setInterval(async () => {
-    if (currentStep.value !== 'payment' || !props.open) {
+    if (!props.open) {
       stopPolling()
       return
     }
@@ -108,21 +104,10 @@ function close(): void {
   emit('close')
 }
 
-function goToNani(): void {
-  close()
-  router.push('/nani-ni-nani')
-}
-
-function goHome(): void {
-  close()
-  router.push('/')
-}
-
 watch(
   () => props.open,
   (isOpen) => {
     if (isOpen) {
-      currentStep.value = 'payment'
       hasOpenedPopup.value = false
       document.body.style.overflow = 'hidden'
       startPolling()
@@ -156,9 +141,9 @@ onBeforeUnmount(() => {
         <div class="px-6 pt-5 pb-4 border-b border-gray-100 dark:border-zinc-800 flex items-start justify-between">
           <div>
             <h3 class="text-lg sm:text-xl font-black text-gray-900 dark:text-white tracking-tight">
-              {{ currentStep === 'success' ? t('taifa.register.successTitle') : t('taifa.register.confirmTitle') }}
+              {{ t('taifa.register.confirmTitle') }}
             </h3>
-            <p v-if="currentStep !== 'success'" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {{ t('taifa.register.confirmFeeDesc') }}
             </p>
           </div>
@@ -193,19 +178,11 @@ onBeforeUnmount(() => {
           <!-- Step 2: Payment -->
           <div class="flex-1 flex items-center gap-2">
             <span
-              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-sm"
-              :class="
-                currentStep === 'success'
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-[#FEBF01] text-gray-950 ring-2 ring-[#FEBF01]/30'
-              "
+              class="w-6 h-6 rounded-full bg-[#FEBF01] text-gray-950 ring-2 ring-[#FEBF01]/30 flex items-center justify-center text-xs font-bold shadow-sm"
             >
-              {{ currentStep === 'success' ? '✓' : '2' }}
+              2
             </span>
-            <span
-              class="text-xs font-bold truncate"
-              :class="currentStep === 'success' ? 'text-gray-700 dark:text-gray-300' : 'text-gray-900 dark:text-white'"
-            >
+            <span class="text-xs font-bold text-gray-900 dark:text-white truncate">
               {{ t('taifa.register.step2Title') }}
             </span>
           </div>
@@ -213,50 +190,8 @@ onBeforeUnmount(() => {
 
         <!-- Modal Body -->
         <div class="flex-1 overflow-y-auto flex flex-col">
-          <!-- SUCCESS STATE -->
-          <div v-if="currentStep === 'success'" class="p-6 text-center py-6 space-y-4">
-            <div
-              class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto text-3xl font-black shadow-inner"
-            >
-              ✓
-            </div>
-            <div>
-              <h4 class="text-xl font-black text-gray-900 dark:text-white">
-                {{ t('taifa.register.successTitle') }}
-              </h4>
-              <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-sm mx-auto leading-relaxed">
-                {{ t('taifa.register.successDesc') }}
-              </p>
-            </div>
-
-            <div
-              v-if="applicationId"
-              class="p-3 bg-gray-50 dark:bg-zinc-800 rounded-2xl text-xs text-gray-500 dark:text-gray-400 inline-block px-5"
-            >
-              {{ t('taifa.register.appRef') }}
-              <span class="font-mono font-bold text-gray-900 dark:text-white ml-1">{{ applicationId }}</span>
-            </div>
-
-            <div class="space-y-2.5 pt-2">
-              <button
-                type="button"
-                class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm shadow transition-all cursor-pointer"
-                @click="goToNani"
-              >
-                {{ t('taifa.register.viewNani') }}
-              </button>
-              <button
-                type="button"
-                class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-                @click="goHome"
-              >
-                {{ t('taifa.register.returnHome') }}
-              </button>
-            </div>
-          </div>
-
           <!-- STEP 2: PAYIT PAYMENT POPUP FLOW -->
-          <template v-else>
+          <template>
             <!-- Compact Application Summary -->
             <div class="px-5 py-3 border-b border-gray-100 dark:border-zinc-800 bg-gray-50/50 dark:bg-zinc-800/40">
               <div class="flex items-center justify-between mb-1.5">
@@ -307,30 +242,6 @@ onBeforeUnmount(() => {
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto">
                   Lipa ada ya usajili kupitia mfumo salama wa PayIt kwa kutumia simu au kadi.
                 </p>
-              </div>
-
-              <!-- Supported Networks Badge Row -->
-              <div class="flex flex-wrap items-center justify-center gap-1.5 py-1">
-                <span
-                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20"
-                >
-                  M-Pesa
-                </span>
-                <span
-                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20"
-                >
-                  Tigo Pesa
-                </span>
-                <span
-                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20"
-                >
-                  Airtel Money
-                </span>
-                <span
-                  class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-500/20"
-                >
-                  HaloPesa
-                </span>
               </div>
 
               <!-- Primary Action: Open PayIt -->
