@@ -343,7 +343,6 @@
       "step3Title": "3. Wall of Fame",
       "step3Desc": "Meet legendary university comedy champions across Tanzania.",
       "voteTitle": "Kicheko Pro: Current Vote Standing",
-      "voteDesc": "Applications are closed. Bars show each contestant against the leader; each vote costs TSh {fee}.",
       "votes": "votes",
       "vote": "Vote",
       "voteEmpty": "No contestants on the vote list yet.",
@@ -358,8 +357,10 @@
       "voteFailed": "Payment failed — no votes were added.",
       "votePending": "Payment is still being confirmed. Your votes will appear once it completes.",
       "done": "Done",
-      "contestantsLabel": "Contestants on the list",
-      "shareNote": "Percentages show each contestant's share of all votes"
+      "liveLabel": "Live voting",
+      "voteSubtitle": "Applications are closed — support your favourite comedian.",
+      "contestantsShort": "Contestants",
+      "voteFooter": "Share of all paid votes · TSh {fee} per vote via Pay-IT"
     },
     "register": {
       "createAccount": "Apply Now",

@@ -235,7 +235,6 @@
       "step3Title": "3. Wall of Fame",
       "step3Desc": "Kutana na mabingwa wa vichekesho waliowahi kutikisa majukwaa ya vyuo Tanzania.",
       "voteTitle": "Kicheko Pro: Mwenendo wa Kura",
-      "voteDesc": "Usajili umefungwa. Mistari inaonyesha kila mshindani dhidi ya anayeongoza; kila kura ni TSh {fee}.",
       "votes": "kura",
       "vote": "Piga Kura",
       "voteEmpty": "Hakuna washindani kwenye orodha ya kura bado.",
@@ -250,8 +249,10 @@
       "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
       "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika.",
       "done": "Sawa",
-      "contestantsLabel": "Washindani kwenye orodha",
-      "shareNote": "Asilimia zinaonyesha sehemu ya kila mshindani katika kura zote"
+      "liveLabel": "Kura zinaendelea",
+      "voteSubtitle": "Usajili umefungwa — mpe sapoti mchekeshaji unayempenda.",
+      "contestantsShort": "Washindani",
+      "voteFooter": "Asilimia ya kura zote zilizolipiwa · TSh {fee} kwa kura kupitia Pay-IT"
     },
     "register": {
       "createAccount": "Tuma Maombi Sasa",

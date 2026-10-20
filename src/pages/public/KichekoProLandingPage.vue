@@ -32,112 +32,120 @@
       </div>
     </template>
 
-    <!-- Applications CLOSED: paid vote poll chart -->
-    <div
+    <!-- Applications CLOSED: paid vote leaderboard -->
+    <section
       v-else
-      class="w-full max-w-3xl mb-24 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden text-left"
+      class="w-full max-w-3xl mb-24 overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_12px_40px_rgba(15,23,42,0.08)] text-left"
     >
       <!-- Header -->
-      <div class="bg-[#1B2A4A] px-5 sm:px-6 py-4 sm:py-5">
-        <h1 class="text-lg sm:text-2xl font-black text-white tracking-tight">
-          {{ t('taifa.home.voteTitle') }}
-        </h1>
-      </div>
-
-      <div class="px-4 sm:px-6 py-5">
-        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-5">
-          {{ t('taifa.home.voteDesc', { fee: applicationsStore.voteFee.toLocaleString() }) }}
-        </p>
-
-        <div v-if="isLoading" class="flex items-center justify-center py-16 text-gray-400">
-          <span class="material-icons animate-spin text-3xl">sync</span>
-        </div>
-
-        <div v-else-if="applicationsStore.voteList.length === 0" class="py-12 text-center text-gray-400">
-          <span class="material-icons text-5xl mb-3 text-gray-300">how_to_vote</span>
-          <p class="font-bold text-sm">{{ t('taifa.home.voteEmpty') }}</p>
-        </div>
-
-        <!-- Poll rows -->
-        <div v-else class="space-y-2">
-          <div
-            v-for="(applicant, index) in applicationsStore.voteList"
-            :key="applicant.id"
-            class="grid grid-cols-[2rem_minmax(0,7rem)_1fr_3rem_auto] sm:grid-cols-[2.25rem_minmax(0,10rem)_1fr_4rem_auto] items-center gap-2 sm:gap-3"
-          >
-            <!-- Rank chip -->
-            <div
-              class="h-8 rounded-md flex items-center justify-center text-xs font-black"
-              :class="
-                index === 0
-                  ? 'bg-[#FEBF01] text-gray-950'
-                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400'
-              "
-            >
-              {{ index + 1 }}
+      <header class="bg-gradient-to-br from-[#1B2A4A] to-[#0F1A30] px-5 sm:px-7 py-5 sm:py-6">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <div class="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80">
+                {{ t('taifa.home.liveLabel') }}
+              </span>
             </div>
-
-            <!-- Name -->
-            <div class="min-w-0">
-              <div class="font-black text-gray-900 dark:text-white text-xs sm:text-sm truncate">
-                {{ applicant.name }}
-              </div>
-              <div class="text-[10px] text-gray-400 truncate">
-                {{ applicant.universityCode || applicant.university }}
-              </div>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+              {{ t('taifa.home.voteTitle') }}
+            </h1>
+            <p class="mt-1 text-xs sm:text-sm text-white/60">
+              {{ t('taifa.home.voteSubtitle') }}
+            </p>
+          </div>
+          <div v-if="applicationsStore.voteList.length" class="shrink-0 text-right">
+            <div class="text-2xl sm:text-3xl font-extrabold tabular-nums text-white">
+              {{ applicationsStore.voteList.length }}
             </div>
-
-            <!-- Bar (relative to leader) -->
-            <div class="min-w-0">
-              <div class="h-8 rounded-md bg-gray-100 dark:bg-zinc-800 overflow-hidden">
-                <div
-                  class="h-full rounded-md transition-all duration-700 ease-out"
-                  :style="{ width: `${barWidth(applicant.votes)}%`, backgroundColor: barColor(index) }"
-                ></div>
-              </div>
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-white/50">
+              {{ t('taifa.home.contestantsShort') }}
             </div>
-
-            <!-- Vote share (percentage only — no raw counts) -->
-            <div
-              class="text-right font-black text-sm sm:text-base tabular-nums"
-              :style="{ color: index === 0 ? '#059669' : undefined }"
-              :class="index === 0 ? '' : 'text-gray-900 dark:text-white'"
-            >
-              {{ sharePercent(applicant.votes) }}%
-            </div>
-
-            <!-- Vote button -->
-            <button
-              type="button"
-              class="h-8 px-3 rounded-md bg-[#FEBF01] hover:bg-[#E5AC00] active:scale-95 text-gray-950 font-black text-[11px] sm:text-xs flex items-center gap-1 shadow-sm transition-all"
-              @click="openVoteModal(applicant)"
-            >
-              <span class="material-icons text-sm">how_to_vote</span>
-              <span class="hidden sm:inline">{{ t('taifa.home.vote') }}</span>
-            </button>
           </div>
         </div>
+      </header>
 
-        <!-- Totals -->
-        <div
-          v-if="applicationsStore.voteList.length > 0"
-          class="mt-6 inline-flex items-center gap-3 border border-gray-200 dark:border-zinc-800 rounded-xl px-4 py-3"
+      <div v-if="isLoading" class="flex items-center justify-center py-20 text-gray-400">
+        <span class="material-icons animate-spin text-3xl">sync</span>
+      </div>
+
+      <div v-else-if="applicationsStore.voteList.length === 0" class="py-16 text-center text-gray-400">
+        <span class="material-icons mb-3 text-5xl text-gray-300">how_to_vote</span>
+        <p class="text-sm font-semibold">{{ t('taifa.home.voteEmpty') }}</p>
+      </div>
+
+      <!-- Leaderboard -->
+      <ol v-else class="divide-y divide-gray-100 dark:divide-zinc-800">
+        <li
+          v-for="(applicant, index) in applicationsStore.voteList"
+          :key="applicant.id"
+          class="group flex items-center gap-3 sm:gap-4 px-4 sm:px-7 py-3.5 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40"
         >
-          <span class="px-2 py-1 rounded-md bg-[#1B2A4A] text-white text-sm font-black tabular-nums">
-            {{ applicationsStore.voteList.length }}
-          </span>
-          <div>
-            <div class="text-sm font-black text-gray-900 dark:text-white">{{ t('taifa.home.contestantsLabel') }}</div>
-            <div class="text-[11px] text-gray-500">{{ t('taifa.home.shareNote') }}</div>
+          <!-- Rank -->
+          <div
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums"
+            :class="rankClass(ranks[index], applicant.votes)"
+          >
+            {{ ranks[index] }}
           </div>
-        </div>
-      </div>
 
-      <div class="border-t border-gray-100 dark:border-zinc-800 px-5 sm:px-6 py-3 flex items-center justify-end gap-2">
-        <img src="/taifa/taifa_logo.png" alt="Taifa House" class="h-7 w-7 rounded-full object-cover" />
-        <span class="text-xs font-black text-[#1B2A4A] dark:text-gray-300">Taifa House</span>
-      </div>
-    </div>
+          <!-- Avatar -->
+          <div
+            class="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A]/5 dark:bg-white/5 text-sm font-bold text-[#1B2A4A] dark:text-gray-200"
+          >
+            {{ initials(applicant.name) }}
+          </div>
+
+          <!-- Name + meter -->
+          <div class="min-w-0 flex-1">
+            <div class="flex items-baseline justify-between gap-3">
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ applicant.name }}</p>
+                <p class="truncate text-[11px] text-gray-500 dark:text-gray-400">
+                  {{ applicant.university || applicant.universityCode }}
+                </p>
+              </div>
+              <span
+                class="shrink-0 text-sm sm:text-base font-bold tabular-nums"
+                :class="isLeader(index) ? 'text-[#B58800] dark:text-[#FEBF01]' : 'text-gray-900 dark:text-white'"
+              >
+                {{ sharePercent(applicant.votes) }}%
+              </span>
+            </div>
+            <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
+              <div
+                class="h-full rounded-full transition-all duration-700 ease-out"
+                :class="isLeader(index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
+                :style="{ width: `${barWidth(applicant.votes)}%` }"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Vote -->
+          <button
+            type="button"
+            class="shrink-0 inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#1B2A4A]/15 dark:border-white/15 px-3 sm:px-4 text-xs font-semibold text-[#1B2A4A] dark:text-white transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95"
+            @click="openVoteModal(applicant)"
+          >
+            <span class="material-icons text-base">how_to_vote</span>
+            <span class="hidden sm:inline">{{ t('taifa.home.vote') }}</span>
+          </button>
+        </li>
+      </ol>
+
+      <!-- Footer -->
+      <footer
+        class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900 px-5 sm:px-7 py-3.5"
+      >
+        <p class="text-[11px] text-gray-500 dark:text-gray-400">
+          {{ t('taifa.home.voteFooter', { fee: applicationsStore.voteFee.toLocaleString() }) }}
+        </p>
+        <div class="flex items-center gap-2">
+          <img src="/taifa/taifa_logo.png" alt="Taifa House" class="h-6 w-6 rounded-full object-cover" />
+          <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-300">Taifa House</span>
+        </div>
+      </footer>
+    </section>
 
     <!-- ───── Paid Vote Modal ───── -->
     <div
@@ -257,14 +265,33 @@ const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 
 const isLoading = ref(true)
-const BAR_COLORS = ['#FEBF01', '#1B2A4A', '#F97316', '#DC2626', '#EF4444', '#0D9488', '#2563EB', '#7C3AED']
 
 const totalVotes = computed(() => applicationsStore.voteList.reduce((sum, a) => sum + a.votes, 0))
 const maxVotes = computed(() => Math.max(0, ...applicationsStore.voteList.map((a) => a.votes)))
 
 const barWidth = (votes: number) => (maxVotes.value > 0 ? Math.max(1.5, (votes / maxVotes.value) * 100) : 1.5)
 const sharePercent = (votes: number) => (totalVotes.value > 0 ? ((votes / totalVotes.value) * 100).toFixed(1) : '0.0')
-const barColor = (index: number) => BAR_COLORS[index % BAR_COLORS.length]
+
+/** Competition ranking — tied vote counts share the same rank. */
+const ranks = computed(() => {
+  const list = applicationsStore.voteList
+  return list.map((a) => 1 + list.filter((o) => o.votes > a.votes).length)
+})
+const isLeader = (index: number) => ranks.value[index] === 1 && (applicationsStore.voteList[index]?.votes ?? 0) > 0
+const rankClass = (rank: number, votes: number) => {
+  if (votes <= 0) return 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-gray-400'
+  if (rank === 1) return 'bg-[#FEBF01] text-gray-950 shadow-sm'
+  if (rank === 2) return 'bg-gray-200 text-gray-700 dark:bg-zinc-700 dark:text-gray-200'
+  if (rank === 3) return 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
+  return 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-gray-400'
+}
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase())
+    .join('')
 
 // ── Paid vote modal ───────────────────────────────────────────
 type Step = 'form' | 'waiting' | 'done' | 'failed' | 'pending'
