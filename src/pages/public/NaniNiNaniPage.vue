@@ -41,11 +41,11 @@
       <!-- Battles Arena — each matchup is a snap slide, auto-scrolls, pauses on hover -->
       <div
         ref="carouselRef"
-        class="nani-carousel w-full max-w-5xl mx-auto overflow-x-auto flex mb-8"
+        class="nani-carousel w-full max-w-5xl mx-auto overflow-x-auto flex mb-8 snap-x snap-mandatory"
         @mouseenter="stopAutoScroll"
         @mouseleave="startAutoScroll"
       >
-        <div v-for="(b, i) in loopBattles" :key="`${b.id}-${i}`" class="w-full shrink-0">
+        <div v-for="(b, i) in loopBattles" :key="`${b.id}-${i}`" class="w-full shrink-0 snap-center">
           <!-- Battle Title -->
           <div class="text-center mb-5">
             <h2 class="text-lg sm:text-xl font-black text-gray-900 dark:text-white">
