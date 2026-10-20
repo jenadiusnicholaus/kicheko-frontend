@@ -646,7 +646,16 @@
       "levelTh": "Level",
       "levelLabel": "Level {n}",
       "onVoteList": "Visible on the public vote list",
-      "notOnVoteList": "Not on the vote list yet"
+      "notOnVoteList": "Not on the vote list yet",
+      "flowHint": "Flow: applicant pays (or you mark-paid) → you Approve → close applications with the toggle → move approved applicants to audition level 2+ so they appear on the public vote list.",
+      "bulkSelected": "{n} selected",
+      "bulkHint": "Approved applicants only — others are skipped.",
+      "bulkApply": "Set level",
+      "bulkUpdating": "Updating…",
+      "bulkClear": "Clear",
+      "bulkSelectAll": "Select all approved",
+      "levelNeedsApproval": "Approve the application first — levels apply to approved applicants only.",
+      "bulkSkipped": "{n} application(s) were skipped because they are not approved."
     },
     "dashboard": {
       "liveOnline": "Live Online",

@@ -538,7 +538,16 @@
       "levelTh": "Kiwango",
       "levelLabel": "Kiwango {n}",
       "onVoteList": "Anaonekana kwenye orodha ya kura",
-      "notOnVoteList": "Bado hayupo kwenye orodha ya kura"
+      "notOnVoteList": "Bado hayupo kwenye orodha ya kura",
+      "flowHint": "Mtiririko: mwombaji analipa (au unaweka malipo) → Unaidhinisha → funga usajili kwa kitufe → hamia walioidhinishwa kiwango cha usaili 2+ ili waonekane kwenye orodha ya kura ya umma.",
+      "bulkSelected": "{n} wamechaguliwa",
+      "bulkHint": "Walioidhinishwa tu — wengine wanarukwa.",
+      "bulkApply": "Weka kiwango",
+      "bulkUpdating": "Inasasisha…",
+      "bulkClear": "Futa",
+      "bulkSelectAll": "Chagua wote walioidhinishwa",
+      "levelNeedsApproval": "Idhinisha ombi kwanza — viwango vinatumika kwa walioidhinishwa tu.",
+      "bulkSkipped": "Maombi {n} yamerukwa kwa sababu hayakuwa yameidhinishwa."
     },
     "dashboard": {
       "liveOnline": "Live Mtandaoni",

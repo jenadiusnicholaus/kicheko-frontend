@@ -112,6 +112,16 @@
       </div>
     </div>
 
+    <!-- Flow Hint -->
+    <div
+      class="flex items-start gap-2.5 px-4 py-3 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 text-amber-900 dark:text-amber-300"
+    >
+      <span class="material-icons text-lg shrink-0 mt-0.5">route</span>
+      <p class="text-xs font-medium leading-relaxed">
+        {{ t('taifa.admin.flowHint') }}
+      </p>
+    </div>
+
     <!-- Filter Tabs & Search -->
     <div
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#18181b] p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
@@ -153,6 +163,43 @@
       </div>
     </div>
 
+    <!-- Bulk Level Bar -->
+    <div
+      v-if="selectedIds.size > 0"
+      class="flex flex-wrap items-center gap-3 px-4 py-3 rounded-2xl bg-[#FEBF01]/10 border border-[#FEBF01]/50 shadow-sm"
+    >
+      <span class="text-xs font-black text-gray-900 dark:text-white">
+        {{ t('taifa.admin.bulkSelected', { n: selectedIds.size }) }}
+      </span>
+      <span class="text-[11px] text-gray-500 dark:text-gray-400">
+        {{ t('taifa.admin.bulkHint') }}
+      </span>
+      <div class="flex items-center gap-2 ml-auto">
+        <select
+          v-model.number="bulkLevel"
+          class="px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+        >
+          <option v-for="n in 4" :key="n" :value="n">{{ t('taifa.admin.levelLabel', { n }) }}</option>
+        </select>
+        <button
+          type="button"
+          class="px-4 py-2 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-xs font-black shadow-sm transition-colors"
+          :disabled="bulkUpdating"
+          @click="applyBulkLevel"
+        >
+          <span v-if="bulkUpdating" class="material-icons text-sm animate-spin align-middle">sync</span>
+          {{ bulkUpdating ? t('taifa.admin.bulkUpdating') : t('taifa.admin.bulkApply') }}
+        </button>
+        <button
+          type="button"
+          class="px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-400 text-xs font-bold hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+          @click="selectedIds.clear()"
+        >
+          {{ t('taifa.admin.bulkClear') }}
+        </button>
+      </div>
+    </div>
+
     <!-- Applications Table -->
     <div
       class="bg-white dark:bg-[#18181b] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
@@ -163,6 +210,16 @@
             <tr
               class="bg-gray-50/80 dark:bg-zinc-800/50 border-b border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider text-[11px]"
             >
+              <th class="py-3.5 px-3 w-10">
+                <input
+                  type="checkbox"
+                  class="accent-[#FEBF01] cursor-pointer"
+                  :checked="allApprovedSelected"
+                  :indeterminate.prop="someApprovedSelected && !allApprovedSelected"
+                  :title="t('taifa.admin.bulkSelectAll')"
+                  @change="toggleSelectAll"
+                />
+              </th>
               <th class="py-3.5 px-4 sm:px-6">{{ t('taifa.admin.applicantTh') }}</th>
               <th class="py-3.5 px-4">{{ t('taifa.admin.universityTh') }}</th>
               <th class="py-3.5 px-4">{{ t('taifa.admin.phoneTh') }}</th>
@@ -178,6 +235,19 @@
               :key="app.id"
               class="hover:bg-gray-50/60 dark:hover:bg-zinc-800/40 transition-colors"
             >
+              <!-- Bulk select -->
+              <td class="py-4 px-3">
+                <input
+                  type="checkbox"
+                  class="accent-[#FEBF01] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                  :value="app.id"
+                  :disabled="app.status !== 'approved'"
+                  :checked="selectedIds.has(app.id)"
+                  :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
+                  @change="toggleSelect(app.id)"
+                />
+              </td>
+
               <!-- Name & Username -->
               <td class="py-4 px-4 sm:px-6">
                 <div class="flex items-center gap-3">
@@ -274,8 +344,9 @@
                 <div class="flex items-center gap-2">
                   <select
                     :value="app.auditionLevel"
-                    :disabled="levelUpdating === app.id"
-                    class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+                    :disabled="levelUpdating === app.id || app.status !== 'approved'"
+                    :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
+                    class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] disabled:opacity-40 disabled:cursor-not-allowed"
                     @change="changeLevel(app, ($event.target as HTMLSelectElement).value)"
                   >
                     <option v-for="n in 4" :key="n" :value="n">
@@ -353,7 +424,7 @@
 
             <!-- Empty State -->
             <tr v-if="filteredApplications.length === 0">
-              <td colspan="7" class="py-12 text-center text-gray-400">
+              <td colspan="8" class="py-12 text-center text-gray-400">
                 <span class="material-icons text-4xl mb-2 text-gray-300">inbox</span>
                 <p class="font-bold text-sm">{{ t('taifa.admin.emptyTitle') }}</p>
                 <p class="text-xs text-gray-400">{{ t('taifa.admin.emptyDesc') }}</p>
@@ -486,11 +557,56 @@ const toggleApplicationsOpen = async () => {
 }
 
 const changeLevel = async (app: ComedianApplication, level: string) => {
+  if (app.status !== 'approved') {
+    alert(t('taifa.admin.levelNeedsApproval'))
+    return
+  }
   levelUpdating.value = app.id
   try {
     await applicationsStore.setAuditionLevel(app.id, Number(level))
+  } catch {
+    await applicationsStore.fetchApplicationsFromBackend()
   } finally {
     levelUpdating.value = null
+  }
+}
+
+// ── Bulk audition level ───────────────────────────────────────
+const selectedIds = ref(new Set<string>())
+const bulkLevel = ref(2)
+const bulkUpdating = ref(false)
+
+const approvedApplications = computed(() => applicationsStore.applications.filter((a) => a.status === 'approved'))
+
+const allApprovedSelected = computed(
+  () => approvedApplications.value.length > 0 && approvedApplications.value.every((a) => selectedIds.value.has(a.id)),
+)
+
+const someApprovedSelected = computed(() => approvedApplications.value.some((a) => selectedIds.value.has(a.id)))
+
+const toggleSelect = (id: string) => {
+  if (selectedIds.value.has(id)) selectedIds.value.delete(id)
+  else selectedIds.value.add(id)
+}
+
+const toggleSelectAll = () => {
+  if (allApprovedSelected.value) {
+    approvedApplications.value.forEach((a) => selectedIds.value.delete(a.id))
+  } else {
+    approvedApplications.value.forEach((a) => selectedIds.value.add(a.id))
+  }
+}
+
+const applyBulkLevel = async () => {
+  bulkUpdating.value = true
+  try {
+    const { skipped } = await applicationsStore.bulkSetAuditionLevel([...selectedIds.value], bulkLevel.value)
+    if (skipped.length > 0) {
+      alert(t('taifa.admin.bulkSkipped', { n: skipped.length }))
+    }
+    selectedIds.value.clear()
+  } finally {
+    bulkUpdating.value = false
   }
 }
 

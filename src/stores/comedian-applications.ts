@@ -230,6 +230,20 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       }
     },
 
+    /** Admin: set one audition level on many applications at once.
+     * Returns { skipped } — ids not updated because they aren't approved. */
+    async bulkSetAuditionLevel(ids: string[], level: number): Promise<{ skipped: string[] }> {
+      const { data } = await http.post('/applications/bulk-set-level/', { ids, level })
+      const updated: ComedianApplication[] = (data?.updated || []).map(normalizeBackendApplication)
+      for (const upd of updated) {
+        const idx = this.applications.findIndex((a) => a.id === upd.id)
+        if (idx !== -1) {
+          this.applications[idx] = upd
+        }
+      }
+      return { skipped: data?.skipped || [] }
+    },
+
     /** Public vote list — paid applicants at audition level >= 2. */
     async fetchVoteList(): Promise<void> {
       const { data } = await http.get('/applications/vote-list/')
