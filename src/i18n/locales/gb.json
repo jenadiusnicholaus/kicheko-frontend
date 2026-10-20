@@ -443,7 +443,8 @@
       "approveOnPhone": "Approve the payment on your phone",
       "approveOnPhoneDesc": "Enter your PIN in the mobile money prompt. Your votes are counted once the payment is confirmed.",
       "voteFailed": "Payment failed — no votes were added.",
-      "votePending": "Payment is still being confirmed. Your votes will appear once it completes."
+      "votePending": "Payment is still being confirmed. Your votes will appear once it completes.",
+      "voteShare": "Vote share"
     },
     "payment": {
       "loading": "Loading secure checkout…",

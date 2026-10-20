@@ -92,98 +92,15 @@
               <div
                 class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_5.5rem_minmax(0,1fr)] gap-4 md:gap-5 items-center relative"
               >
-                <!-- Left Card: Contestant A (e.g. Frank Mollel) -->
-                <div
-                  class="min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-                  :style="cardStyle(colorA(b))"
-                >
-                  <!-- Photo Container -->
-                  <div
-                    class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden"
-                  >
-                    <img
-                      :src="b.contestantA.photo"
-                      :alt="b.contestantA.name"
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-
-                    <!-- University Floating Badge -->
-                    <div
-                      class="absolute -bottom-5 left-6 w-14 h-14 rounded-full bg-white dark:bg-zinc-800 shadow-lg p-1.5 border-2 border-white dark:border-zinc-700 flex items-center justify-center z-10"
-                    >
-                      <img
-                        :src="badgeFor(b.contestantA)"
-                        :alt="b.contestantA.universityCode"
-                        class="w-full h-full object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Card Body -->
-                  <div class="p-6 pt-8 flex-1 flex flex-col justify-between">
-                    <div>
-                      <!-- University Code Pill -->
-                      <div
-                        class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
-                        :style="{ backgroundColor: colorA(b), color: contrastText(colorA(b)) }"
-                      >
-                        {{ b.contestantA.universityCode }}
-                      </div>
-
-                      <!-- Name -->
-                      <h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
-                        {{ b.contestantA.name }}
-                      </h3>
-
-                      <!-- Votes Counter -->
-                      <div
-                        class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
-                      >
-                        <span class="material-icons text-base" :style="{ color: colorA(b) }">favorite</span>
-                        <span class="text-base font-black tabular-nums" :style="{ color: colorA(b) }"
-                          >{{ pctOf(b, b.contestantA.votes) }}%</span
-                        >
-                        <span class="text-gray-400 font-normal">{{ t('taifa.nani.ofVotes') }}</span>
-                      </div>
-                    </div>
-
-                    <!-- Vote Button matching PDF -->
-                    <button
-                      v-if="b.status === 'active'"
-                      type="button"
-                      class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
-                      :style="{ backgroundColor: colorA(b), color: contrastText(colorA(b)) }"
-                      @click="openVoteModal(b.contestantA, b)"
-                    >
-                      <span class="material-icons text-xl">favorite</span>
-                      <span>{{ t('taifa.nani.vote') }}</span>
-                    </button>
-                    <div
-                      v-else
-                      class="w-full mt-5 py-3.5 rounded-2xl bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 font-black text-base flex items-center justify-center gap-2"
-                    >
-                      <span>{{ t('taifa.nani.battleEnded') }}</span>
-                    </div>
-
-                    <!-- Watch Clip Button -->
-                    <button
-                      type="button"
-                      class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
-                      :class="
-                        b.contestantA.videoUrl
-                          ? 'cursor-pointer hover:opacity-80'
-                          : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                      "
-                      :style="b.contestantA.videoUrl ? { borderColor: colorA(b), color: colorA(b) } : {}"
-                      :disabled="!b.contestantA.videoUrl"
-                      @click="openVideoModal(b.contestantA)"
-                    >
-                      <span class="material-icons text-lg">play_circle</span>
-                      <span>{{ t('taifa.nani.watchClip') }}</span>
-                    </button>
-                  </div>
-                </div>
+                <ContestantCard
+                  :contestant="b.contestantA"
+                  :color="colorA(b)"
+                  :pct="pctOf(b, b.contestantA.votes)"
+                  :badge="badgeFor(b.contestantA)"
+                  :active="b.status === 'active'"
+                  @vote="openVoteModal(b.contestantA, b)"
+                  @watch="openVideoModal(b.contestantA)"
+                />
 
                 <!-- Center: live vote graph in the battle's colors
                  (vertical between the cards on desktop, horizontal when stacked) -->
@@ -214,98 +131,15 @@
                   </span>
                 </div>
 
-                <!-- Right Card: Contestant B (e.g. Neema Juma) -->
-                <div
-                  class="min-w-0 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 relative flex flex-col"
-                  :style="cardStyle(colorB(b))"
-                >
-                  <!-- Photo Container -->
-                  <div
-                    class="relative w-full aspect-[4/3] bg-gradient-to-t from-black/60 to-transparent overflow-hidden"
-                  >
-                    <img
-                      :src="b.contestantB.photo"
-                      :alt="b.contestantB.name"
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-
-                    <!-- University Floating Badge -->
-                    <div
-                      class="absolute -bottom-5 left-6 w-14 h-14 rounded-full bg-white dark:bg-zinc-800 shadow-lg p-1.5 border-2 border-white dark:border-zinc-700 flex items-center justify-center z-10"
-                    >
-                      <img
-                        :src="badgeFor(b.contestantB)"
-                        :alt="b.contestantB.universityCode"
-                        class="w-full h-full object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Card Body -->
-                  <div class="p-6 pt-8 flex-1 flex flex-col justify-between">
-                    <div>
-                      <!-- University Code Pill -->
-                      <div
-                        class="inline-block px-3 py-0.5 rounded-md text-[11px] font-black tracking-wider uppercase mb-1"
-                        :style="{ backgroundColor: colorB(b), color: contrastText(colorB(b)) }"
-                      >
-                        {{ b.contestantB.universityCode }}
-                      </div>
-
-                      <!-- Name -->
-                      <h3 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
-                        {{ b.contestantB.name }}
-                      </h3>
-
-                      <!-- Votes Counter -->
-                      <div
-                        class="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-300 mt-1"
-                      >
-                        <span class="material-icons text-base" :style="{ color: colorB(b) }">favorite</span>
-                        <span class="text-base font-black tabular-nums" :style="{ color: colorB(b) }"
-                          >{{ pctOf(b, b.contestantB.votes) }}%</span
-                        >
-                        <span class="text-gray-400 font-normal">{{ t('taifa.nani.ofVotes') }}</span>
-                      </div>
-                    </div>
-
-                    <!-- Vote Button matching PDF -->
-                    <button
-                      v-if="b.status === 'active'"
-                      type="button"
-                      class="w-full mt-5 py-3.5 rounded-2xl active:scale-98 font-black text-base shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer hover:brightness-95"
-                      :style="{ backgroundColor: colorB(b), color: contrastText(colorB(b)) }"
-                      @click="openVoteModal(b.contestantB, b)"
-                    >
-                      <span class="material-icons text-xl">favorite</span>
-                      <span>{{ t('taifa.nani.vote') }}</span>
-                    </button>
-                    <div
-                      v-else
-                      class="w-full mt-5 py-3.5 rounded-2xl bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400 font-black text-base flex items-center justify-center gap-2"
-                    >
-                      <span>{{ t('taifa.nani.battleEnded') }}</span>
-                    </div>
-
-                    <!-- Watch Clip Button -->
-                    <button
-                      type="button"
-                      class="w-full mt-2.5 py-2.5 rounded-2xl border-2 font-black text-sm flex items-center justify-center gap-2 transition-all"
-                      :class="
-                        b.contestantB.videoUrl
-                          ? 'cursor-pointer hover:opacity-80'
-                          : 'border-gray-200 dark:border-zinc-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                      "
-                      :style="b.contestantB.videoUrl ? { borderColor: colorB(b), color: colorB(b) } : {}"
-                      :disabled="!b.contestantB.videoUrl"
-                      @click="openVideoModal(b.contestantB)"
-                    >
-                      <span class="material-icons text-lg">play_circle</span>
-                      <span>{{ t('taifa.nani.watchClip') }}</span>
-                    </button>
-                  </div>
-                </div>
+                <ContestantCard
+                  :contestant="b.contestantB"
+                  :color="colorB(b)"
+                  :pct="pctOf(b, b.contestantB.votes)"
+                  :badge="badgeFor(b.contestantB)"
+                  :active="b.status === 'active'"
+                  @vote="openVoteModal(b.contestantB, b)"
+                  @watch="openVideoModal(b.contestantB)"
+                />
               </div>
             </div>
           </div>
@@ -529,6 +363,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useNaniNiNaniStore, type Contestant, type BattleRound } from '../../stores/nani-ni-nani'
 import { useUniversitiesStore } from '../../stores/universities'
+import ContestantCard from '../../components/nani/ContestantCard.vue'
 import { resolveMediaUrl } from '../../services/api/config'
 
 const { t } = useI18n()
@@ -731,13 +566,6 @@ const shade = (hex: string, amount: number): string => {
 const colorA = (b: BattleRound) => b.themeColor
 const colorB = (b: BattleRound) =>
   contrastText(b.themeColor) === '#ffffff' ? shade(b.themeColor, -0.55) : shade(b.themeColor, 0.6)
-
-/** Each contestant's card: thick top border + a light tint of their color. */
-const cardStyle = (color: string) => ({
-  borderTopColor: color,
-  borderTopWidth: '6px',
-  backgroundImage: `linear-gradient(to bottom, ${color}1F, transparent 55%)`,
-})
 
 /** Badge comes from the universities directory; battle's own badge field is the fallback. */
 const badgeFor = (c: Contestant): string => {

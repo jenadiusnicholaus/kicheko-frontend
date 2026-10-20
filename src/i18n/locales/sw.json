@@ -335,7 +335,8 @@
       "approveOnPhone": "Thibitisha malipo kwenye simu yako",
       "approveOnPhoneDesc": "Weka PIN kwenye ujumbe wa malipo. Kura zako zitahesabiwa malipo yakithibitishwa.",
       "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
-      "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika."
+      "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika.",
+      "voteShare": "Asilimia ya kura"
     },
     "payment": {
       "loading": "Inapakia malipo salama...",
