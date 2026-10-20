@@ -168,35 +168,8 @@
           </button>
         </div>
 
-        <!-- Step: choose votes + phone -->
+        <!-- Step: payer phone (one vote per payment) -->
         <template v-if="voteModal.step === 'form'">
-          <label class="block text-[11px] font-bold uppercase tracking-wide text-gray-500 mb-2">
-            {{ t('taifa.home.howManyVotes') }}
-          </label>
-          <div class="grid grid-cols-4 gap-2 mb-3">
-            <button
-              v-for="n in presetCounts"
-              :key="n"
-              type="button"
-              class="py-2 rounded-xl text-sm font-black border transition-colors"
-              :class="
-                voteModal.count === n
-                  ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
-                  : 'border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
-              "
-              @click="voteModal.count = n"
-            >
-              {{ n }}
-            </button>
-          </div>
-          <input
-            v-model.number="voteModal.count"
-            type="number"
-            min="1"
-            max="1000"
-            class="w-full mb-4 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
-          />
-
           <label class="block text-[11px] font-bold uppercase tracking-wide text-gray-500 mb-2">
             {{ t('taifa.home.payerPhone') }}
           </label>
@@ -284,7 +257,6 @@ const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 
 const isLoading = ref(true)
-const presetCounts = [1, 5, 10, 20]
 const BAR_COLORS = ['#FEBF01', '#1B2A4A', '#F97316', '#DC2626', '#EF4444', '#0D9488', '#2563EB', '#7C3AED']
 
 const totalVotes = computed(() => applicationsStore.voteList.reduce((sum, a) => sum + a.votes, 0))
@@ -300,7 +272,6 @@ type Step = 'form' | 'waiting' | 'done' | 'failed' | 'pending'
 const voteModal = reactive({
   applicant: null as VoteListApplicant | null,
   step: 'form' as Step,
-  count: 1,
   phone: '',
   submitting: false,
   error: '',
@@ -312,11 +283,9 @@ const currentShare = computed(() => {
   return sharePercent(a?.votes ?? 0)
 })
 
-const totalAmount = computed(() => Math.max(0, Number(voteModal.count) || 0) * applicationsStore.voteFee)
-const canPay = computed(() => {
-  const n = Number(voteModal.count)
-  return Number.isInteger(n) && n >= 1 && n <= 1000 && voteModal.phone.replace(/\D/g, '').length >= 9
-})
+// One vote per payment
+const totalAmount = computed(() => applicationsStore.voteFee)
+const canPay = computed(() => voteModal.phone.replace(/\D/g, '').length >= 9)
 
 let pollTimer: ReturnType<typeof setTimeout> | null = null
 const stopPolling = () => {
@@ -325,7 +294,7 @@ const stopPolling = () => {
 }
 
 const openVoteModal = (applicant: VoteListApplicant) => {
-  Object.assign(voteModal, { applicant, step: 'form', count: 1, submitting: false, error: '' })
+  Object.assign(voteModal, { applicant, step: 'form', submitting: false, error: '' })
 }
 
 const closeVoteModal = () => {
@@ -354,7 +323,7 @@ const submitVote = async () => {
   voteModal.submitting = true
   voteModal.error = ''
   try {
-    const res = await applicationsStore.buyVotes(voteModal.applicant.id, Number(voteModal.count), voteModal.phone)
+    const res = await applicationsStore.buyVotes(voteModal.applicant.id, 1, voteModal.phone)
     voteModal.step = 'waiting'
     pollVote(res.vote_id, Date.now() + 120_000)
   } catch (e: any) {

@@ -195,33 +195,8 @@
             {{ t('taifa.nani.payVoteDesc', { name: selectedContestant.name, fee: VOTE_FEE.toLocaleString() }) }}
           </p>
 
-          <!-- Step 1: number of votes + payer phone -->
+          <!-- Step 1: payer phone (one vote per payment) -->
           <template v-if="voteStep === 'form'">
-            <div class="grid grid-cols-4 gap-2 mb-2">
-              <button
-                v-for="n in [1, 5, 10, 20]"
-                :key="n"
-                type="button"
-                class="py-2 rounded-xl text-sm font-black border transition-colors"
-                :class="
-                  votesCount === n
-                    ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
-                    : 'border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'
-                "
-                @click="votesCount = n"
-              >
-                {{ n }}
-              </button>
-            </div>
-            <input
-              v-model.number="votesCount"
-              type="number"
-              min="1"
-              max="1000"
-              :aria-label="t('taifa.nani.howManyVotes')"
-              class="w-full mb-4 px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/80 text-sm font-bold text-center text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
-            />
-
             <!-- Amount Box -->
             <div
               class="p-4 rounded-2xl bg-[#EBF4FE] dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 mb-4 text-center"
@@ -596,17 +571,14 @@ const showVoteModal = ref(false)
 const selectedContestant = ref<Contestant | null>(null)
 const votingBattle = ref<BattleRound | null>(null)
 const voteStep = ref<'form' | 'waiting' | 'failed' | 'pending'>('form')
-const votesCount = ref(1)
 const voterPhone = ref('')
 const voteError = ref('')
 const isVoting = ref(false)
 const voteSuccessMessage = ref('')
 
-const voteTotal = computed(() => Math.max(0, Number(votesCount.value) || 0) * VOTE_FEE)
-const canPayVote = computed(() => {
-  const n = Number(votesCount.value)
-  return Number.isInteger(n) && n >= 1 && n <= 1000 && voterPhone.value.replace(/\D/g, '').length >= 9
-})
+// One vote per payment
+const voteTotal = computed(() => VOTE_FEE)
+const canPayVote = computed(() => voterPhone.value.replace(/\D/g, '').length >= 9)
 
 let votePollTimer: ReturnType<typeof setTimeout> | undefined
 const stopVotePoll = () => {
@@ -618,7 +590,6 @@ const openVoteModal = (contestant: Contestant, b: BattleRound) => {
   selectedContestant.value = contestant
   votingBattle.value = b
   voteStep.value = 'form'
-  votesCount.value = 1
   voteError.value = ''
   showVoteModal.value = true
 }
@@ -665,7 +636,7 @@ const submitVote = async () => {
     const res = await naniStore.buyVotes({
       battleId: votingBattle.value.id,
       contestantId: selectedContestant.value.id,
-      votesCount: Number(votesCount.value),
+      votesCount: 1,
       mobileNumber: voterPhone.value,
     })
     voteStep.value = 'waiting'
