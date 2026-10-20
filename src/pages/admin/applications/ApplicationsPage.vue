@@ -27,8 +27,29 @@
         </div>
       </div>
 
-      <!-- Quick Action: Refresh -->
+      <!-- Quick Actions: Open/Close window + Refresh -->
       <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
+          :class="
+            applicationsStore.applicationsOpen
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+              : 'bg-red-600 hover:bg-red-700 text-white'
+          "
+          :disabled="togglingOpen"
+          @click="toggleApplicationsOpen"
+        >
+          <span v-if="togglingOpen" class="material-icons text-base animate-spin">sync</span>
+          <span v-else class="material-icons text-base">{{
+            applicationsStore.applicationsOpen ? 'lock_open' : 'lock'
+          }}</span>
+          <span>{{
+            applicationsStore.applicationsOpen
+              ? t('taifa.admin.applicationsOpenBtn')
+              : t('taifa.admin.applicationsClosedBtn')
+          }}</span>
+        </button>
         <button
           type="button"
           class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center gap-1.5 transition-colors"
@@ -147,6 +168,7 @@
               <th class="py-3.5 px-4">{{ t('taifa.admin.phoneTh') }}</th>
               <th class="py-3.5 px-4">{{ t('taifa.admin.feeTh') }}</th>
               <th class="py-3.5 px-4">{{ t('taifa.admin.statusTh') }}</th>
+              <th class="py-3.5 px-4">{{ t('taifa.admin.levelTh') }}</th>
               <th class="py-3.5 px-4 sm:px-6 text-right">{{ t('taifa.admin.actionsTh') }}</th>
             </tr>
           </thead>
@@ -247,6 +269,37 @@
                 </span>
               </td>
 
+              <!-- Audition Level + Votes -->
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-2">
+                  <select
+                    :value="app.auditionLevel"
+                    :disabled="levelUpdating === app.id"
+                    class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+                    @change="changeLevel(app, ($event.target as HTMLSelectElement).value)"
+                  >
+                    <option v-for="n in 4" :key="n" :value="n">
+                      {{ t('taifa.admin.levelLabel', { n }) }}
+                    </option>
+                  </select>
+                  <span
+                    v-if="app.auditionLevel >= 2"
+                    class="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
+                    :title="t('taifa.admin.onVoteList')"
+                  >
+                    <span class="material-icons text-xs">how_to_vote</span>
+                    {{ app.voteCount }}
+                  </span>
+                  <span
+                    v-else
+                    class="inline-flex items-center gap-0.5 text-[10px] font-bold text-gray-400"
+                    :title="t('taifa.admin.notOnVoteList')"
+                  >
+                    <span class="material-icons text-xs">visibility_off</span>
+                  </span>
+                </div>
+              </td>
+
               <!-- Actions -->
               <td class="py-4 px-4 sm:px-6 text-right">
                 <div class="flex items-center justify-end gap-1.5 flex-wrap">
@@ -300,7 +353,7 @@
 
             <!-- Empty State -->
             <tr v-if="filteredApplications.length === 0">
-              <td colspan="6" class="py-12 text-center text-gray-400">
+              <td colspan="7" class="py-12 text-center text-gray-400">
                 <span class="material-icons text-4xl mb-2 text-gray-300">inbox</span>
                 <p class="font-bold text-sm">{{ t('taifa.admin.emptyTitle') }}</p>
                 <p class="text-xs text-gray-400">{{ t('taifa.admin.emptyDesc') }}</p>
@@ -417,7 +470,29 @@ const applicationsStore = useComedianApplicationsStore()
 
 onMounted(() => {
   applicationsStore.fetchApplicationsFromBackend()
+  applicationsStore.fetchConfig()
 })
+
+const togglingOpen = ref(false)
+const levelUpdating = ref<string | null>(null)
+
+const toggleApplicationsOpen = async () => {
+  togglingOpen.value = true
+  try {
+    await applicationsStore.setApplicationsOpen(!applicationsStore.applicationsOpen)
+  } finally {
+    togglingOpen.value = false
+  }
+}
+
+const changeLevel = async (app: ComedianApplication, level: string) => {
+  levelUpdating.value = app.id
+  try {
+    await applicationsStore.setAuditionLevel(app.id, Number(level))
+  } finally {
+    levelUpdating.value = null
+  }
+}
 
 const currentFilter = ref<'all' | 'pending_review' | 'approved' | 'rejected'>('all')
 const searchQuery = ref('')

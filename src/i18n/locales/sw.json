@@ -233,7 +233,13 @@
       "step2Title": "2. Nani ni Nani?",
       "step2Desc": "Tazama mapambano ya wachekeshaji wa vyuo na piga kura kwa TSh 1,000 kumuinua unayempenda.",
       "step3Title": "3. Wall of Fame",
-      "step3Desc": "Kutana na mabingwa wa vichekesho waliowahi kutikisa majukwaa ya vyuo Tanzania."
+      "step3Desc": "Kutana na mabingwa wa vichekesho waliowahi kutikisa majukwaa ya vyuo Tanzania.",
+      "voteTitle": "Piga kura mchekeshaji wako unayempenda",
+      "voteDesc": "Usajili umefungwa — piga kura waendelee kiwango kichacho cha usaili.",
+      "votes": "kura",
+      "vote": "Piga Kura",
+      "voted": "Umepiga",
+      "voteEmpty": "Hakuna washindani kwenye orodha ya kura bado."
     },
     "register": {
       "createAccount": "Tuma Maombi Sasa",
@@ -526,7 +532,13 @@
         "submittingBtn": "Inapakia...",
         "submitBtn": "Chapisha Video Sasa",
         "uploadSuccess": "Video imepakiwa na kuchapishwa kikamilifu!"
-      }
+      },
+      "applicationsOpenBtn": "Usajili: Wazi",
+      "applicationsClosedBtn": "Usajili: Imefungwa",
+      "levelTh": "Kiwango",
+      "levelLabel": "Kiwango {n}",
+      "onVoteList": "Anaonekana kwenye orodha ya kura",
+      "notOnVoteList": "Bado hayupo kwenye orodha ya kura"
     },
     "dashboard": {
       "liveOnline": "Live Mtandaoni",

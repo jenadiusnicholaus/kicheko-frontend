@@ -341,7 +341,13 @@
       "step2Title": "2. Nani ni Nani?",
       "step2Desc": "Watch campus comedy battles and vote for TSh 1,000 for your favorite.",
       "step3Title": "3. Wall of Fame",
-      "step3Desc": "Meet legendary university comedy champions across Tanzania."
+      "step3Desc": "Meet legendary university comedy champions across Tanzania.",
+      "voteTitle": "Vote for your favourite comedian",
+      "voteDesc": "Applications are closed — vote for who should make it to the next audition level.",
+      "votes": "votes",
+      "vote": "Vote",
+      "voted": "Voted",
+      "voteEmpty": "No contestants on the vote list yet."
     },
     "register": {
       "createAccount": "Apply Now",
@@ -634,7 +640,13 @@
         "submittingBtn": "Uploading...",
         "submitBtn": "Publish Video Now",
         "uploadSuccess": "Video uploaded and published successfully!"
-      }
+      },
+      "applicationsOpenBtn": "Applications: Open",
+      "applicationsClosedBtn": "Applications: Closed",
+      "levelTh": "Level",
+      "levelLabel": "Level {n}",
+      "onVoteList": "Visible on the public vote list",
+      "notOnVoteList": "Not on the vote list yet"
     },
     "dashboard": {
       "liveOnline": "Live Online",

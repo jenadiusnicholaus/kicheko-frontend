@@ -22,7 +22,20 @@ export interface ComedianApplication {
   auditionDate?: string
   auditionVenue?: string
   auditionStatus?: string
+  auditionLevel: number
+  voteCount: number
   tempPassword?: string
+}
+
+export interface VoteListApplicant {
+  id: string
+  name: string
+  username: string
+  university: string
+  universityCode: string
+  universityBadge: string
+  auditionLevel: number
+  votes: number
 }
 
 function normalizeBackendApplication(raw: any): ComedianApplication {
@@ -46,13 +59,45 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
     auditionDate: raw.audition_date ? raw.audition_date.replace('T', ' ').slice(0, 16) : undefined,
     auditionVenue: raw.audition_venue || '',
     auditionStatus: raw.audition_status || 'pending',
+    auditionLevel: raw.audition_level ?? 1,
+    voteCount: raw.vote_count ?? 0,
     tempPassword: raw.temp_password || '',
+  }
+}
+
+const VOTER_KEY_STORAGE = 'kicheko_voter_key'
+const VOTED_STORAGE = 'kicheko_voted_ids'
+
+function getVoterKey(): string {
+  let key = localStorage.getItem(VOTER_KEY_STORAGE)
+  if (!key) {
+    key = crypto.randomUUID()
+    localStorage.setItem(VOTER_KEY_STORAGE, key)
+  }
+  return key
+}
+
+export function getVotedIds(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(VOTED_STORAGE) || '[]')
+  } catch {
+    return []
+  }
+}
+
+function markVoted(id: string) {
+  const ids = getVotedIds()
+  if (!ids.includes(id)) {
+    ids.push(id)
+    localStorage.setItem(VOTED_STORAGE, JSON.stringify(ids))
   }
 }
 
 export const useComedianApplicationsStore = defineStore('comedianApplications', {
   state: () => ({
     applications: [] as ComedianApplication[],
+    applicationsOpen: true,
+    voteList: [] as VoteListApplicant[],
     isLoading: false,
     error: null as string | null,
   }),
@@ -156,6 +201,60 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
         this.applications[idx] = updated
       }
       return updated
+    },
+
+    /** Public config — is the application window open? */
+    async fetchConfig(): Promise<boolean> {
+      try {
+        const { data } = await http.get('/application-config/')
+        this.applicationsOpen = !!data?.applications_open
+      } catch {
+        // Default to open if the config endpoint is unreachable.
+      }
+      return this.applicationsOpen
+    },
+
+    /** Admin: open/close the application window. */
+    async setApplicationsOpen(open: boolean): Promise<void> {
+      const { data } = await http.patch('/application-config/', { applications_open: open })
+      this.applicationsOpen = !!data?.applications_open
+    },
+
+    /** Admin: move an application through audition levels 1-4. */
+    async setAuditionLevel(id: string, level: number): Promise<void> {
+      const { data } = await http.post(`/applications/${id}/set-level/`, { level })
+      const updated = normalizeBackendApplication(data)
+      const idx = this.applications.findIndex((a) => a.id === id)
+      if (idx !== -1) {
+        this.applications[idx] = updated
+      }
+    },
+
+    /** Public vote list — paid applicants at audition level >= 2. */
+    async fetchVoteList(): Promise<void> {
+      const { data } = await http.get('/applications/vote-list/')
+      this.applicationsOpen = !!data?.applications_open
+      this.voteList = (data?.applicants || []).map((a: any) => ({
+        id: String(a.id),
+        name: a.name || '',
+        username: a.username || '',
+        university: a.university || '',
+        universityCode: a.university_code || '',
+        universityBadge: a.university_badge || '',
+        auditionLevel: a.audition_level ?? 2,
+        votes: a.votes ?? 0,
+      }))
+    },
+
+    /** Cast one vote for an applicant; returns the new tally. */
+    async castVote(id: string): Promise<number | null> {
+      const { data } = await http.post(`/applications/${id}/vote/`, {
+        voter_key: getVoterKey(),
+      })
+      markVoted(id)
+      const item = this.voteList.find((a) => a.id === id)
+      if (item) item.votes = data?.votes ?? item.votes
+      return data?.votes ?? null
     },
 
     async approveApplication(id: string): Promise<boolean> {
