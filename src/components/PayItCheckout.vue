@@ -39,21 +39,28 @@ const router = useRouter()
 const applicationsStore = useComedianApplicationsStore()
 
 const isCheckingStatus = ref(false)
-const hasOpenedPopup = ref(false)
+const isInitiating = ref(false)
+const paymentInitiated = ref(false)
+const initiateError = ref('')
+const payerPhone = ref('')
 let pollingInterval: ReturnType<typeof setInterval> | null = null
 
 function openPayItPopup(): void {
-  hasOpenedPopup.value = true
-  const width = 500
-  const height = 750
-  const left = window.screenX + Math.max(0, (window.outerWidth - width) / 2)
-  const top = window.screenY + Math.max(0, (window.outerHeight - height) / 2)
-  const features = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
+  window.open(props.checkoutUrl, '_blank', 'noopener,noreferrer')
+}
 
-  const popup = window.open(props.checkoutUrl, 'PayItCheckout', features)
-  if (!popup || popup.closed) {
-    // If popup is blocked by the browser, open in new tab
-    window.open(props.checkoutUrl, '_blank')
+async function initiatePayment(): Promise<void> {
+  if (!props.applicationId || isInitiating.value) return
+  initiateError.value = ''
+  isInitiating.value = true
+  try {
+    await applicationsStore.initiatePayment(props.applicationId, payerPhone.value)
+    paymentInitiated.value = true
+    startPolling()
+  } catch (e: any) {
+    initiateError.value = e?.response?.data?.detail || e?.message || t('taifa.payment.initiateError')
+  } finally {
+    isInitiating.value = false
   }
 }
 
@@ -108,7 +115,9 @@ watch(
   () => props.open,
   (isOpen) => {
     if (isOpen) {
-      hasOpenedPopup.value = false
+      paymentInitiated.value = false
+      initiateError.value = ''
+      payerPhone.value = props.applicantPhone
       document.body.style.overflow = 'hidden'
       startPolling()
     } else {
@@ -244,22 +253,55 @@ onBeforeUnmount(() => {
                 </p>
               </div>
 
-              <!-- Primary Action: Open PayIt -->
+              <!-- Primary Action: push the mobile-money prompt to the payer's phone -->
               <div class="w-full space-y-2 pt-1">
-                <button
-                  type="button"
-                  class="w-full py-3.5 rounded-2xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-lg hover:shadow-[#FEBF01]/30 transition-all active:scale-98 cursor-pointer"
-                  @click="openPayItPopup"
-                >
-                  <span class="material-icons text-lg">open_in_new</span>
-                  <span>{{ t('taifa.register.payViaPayit') }}</span>
-                </button>
+                <template v-if="!paymentInitiated">
+                  <label class="block text-left text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                    {{ t('taifa.payment.payerPhoneLabel') }}
+                  </label>
+                  <div
+                    class="flex rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 focus-within:ring-2 focus-within:ring-[#FEBF01] focus-within:border-[#FEBF01] transition-all overflow-hidden"
+                  >
+                    <span
+                      class="flex items-center gap-1.5 px-2.5 py-3 border-r border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-700 dark:text-gray-300"
+                    >
+                      <span class="text-base">🇹🇿</span>
+                      <span>+255</span>
+                    </span>
+                    <input
+                      v-model="payerPhone"
+                      type="tel"
+                      :placeholder="t('taifa.payment.payerPhonePlaceholder')"
+                      class="w-full px-3 py-3 bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none"
+                    />
+                  </div>
 
-                <p
-                  v-if="hasOpenedPopup"
-                  class="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-pulse"
-                >
-                  ✓ Dirisha la PayIt limefunguliwa. Kamilisha malipo kwenye PayIt kisha subiri uthibitisho hapa chini.
+                  <button
+                    type="button"
+                    :disabled="isInitiating"
+                    class="w-full py-3.5 rounded-2xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-sm font-black flex items-center justify-center gap-2 shadow-lg hover:shadow-[#FEBF01]/30 transition-all active:scale-98 cursor-pointer disabled:opacity-60"
+                    @click="initiatePayment"
+                  >
+                    <span v-if="isInitiating" class="material-icons animate-spin text-lg">sync</span>
+                    <span v-else class="material-icons text-lg">send_to_mobile</span>
+                    <span>{{ isInitiating ? t('taifa.payment.initiating') : t('taifa.register.payViaPayit') }}</span>
+                  </button>
+
+                  <p v-if="initiateError" class="text-xs font-semibold text-red-600 dark:text-red-400">
+                    {{ initiateError }}
+                  </p>
+
+                  <button
+                    type="button"
+                    class="text-[11px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline underline-offset-2 transition-colors cursor-pointer"
+                    @click="openPayItPopup"
+                  >
+                    {{ t('taifa.payment.openPayit') }}
+                  </button>
+                </template>
+
+                <p v-else class="text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-pulse">
+                  {{ t('taifa.payment.promptSent') }}
                 </p>
               </div>
 

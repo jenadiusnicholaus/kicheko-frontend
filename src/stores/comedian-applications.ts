@@ -106,6 +106,14 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       return newApp
     },
 
+    /** Ask the backend to push a mobile-money prompt to the payer's phone. */
+    async initiatePayment(id: string, mobileNumber: string): Promise<{ payment_id: string; status: string }> {
+      const { data } = await http.post(`/applications/${id}/initiate-payment/`, {
+        mobile_number: mobileNumber,
+      })
+      return data
+    },
+
     /** Single payment-state read — includes the Pay-IT payment_reference. */
     async fetchPaymentStatus(id: string): Promise<{
       payment_confirmed: boolean

@@ -437,7 +437,12 @@
       "pageSuccessDesc": "Thank you! Your payment was received and your application awaits admin review.",
       "pageFailedTitle": "Payment Not Completed",
       "pageFailedDesc": "The payment did not complete. You can try again from the application form.",
-      "secureFooter": "Payments are processed securely by PayIt. Amounts are in TSh."
+      "secureFooter": "Payments are processed securely by PayIt. Amounts are in TSh.",
+      "payerPhoneLabel": "Mobile Money Number",
+      "payerPhonePlaceholder": "712 345 678",
+      "initiating": "Sending payment request…",
+      "initiateError": "Could not send the payment request. Try again.",
+      "promptSent": "Payment request sent — check your phone and approve the prompt to finish."
     },
     "wall": {
       "title": "Wall of Fame",

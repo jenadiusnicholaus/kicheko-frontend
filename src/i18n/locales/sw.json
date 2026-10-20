@@ -329,7 +329,12 @@
       "pageSuccessDesc": "Asante! Malipo yako yamepokelewa na ombi lako linasubiri uhakiki wa Usimamizi.",
       "pageFailedTitle": "Malipo Hayakukamilika",
       "pageFailedDesc": "Malipo hayakukamilika. Unaweza kujaribu tena kupitia fomu ya maombi.",
-      "secureFooter": "Malipo yanashughulikiwa kwa usalama na PayIt. Kiasi ni kwa TSh."
+      "secureFooter": "Malipo yanashughulikiwa kwa usalama na PayIt. Kiasi ni kwa TSh.",
+      "payerPhoneLabel": "Namba ya Mobile Money",
+      "payerPhonePlaceholder": "712 345 678",
+      "initiating": "Inatuma ombi la malipo…",
+      "initiateError": "Imeshindwa kutuma ombi la malipo. Jaribu tena.",
+      "promptSent": "Ombi la malipo limetumwa — angalia simu yako na uidhinishie ombi kukamilisha."
     },
     "wall": {
       "title": "Wall of Fame",
