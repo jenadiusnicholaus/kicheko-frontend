@@ -16,15 +16,6 @@
         </RouterLink>
       </div>
 
-      <!-- Center Badge -->
-      <div class="hidden sm:flex items-center gap-2">
-        <span
-          class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20"
-        >
-          Kicheko Pro Live
-        </span>
-      </div>
-
       <!-- Right: Language Toggle & User Auth Action -->
       <div class="flex items-center gap-2 sm:gap-3">
         <!-- Language Switcher Button (English / Kiswahili) -->
