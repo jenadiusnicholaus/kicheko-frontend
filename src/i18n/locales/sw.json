@@ -326,7 +326,9 @@
       "endedPill": "Mzunguko #{round} • Imekwisha",
       "battleEnded": "Pambano Limekwisha",
       "battlesTitle": "Mapambano",
-      "watchClip": "Tazama Video"
+      "watchClip": "Tazama Video",
+      "prevBattle": "Pambano lililopita",
+      "nextBattle": "Pambano linalofuata"
     },
     "payment": {
       "loading": "Inapakia malipo salama...",

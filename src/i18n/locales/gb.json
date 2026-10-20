@@ -434,7 +434,9 @@
       "endedPill": "Round #{round} • Ended",
       "battleEnded": "Battle Ended",
       "battlesTitle": "Battles",
-      "watchClip": "Watch Clip"
+      "watchClip": "Watch Clip",
+      "prevBattle": "Previous battle",
+      "nextBattle": "Next battle"
     },
     "payment": {
       "loading": "Loading secure checkout…",
