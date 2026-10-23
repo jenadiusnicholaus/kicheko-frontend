@@ -52,6 +52,11 @@ const routes: Array<RouteRecordRaw> = [
         redirect: { name: 'nani-ni-nani' },
       },
       {
+        name: 'payment-checkout',
+        path: 'payment/checkout',
+        component: () => import('../pages/public/PaymentCheckoutPage.vue'),
+      },
+      {
         name: 'payment-success',
         path: 'payment/success',
         component: () => import('../pages/public/PaymentResultPage.vue'),

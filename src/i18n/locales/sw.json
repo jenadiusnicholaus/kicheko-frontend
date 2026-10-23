@@ -364,7 +364,13 @@
       "payerPhonePlaceholder": "712 345 678",
       "initiating": "Inatuma ombi la malipo…",
       "initiateError": "Imeshindwa kutuma ombi la malipo. Jaribu tena.",
-      "promptSent": "Ombi la malipo limetumwa — angalia simu yako na uidhinishie ombi kukamilisha."
+      "promptSent": "Ombi la malipo limetumwa — angalia simu yako na uidhinishie ombi kukamilisha.",
+      "done": "Imekamilika",
+      "instructions": "Bonyeza kulipa na ombi salama litatumwa kwenye simu yako — liidhinishie kwa PIN yako ya mobile money kukamilisha malipo.",
+      "stepSent": "Ombi la malipo limetumwa kwenye simu yako",
+      "stepApprove": "Idhinisha ombi kwa PIN yako",
+      "stepConfirm": "Inathibitisha malipo yako",
+      "notReceived": "Hujapokea ombi? Rudi nyuma"
     },
     "wall": {
       "title": "Wall of Fame",

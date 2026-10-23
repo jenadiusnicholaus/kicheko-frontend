@@ -472,7 +472,13 @@
       "payerPhonePlaceholder": "712 345 678",
       "initiating": "Sending payment request…",
       "initiateError": "Could not send the payment request. Try again.",
-      "promptSent": "Payment request sent — check your phone and approve the prompt to finish."
+      "promptSent": "Payment request sent — check your phone and approve the prompt to finish.",
+      "done": "Done",
+      "instructions": "Tap pay and a secure prompt will be pushed to your phone — approve it with your mobile money PIN to complete the payment.",
+      "stepSent": "Payment prompt sent to your phone",
+      "stepApprove": "Approve the prompt with your PIN",
+      "stepConfirm": "Confirming your payment",
+      "notReceived": "Didn't get the prompt? Go back"
     },
     "wall": {
       "title": "Wall of Fame",

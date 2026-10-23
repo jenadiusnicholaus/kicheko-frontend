@@ -167,35 +167,6 @@
       </form>
     </div>
 
-    <!-- Application & PayIt Payment Step Modal -->
-    <PayItCheckout
-      :open="showPayModal"
-      :application-id="createdAppId"
-      :applicant-name="`${form.firstName} ${form.lastName}`.trim()"
-      :applicant-phone="form.phone"
-      :applicant-university="form.university"
-      @success="onPaymentSuccess"
-      @close="onCheckoutClose"
-    />
-
-    <!-- Payment Confirmation Modal — waits for the Pay-IT webhook -->
-    <div
-      v-if="confirmingPayment"
-      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-    >
-      <div
-        class="w-full max-w-md bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 sm:p-8 text-center"
-      >
-        <span class="material-icons animate-spin text-4xl text-[#FEBF01]">sync</span>
-        <h3 class="text-xl font-black text-gray-900 dark:text-white mt-4 mb-2">
-          {{ t('taifa.register.confirmingTitle') }}
-        </h3>
-        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-          {{ t('taifa.register.confirmingDesc') }}
-        </p>
-      </div>
-    </div>
-
     <!-- Already Registered Modal — matched an existing paid application -->
     <div
       v-if="alreadyRegistered"
@@ -234,59 +205,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Success Screen Modal -->
-    <div
-      v-if="showSuccessModal"
-      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-    >
-      <div
-        class="w-full max-w-md bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 sm:p-8 text-center"
-      >
-        <div
-          class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center mx-auto mb-4 text-3xl"
-        >
-          ✓
-        </div>
-
-        <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">
-          {{ t('taifa.register.successTitle') }}
-        </h3>
-        <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-5 leading-relaxed">
-          {{ paymentDone ? t('taifa.register.successDesc') : t('taifa.register.successDescPending') }}
-        </p>
-
-        <!-- Reference badge -->
-        <div class="p-3 bg-gray-50 dark:bg-zinc-800 rounded-xl mb-3 text-xs text-gray-500 dark:text-gray-400">
-          {{ t('taifa.register.appRef') }}
-          <span class="font-mono font-bold text-gray-900 dark:text-white">{{ createdAppId }}</span>
-        </div>
-        <div
-          v-if="paymentRef"
-          class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl mb-6 text-xs text-emerald-700 dark:text-emerald-400"
-        >
-          {{ t('taifa.payment.paymentRef') }}
-          <span class="font-mono font-bold">{{ paymentRef }}</span>
-        </div>
-        <div v-else class="mb-6" />
-
-        <div class="space-y-2.5">
-          <RouterLink
-            to="/nani-ni-nani"
-            class="block w-full py-3 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm shadow transition-all"
-          >
-            {{ t('taifa.register.viewNani') }}
-          </RouterLink>
-
-          <RouterLink
-            to="/"
-            class="block w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
-          >
-            {{ t('taifa.register.returnHome') }}
-          </RouterLink>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -296,8 +214,6 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 import { useUniversitiesStore } from '../../stores/universities'
-import PayItCheckout from '../../components/PayItCheckout.vue'
-import type { PayItResult } from '../../lib/payit'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -316,13 +232,7 @@ const form = reactive({
   phone: '',
 })
 
-const showSuccessModal = ref(false)
-const showPayModal = ref(false)
-const confirmingPayment = ref(false)
-const paymentDone = ref(false)
-const paymentRef = ref('')
 const isSubmitting = ref(false)
-const createdAppId = ref('')
 const submitError = ref('')
 const alreadyRegistered = ref(false)
 
@@ -341,26 +251,24 @@ const handleSubmit = async () => {
       alreadyRegistered.value = true
       return
     }
-    createdAppId.value = app.id
     try {
       sessionStorage.setItem('pending_application_id', app.id)
     } catch {
       /* ignore storage access error */
     }
-    showPayModal.value = true
+    router.push({
+      name: 'payment-checkout',
+      query: {
+        app: app.id,
+        name: `${form.firstName} ${form.lastName}`.trim(),
+        phone: form.phone,
+        uni: form.university,
+      },
+    })
   } catch (e: any) {
     submitError.value = e?.response?.data?.detail || e?.message || 'Submission failed'
   } finally {
     isSubmitting.value = false
   }
-}
-
-const onPaymentSuccess = async (result: PayItResult) => {
-  paymentRef.value = result.payment_id
-  paymentDone.value = true
-}
-
-const onCheckoutClose = () => {
-  showPayModal.value = false
 }
 </script>
