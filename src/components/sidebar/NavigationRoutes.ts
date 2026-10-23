@@ -33,6 +33,13 @@ export default {
       },
     },
     {
+      name: 'admin-vote-stats',
+      displayName: 'taifa.voteStats.nav',
+      meta: {
+        icon: 'how_to_vote',
+      },
+    },
+    {
       name: 'admin-universities',
       displayName: 'taifa.admin.universitiesNav',
       meta: {

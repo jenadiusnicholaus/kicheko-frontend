@@ -94,7 +94,7 @@
               >
                 <ContestantCard
                   :contestant="b.contestantA"
-                  :color="colorA(b)"
+                  :color="colorA()"
                   :pct="pctOf(b, b.contestantA.votes)"
                   :badge="badgeFor(b.contestantA)"
                   :active="b.status === 'active'"
@@ -105,28 +105,51 @@
                 <!-- Center: live vote graph in the battle's colors
                  (vertical between the cards on desktop, horizontal when stacked) -->
                 <div class="flex md:flex-col items-center justify-center gap-2 md:gap-2.5 z-20 md:self-stretch md:py-6">
-                  <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorA(b) }">
+                  <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorA() }">
                     {{ pctOf(b, b.contestantA.votes) }}%
                   </span>
                   <div
-                    class="relative flex-1 self-stretch md:self-auto md:w-6 flex items-center justify-center min-h-[1.5rem]"
+                    class="relative flex-1 self-stretch md:self-auto md:w-16 flex items-center justify-center min-h-[1.5rem]"
                   >
-                    <!-- Split bar: A then B, sized by vote share -->
+                    <!-- Two-bar chart: one bar per contestant, sized by vote share -->
                     <div
-                      class="absolute flex md:flex-col inset-x-0 md:inset-x-auto md:inset-y-0 h-3.5 md:h-auto md:w-3.5 rounded-full overflow-hidden bg-gray-200 dark:bg-zinc-800 shadow-inner"
+                      class="hidden md:flex h-full w-full items-end justify-center gap-2"
                       :title="`${b.contestantA.name}: ${pctOf(b, b.contestantA.votes)}% · ${b.contestantB.name}: ${pctOf(b, b.contestantB.votes)}%`"
                     >
                       <div
-                        class="transition-all duration-700 ease-out"
-                        :style="{ flex: `${pctOf(b, b.contestantA.votes)} 1 0%`, backgroundColor: colorA(b) }"
+                        class="w-4 rounded-t-lg transition-all duration-700 ease-out"
+                        :style="{
+                          height: `${pctOf(b, b.contestantA.votes)}%`,
+                          minHeight: '4px',
+                          backgroundColor: colorA(),
+                        }"
                       ></div>
                       <div
-                        class="transition-all duration-700 ease-out"
-                        :style="{ flex: `${pctOf(b, b.contestantB.votes)} 1 0%`, backgroundColor: colorB(b) }"
+                        class="w-4 rounded-t-lg transition-all duration-700 ease-out"
+                        :style="{
+                          height: `${pctOf(b, b.contestantB.votes)}%`,
+                          minHeight: '4px',
+                          backgroundColor: colorB(),
+                        }"
                       ></div>
                     </div>
+                    <!-- Stacked horizontal bars when the cards stack on mobile -->
+                    <div class="flex md:hidden flex-col gap-1.5 w-full self-center">
+                      <div class="h-2 w-full rounded-full bg-gray-200 dark:bg-zinc-800 overflow-hidden">
+                        <div
+                          class="h-full rounded-full transition-all duration-700 ease-out"
+                          :style="{ width: `${pctOf(b, b.contestantA.votes)}%`, backgroundColor: colorA() }"
+                        ></div>
+                      </div>
+                      <div class="h-2 w-full rounded-full bg-gray-200 dark:bg-zinc-800 overflow-hidden">
+                        <div
+                          class="h-full rounded-full transition-all duration-700 ease-out"
+                          :style="{ width: `${pctOf(b, b.contestantB.votes)}%`, backgroundColor: colorB() }"
+                        ></div>
+                      </div>
+                    </div>
                   </div>
-                  <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorB(b) }">
+                  <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorB() }">
                     {{ pctOf(b, b.contestantB.votes) }}%
                   </span>
                   <span class="text-[10px] font-bold uppercase tracking-wide text-gray-400 tabular-nums">
@@ -136,7 +159,7 @@
 
                 <ContestantCard
                   :contestant="b.contestantB"
-                  :color="colorB(b)"
+                  :color="colorB()"
                   :pct="pctOf(b, b.contestantB.votes)"
                   :badge="badgeFor(b.contestantB)"
                   :active="b.status === 'active'"
@@ -157,7 +180,7 @@
           type="button"
           class="h-2.5 rounded-full transition-all duration-300"
           :class="activeDot === i ? 'w-7' : 'w-2.5 opacity-40 hover:opacity-70'"
-          :style="{ backgroundColor: b.themeColor }"
+          :style="{ backgroundColor: COLOR_A }"
           :aria-label="b.title"
           @click="goTo(i)"
         ></button>
@@ -554,34 +577,12 @@ const pctOf = (b: BattleRound, votes: number) => {
   return total === 0 ? 50 : Math.round((votes / total) * 100)
 }
 
-/** Readable text color on top of the battle's theme color. */
-const contrastText = (hex: string): string => {
-  const c = (hex || '').replace('#', '')
-  if (c.length < 6) return '#111827'
-  const r = parseInt(c.slice(0, 2), 16)
-  const g = parseInt(c.slice(2, 4), 16)
-  const bl = parseInt(c.slice(4, 6), 16)
-  return 0.299 * r + 0.587 * g + 0.114 * bl > 150 ? '#111827' : '#ffffff'
-}
-
-/** Mix a hex color toward black (amount > 0) or white (amount < 0). */
-const shade = (hex: string, amount: number): string => {
-  const c = (hex || '').replace('#', '')
-  if (c.length < 6) return hex
-  const target = amount > 0 ? 0 : 255
-  const a = Math.abs(amount)
-  const mix = (i: number) =>
-    Math.round(parseInt(c.slice(i, i + 2), 16) * (1 - a) + target * a)
-      .toString(16)
-      .padStart(2, '0')
-  return `#${mix(0)}${mix(2)}${mix(4)}`
-}
-
-/** Contestant A = the battle color; contestant B = a contrasting shade of it,
- * so every battle's graph is drawn in its own color family. */
-const colorA = (b: BattleRound) => b.themeColor
-const colorB = (b: BattleRound) =>
-  contrastText(b.themeColor) === '#ffffff' ? shade(b.themeColor, -0.55) : shade(b.themeColor, 0.6)
+/** Fixed matchup colors — every battle reads yellow vs navy instead of
+ * using its own theme_color, so the arena looks consistent across battles. */
+const COLOR_A = '#FEBF01'
+const COLOR_B = '#183153'
+const colorA = () => COLOR_A
+const colorB = () => COLOR_B
 
 /** Badge comes from the universities directory; battle's own badge field is the fallback. */
 const badgeFor = (c: Contestant): string => {
@@ -715,7 +716,6 @@ const submitVote = async () => {
       contestantId: selectedContestant.value.id,
       votesCount: votesCount.value,
       mobileNumber: voterPhone.value,
-      amount: voteTotal.value,
     })
     votePaymentId.value = res.payment_id
     voteStep.value = 'waiting'

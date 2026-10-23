@@ -120,6 +120,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../pages/admin/applications/ApplicationsPage.vue'),
       },
       {
+        name: 'admin-vote-stats',
+        path: 'vote-stats',
+        component: () => import('../pages/admin/votes/VoteStatsPage.vue'),
+      },
+      {
         name: 'admin-universities',
         path: 'universities',
         component: () => import('../pages/admin/universities/ManageUniversitiesPage.vue'),
