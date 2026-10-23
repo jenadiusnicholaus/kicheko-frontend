@@ -375,6 +375,7 @@
       "selectUniversity": "Select your university",
       "phone": "Phone Number",
       "phoneNote": "We'll use this number to contact you about your application.",
+      "alreadyApplied": "An application for this phone number or username already exists. Contact the admin if this is not yours.",
       "back": "Back",
       "submit": "Submit",
       "confirmTitle": "Confirm Application & Pay Fee",

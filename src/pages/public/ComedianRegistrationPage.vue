@@ -305,7 +305,10 @@ const handleSubmit = async () => {
     }
     showPayModal.value = true
   } catch (e: any) {
-    submitError.value = e?.response?.data?.detail || e?.message || 'Submission failed'
+    submitError.value =
+      e?.response?.status === 409
+        ? t('taifa.register.alreadyApplied')
+        : e?.response?.data?.detail || e?.message || 'Submission failed'
   } finally {
     isSubmitting.value = false
   }
@@ -314,11 +317,6 @@ const handleSubmit = async () => {
 const onPaymentSuccess = async (result: PayItResult) => {
   paymentRef.value = result.payment_id
   paymentDone.value = true
-  try {
-    await applicationsStore.recordPayment(createdAppId.value, result.payment_id)
-  } catch {
-    // Reference failed to save — the PayIt webhook still confirms the payment.
-  }
 }
 
 const onCheckoutClose = () => {
