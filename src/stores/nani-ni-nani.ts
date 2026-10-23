@@ -212,26 +212,36 @@ export const useNaniNiNaniStore = defineStore('naniNiNani', {
 
     /** Buy votes: the backend pushes a Pay-IT mobile-money prompt for
      * votesCount x TSh 1,000. Votes are only counted once the webhook
-     * confirms the payment — poll with fetchVoteStatus. */
+     * confirms the payment — poll with fetchVoteStatus using payment_id. */
     async buyVotes(payload: {
       battleId: string
       contestantId: string
       votesCount: number
       mobileNumber: string
-    }): Promise<{ vote_id: string; amount: number; votes_count: number; contestantName: string }> {
-      const { data } = await http.post('/nani-ni-nani/vote/', {
+      amount: number
+    }): Promise<{
+      vote_id: string
+      payment_id: string
+      amount: number
+      votes_count: number
+      contestantName: string
+    }> {
+      const { data } = await http.post('/payments/initiate/', {
+        purpose: 'nani_vote',
         battle_id: payload.battleId,
         contestant_id: payload.contestantId,
         votes_count: payload.votesCount,
+        amount: payload.amount,
         mobile_number: payload.mobileNumber,
       })
       return data
     },
 
-    /** Single read of a vote purchase; on confirmation, updates the battle tallies. */
-    async fetchVoteStatus(voteId: string): Promise<{ confirmed: boolean; payment_status: string } | null> {
+    /** Single read of a vote purchase by Pay-IT payment_id; on confirmation,
+     * updates the battle tallies. */
+    async fetchVoteStatus(paymentId: string): Promise<{ confirmed: boolean; payment_status: string } | null> {
       try {
-        const { data } = await http.get(`/nani-ni-nani/vote-status/${voteId}/`)
+        const { data } = await http.get(`/payments/${paymentId}/status/`)
         if (data?.confirmed) {
           for (const b of [this.activeBattle, ...this.battles]) {
             if (b && b.id === data.battle_id) {

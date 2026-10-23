@@ -79,6 +79,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     applications: [] as ComedianApplication[],
     applicationsOpen: true,
     voteFee: 1000,
+    applicationFee: 10000,
     voteList: [] as VoteListApplicant[],
     isLoading: false,
     error: null as string | null,
@@ -134,22 +135,27 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     },
 
     /** Ask the backend to push a mobile-money prompt to the payer's phone. */
-    async initiatePayment(id: string, mobileNumber: string): Promise<{ payment_id: string; status: string }> {
-      const { data } = await http.post(`/applications/${id}/initiate-payment/`, {
+    async initiatePayment(
+      id: string,
+      mobileNumber: string,
+    ): Promise<{ payment_id: string; status: string; already_initiated?: boolean }> {
+      const { data } = await http.post('/payments/initiate/', {
+        purpose: 'application_fee',
+        reference_id: id,
         mobile_number: mobileNumber,
       })
       return data
     },
 
-    /** Single payment-state read — includes the Pay-IT payment_reference. */
-    async fetchPaymentStatus(id: string): Promise<{
-      payment_confirmed: boolean
+    /** Single payment-state read by Pay-IT payment_id (cs_...). */
+    async fetchPaymentStatus(paymentId: string): Promise<{
+      confirmed: boolean
       payment_status: string
       payment_reference: string
       status: string
     } | null> {
       try {
-        const { data } = await http.get(`/applications/${id}/payment-status/`)
+        const { data } = await http.get(`/payments/${paymentId}/status/`)
         return data
       } catch {
         return null
@@ -158,31 +164,16 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
 
     /** Poll until the Pay-IT webhook confirms the payment (or timeout). */
     async waitForPaymentConfirmation(
-      id: string,
+      paymentId: string,
       { intervalMs = 2500, timeoutMs = 60_000 }: { intervalMs?: number; timeoutMs?: number } = {},
     ): Promise<boolean> {
       const deadline = Date.now() + timeoutMs
       while (Date.now() < deadline) {
-        try {
-          const { data } = await http.get(`/applications/${id}/payment-status/`)
-          if (data?.payment_confirmed || data?.payment_status === 'paid') return true
-        } catch {
-          // Transient errors — keep polling until the deadline.
-        }
+        const s = await this.fetchPaymentStatus(paymentId)
+        if (s?.confirmed || s?.payment_status === 'paid') return true
         await new Promise((resolve) => setTimeout(resolve, intervalMs))
       }
       return false
-    },
-
-    /** Link a Pay-IT payment_id reported by hosted checkout to the application. */
-    async recordPayment(id: string, paymentId: string): Promise<ComedianApplication> {
-      const { data } = await http.post(`/applications/${id}/payment/`, { payment_id: paymentId })
-      const updated = normalizeBackendApplication(data)
-      const idx = this.applications.findIndex((a) => a.id === id)
-      if (idx !== -1) {
-        this.applications[idx] = updated
-      }
-      return updated
     },
 
     /** Public config — is the application window open? */
@@ -191,6 +182,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
         const { data } = await http.get('/application-config/')
         this.applicationsOpen = !!data?.applications_open
         this.voteFee = data?.vote_fee ?? this.voteFee
+        this.applicationFee = data?.application_fee ?? this.applicationFee
       } catch {
         // Default to open if the config endpoint is unreachable.
       }
@@ -207,6 +199,12 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     async setVoteFee(fee: number): Promise<void> {
       const { data } = await http.patch('/application-config/', { vote_fee: fee })
       this.voteFee = data?.vote_fee ?? this.voteFee
+    },
+
+    /** Admin: set the application fee (TZS). */
+    async setApplicationFee(fee: number): Promise<void> {
+      const { data } = await http.patch('/application-config/', { application_fee: fee })
+      this.applicationFee = data?.application_fee ?? this.applicationFee
     },
 
     /** Admin: move an application through audition levels 1-4. */
@@ -256,24 +254,27 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       id: string,
       votesCount: number,
       mobileNumber: string,
-    ): Promise<{ vote_id: number; amount: number; votes_count: number }> {
-      const { data } = await http.post(`/applications/${id}/vote/`, {
+    ): Promise<{ vote_id: number; payment_id: string; amount: number; votes_count: number }> {
+      const { data } = await http.post('/payments/initiate/', {
+        purpose: 'comedian_vote',
+        reference_id: id,
         votes_count: votesCount,
+        amount: votesCount * this.voteFee,
         mobile_number: mobileNumber,
         voter_key: getVoterKey(),
       })
       return data
     },
 
-    /** Single read of a vote purchase's payment state. */
-    async fetchVoteStatus(voteId: number): Promise<{
+    /** Single read of a vote purchase's payment state, by Pay-IT payment_id. */
+    async fetchVoteStatus(paymentId: string): Promise<{
       confirmed: boolean
       payment_status: string
       votes_count: number
       applicant_votes: number
     } | null> {
       try {
-        const { data } = await http.get(`/applications/vote-status/${voteId}/`)
+        const { data } = await http.get(`/payments/${paymentId}/status/`)
         return data
       } catch {
         return null

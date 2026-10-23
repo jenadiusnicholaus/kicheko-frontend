@@ -673,6 +673,7 @@
       "levelNeedsApproval": "Approve the application first — levels apply to approved applicants only.",
       "bulkSkipped": "{n} application(s) were skipped because they are not approved.",
       "voteFeeLabel": "Vote fee (TSh)",
+      "appFeeLabel": "Application fee (TSh)",
       "saveBtn": "Save"
     },
     "dashboard": {

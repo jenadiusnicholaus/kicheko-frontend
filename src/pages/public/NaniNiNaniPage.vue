@@ -198,8 +198,26 @@
             {{ t('taifa.nani.payVoteDesc', { name: selectedContestant.name, fee: VOTE_FEE.toLocaleString() }) }}
           </p>
 
-          <!-- Step 1: payer phone (one vote per payment) -->
+          <!-- Step 1: vote count + payer phone -->
           <template v-if="voteStep === 'form'">
+            <!-- Votes count picker -->
+            <div class="flex flex-wrap justify-center gap-2 mb-4">
+              <button
+                v-for="n in VOTE_COUNT_CHOICES"
+                :key="n"
+                type="button"
+                class="px-3.5 py-2 rounded-xl text-sm font-bold border transition-all"
+                :class="
+                  votesCount === n
+                    ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
+                    : 'border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:border-[#FEBF01]'
+                "
+                @click="votesCount = n"
+              >
+                {{ n }}
+              </button>
+            </div>
+
             <!-- Amount Box -->
             <div
               class="p-4 rounded-2xl bg-[#EBF4FE] dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 mb-4 text-center"
@@ -602,8 +620,10 @@ const votePaymentId = ref('')
 const voteSuccessMessage = ref('')
 const voteDoneText = ref('')
 
-// One vote per payment
-const voteTotal = computed(() => VOTE_FEE)
+// Payer picks how many votes — backend charges votesCount x VOTE_FEE (max 1000).
+const VOTE_COUNT_CHOICES = [1, 5, 10, 25, 50, 100]
+const votesCount = ref(1)
+const voteTotal = computed(() => votesCount.value * VOTE_FEE)
 const canPayVote = computed(() => voterPhone.value.replace(/\D/g, '').length >= 9)
 
 let votePollTimer: ReturnType<typeof setTimeout> | undefined
@@ -616,6 +636,7 @@ const openVoteModal = (contestant: Contestant, b: BattleRound) => {
   selectedContestant.value = contestant
   votingBattle.value = b
   voteStep.value = 'form'
+  votesCount.value = 1
   voteError.value = ''
   voteDoneText.value = ''
   votePaymentId.value = ''
@@ -692,8 +713,9 @@ const submitVote = async () => {
     const res = await naniStore.buyVotes({
       battleId: votingBattle.value.id,
       contestantId: selectedContestant.value.id,
-      votesCount: 1,
+      votesCount: votesCount.value,
       mobileNumber: voterPhone.value,
+      amount: voteTotal.value,
     })
     votePaymentId.value = res.payment_id
     voteStep.value = 'waiting'

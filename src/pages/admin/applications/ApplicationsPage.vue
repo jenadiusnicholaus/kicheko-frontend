@@ -50,6 +50,27 @@
             {{ t('taifa.admin.saveBtn') }}
           </button>
         </div>
+        <div
+          class="flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-xl border border-gray-200 dark:border-zinc-700"
+          :title="t('taifa.admin.appFeeLabel')"
+        >
+          <span class="text-[11px] font-bold text-gray-500">{{ t('taifa.admin.appFeeLabel') }}</span>
+          <input
+            v-model.number="appFeeInput"
+            type="number"
+            min="100"
+            step="100"
+            class="w-24 px-2 py-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+          />
+          <button
+            type="button"
+            class="px-2.5 py-1.5 rounded-lg bg-[#FEBF01] hover:bg-[#E5AC00] disabled:opacity-40 text-gray-950 text-[11px] font-black"
+            :disabled="savingAppFee || appFeeInput === applicationsStore.applicationFee || appFeeInput < 100"
+            @click="saveAppFee"
+          >
+            {{ t('taifa.admin.saveBtn') }}
+          </button>
+        </div>
         <button
           type="button"
           class="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
@@ -445,12 +466,15 @@ const appColumns = computed(() =>
 )
 
 const voteFeeInput = ref(applicationsStore.voteFee)
+const appFeeInput = ref(applicationsStore.applicationFee)
 const savingFee = ref(false)
+const savingAppFee = ref(false)
 
 onMounted(async () => {
   applicationsStore.fetchApplicationsFromBackend()
   await applicationsStore.fetchConfig()
   voteFeeInput.value = applicationsStore.voteFee
+  appFeeInput.value = applicationsStore.applicationFee
 })
 
 const saveVoteFee = async () => {
@@ -460,6 +484,16 @@ const saveVoteFee = async () => {
   } finally {
     voteFeeInput.value = applicationsStore.voteFee
     savingFee.value = false
+  }
+}
+
+const saveAppFee = async () => {
+  savingAppFee.value = true
+  try {
+    await applicationsStore.setApplicationFee(appFeeInput.value)
+  } finally {
+    appFeeInput.value = applicationsStore.applicationFee
+    savingAppFee.value = false
   }
 }
 

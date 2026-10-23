@@ -19,7 +19,8 @@
         class="absolute top-3 right-3 rounded-full bg-white/95 dark:bg-zinc-900/90 backdrop-blur px-3 py-1 text-sm font-extrabold tabular-nums shadow-sm"
         :style="{ color: textColor }"
       >
-        {{ pct }}%
+        {{ contestant.votes.toLocaleString() }}
+        <span class="text-[11px] font-bold opacity-70">· {{ pct }}%</span>
       </div>
 
       <!-- Identity -->
@@ -55,7 +56,9 @@
           <span class="font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
             {{ t('taifa.nani.voteShare') }}
           </span>
-          <span class="font-extrabold tabular-nums text-gray-900 dark:text-white">{{ pct }}%</span>
+          <span class="font-extrabold tabular-nums text-gray-900 dark:text-white">
+            {{ contestant.votes.toLocaleString() }} {{ t('taifa.nani.votes') }} · {{ pct }}%
+          </span>
         </div>
         <div class="h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
           <div

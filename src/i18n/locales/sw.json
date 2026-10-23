@@ -565,6 +565,7 @@
       "levelNeedsApproval": "Idhinisha ombi kwanza — viwango vinatumika kwa walioidhinishwa tu.",
       "bulkSkipped": "Maombi {n} yamerukwa kwa sababu hayakuwa yameidhinishwa.",
       "voteFeeLabel": "Bei ya kura (TSh)",
+      "appFeeLabel": "Ada ya maombi (TSh)",
       "saveBtn": "Hifadhi"
     },
     "dashboard": {

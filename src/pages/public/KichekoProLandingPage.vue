@@ -181,8 +181,28 @@
           </button>
         </div>
 
-        <!-- Step: payer phone (one vote per payment) -->
+        <!-- Step: payer phone + vote count -->
         <template v-if="voteModal.step === 'form'">
+          <label class="block text-[11px] font-bold uppercase tracking-wide text-gray-500 mb-2">
+            {{ t('taifa.home.votes') }}
+          </label>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button
+              v-for="n in VOTE_COUNT_CHOICES"
+              :key="n"
+              type="button"
+              class="px-3.5 py-2 rounded-xl text-sm font-bold border transition-all"
+              :class="
+                voteModal.votesCount === n
+                  ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
+                  : 'border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:border-[#FEBF01]'
+              "
+              @click="voteModal.votesCount = n"
+            >
+              {{ n }}
+            </button>
+          </div>
+
           <label class="block text-[11px] font-bold uppercase tracking-wide text-gray-500 mb-2">
             {{ t('taifa.home.payerPhone') }}
           </label>
@@ -305,6 +325,7 @@ type Step = 'form' | 'waiting' | 'done' | 'failed' | 'pending'
 const voteModal = reactive({
   applicant: null as VoteListApplicant | null,
   step: 'form' as Step,
+  votesCount: 1,
   phone: '',
   submitting: false,
   error: '',
@@ -316,8 +337,9 @@ const currentShare = computed(() => {
   return sharePercent(a?.votes ?? 0)
 })
 
-// One vote per payment
-const totalAmount = computed(() => applicationsStore.voteFee)
+// Payer picks how many votes — backend charges votesCount x voteFee (max 1000).
+const VOTE_COUNT_CHOICES = [1, 5, 10, 25, 50, 100]
+const totalAmount = computed(() => voteModal.votesCount * applicationsStore.voteFee)
 const canPay = computed(() => voteModal.phone.replace(/\D/g, '').length >= 9)
 
 const checkingVote = ref(false)
@@ -330,7 +352,7 @@ const stopPolling = () => {
 }
 
 const openVoteModal = (applicant: VoteListApplicant) => {
-  Object.assign(voteModal, { applicant, step: 'form', submitting: false, error: '' })
+  Object.assign(voteModal, { applicant, step: 'form', votesCount: 1, submitting: false, error: '' })
   votePaymentId.value = ''
 }
 
@@ -384,7 +406,7 @@ const submitVote = async () => {
   voteModal.submitting = true
   voteModal.error = ''
   try {
-    const res = await applicationsStore.buyVotes(voteModal.applicant.id, 1, voteModal.phone)
+    const res = await applicationsStore.buyVotes(voteModal.applicant.id, voteModal.votesCount, voteModal.phone)
     votePaymentId.value = res.payment_id
     voteModal.step = 'waiting'
     pollVote(res.payment_id, Date.now() + 120_000)
