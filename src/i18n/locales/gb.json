@@ -432,6 +432,8 @@
       "verifyingVote": "Casting Vote...",
       "cancel": "Cancel",
       "votedSuccess": "You voted for {name} with TSh {fee}! Now at {pct}% of the votes",
+      "voteDoneTitle": "Vote counted!",
+      "done": "Done",
       "loading": "Loading battle...",
       "endedPill": "Round #{round} • Ended",
       "battleEnded": "Battle Ended",

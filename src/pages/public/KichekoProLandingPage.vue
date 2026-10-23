@@ -113,13 +113,18 @@
             ></div>
           </div>
 
-          <!-- Percentage -->
-          <span
-            class="w-14 shrink-0 text-right text-sm sm:text-base font-bold tabular-nums"
-            :class="isLeader(index) ? 'text-[#B58800] dark:text-[#FEBF01]' : 'text-gray-900 dark:text-white'"
-          >
-            {{ sharePercent(applicant.votes) }}%
-          </span>
+          <!-- Votes + percentage -->
+          <div class="w-20 sm:w-24 shrink-0 text-right">
+            <div
+              class="text-sm sm:text-base font-bold tabular-nums leading-tight"
+              :class="isLeader(index) ? 'text-[#B58800] dark:text-[#FEBF01]' : 'text-gray-900 dark:text-white'"
+            >
+              {{ sharePercent(applicant.votes) }}%
+            </div>
+            <div class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 tabular-nums">
+              {{ applicant.votes.toLocaleString() }} {{ t('taifa.home.votes') }}
+            </div>
+          </div>
 
           <!-- Vote -->
           <button
@@ -210,10 +215,13 @@
         </template>
 
         <!-- Step: waiting for webhook -->
-        <div v-else-if="voteModal.step === 'waiting'" class="text-center py-4">
-          <span class="material-icons text-5xl text-[#FEBF01] animate-pulse mb-3">phone_iphone</span>
-          <p class="font-black text-gray-900 dark:text-white text-sm mb-1">{{ t('taifa.home.approveOnPhone') }}</p>
-          <p class="text-xs text-gray-500">{{ t('taifa.home.approveOnPhoneDesc') }}</p>
+        <div v-else-if="voteModal.step === 'waiting'">
+          <PaymentWaitingPanel
+            :phone="voteModal.phone"
+            :checking="checkingVote"
+            @check="checkVoteNow"
+            @back="backToVoteForm"
+          />
         </div>
 
         <!-- Step: done -->
@@ -260,6 +268,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 import type { VoteListApplicant } from '../../stores/comedian-applications'
+import PaymentWaitingPanel from '../../components/PaymentWaitingPanel.vue'
 
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
@@ -311,6 +320,9 @@ const currentShare = computed(() => {
 const totalAmount = computed(() => applicationsStore.voteFee)
 const canPay = computed(() => voteModal.phone.replace(/\D/g, '').length >= 9)
 
+const checkingVote = ref(false)
+const votePaymentId = ref('')
+
 let pollTimer: ReturnType<typeof setTimeout> | null = null
 const stopPolling = () => {
   if (pollTimer) clearTimeout(pollTimer)
@@ -319,6 +331,7 @@ const stopPolling = () => {
 
 const openVoteModal = (applicant: VoteListApplicant) => {
   Object.assign(voteModal, { applicant, step: 'form', submitting: false, error: '' })
+  votePaymentId.value = ''
 }
 
 const closeVoteModal = () => {
@@ -326,20 +339,44 @@ const closeVoteModal = () => {
   voteModal.applicant = null
 }
 
-const pollVote = (voteId: number, deadline: number) => {
+/** Applies a status response to the vote modal. Returns true when the
+ * payment reached a terminal state (confirmed or failed). */
+const applyVoteStatus = (s: { confirmed?: boolean; payment_status?: string } | null): boolean => {
+  if (s?.confirmed) {
+    voteModal.step = 'done'
+    applicationsStore.fetchVoteList()
+    return true
+  }
+  if (s && ['failed', 'underpaid'].includes(s.payment_status ?? '')) {
+    voteModal.step = 'failed'
+    return true
+  }
+  return false
+}
+
+const pollVote = (paymentId: string, deadline: number) => {
   pollTimer = setTimeout(async () => {
-    const s = await applicationsStore.fetchVoteStatus(voteId)
-    if (s?.confirmed) {
-      voteModal.step = 'done'
-      await applicationsStore.fetchVoteList()
-    } else if (s && ['failed', 'underpaid'].includes(s.payment_status)) {
-      voteModal.step = 'failed'
-    } else if (Date.now() > deadline) {
-      voteModal.step = 'pending'
-    } else {
-      pollVote(voteId, deadline)
+    const s = await applicationsStore.fetchVoteStatus(paymentId)
+    if (!applyVoteStatus(s)) {
+      if (Date.now() > deadline) voteModal.step = 'pending'
+      else pollVote(paymentId, deadline)
     }
   }, 3000)
+}
+
+const checkVoteNow = async () => {
+  if (!votePaymentId.value || checkingVote.value) return
+  checkingVote.value = true
+  try {
+    applyVoteStatus(await applicationsStore.fetchVoteStatus(votePaymentId.value))
+  } finally {
+    checkingVote.value = false
+  }
+}
+
+const backToVoteForm = () => {
+  stopPolling()
+  voteModal.step = 'form'
 }
 
 const submitVote = async () => {
@@ -348,8 +385,9 @@ const submitVote = async () => {
   voteModal.error = ''
   try {
     const res = await applicationsStore.buyVotes(voteModal.applicant.id, 1, voteModal.phone)
+    votePaymentId.value = res.payment_id
     voteModal.step = 'waiting'
-    pollVote(res.vote_id, Date.now() + 120_000)
+    pollVote(res.payment_id, Date.now() + 120_000)
   } catch (e: any) {
     voteModal.error = e?.response?.data?.detail || t('taifa.home.voteFailed')
   } finally {

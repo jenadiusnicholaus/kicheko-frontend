@@ -129,6 +129,9 @@
                   <span class="text-sm md:text-base font-black tabular-nums" :style="{ color: colorB(b) }">
                     {{ pctOf(b, b.contestantB.votes) }}%
                   </span>
+                  <span class="text-[10px] font-bold uppercase tracking-wide text-gray-400 tabular-nums">
+                    {{ (b.contestantA.votes + b.contestantB.votes).toLocaleString() }} {{ t('taifa.nani.votes') }}
+                  </span>
                 </div>
 
                 <ContestantCard
@@ -240,13 +243,32 @@
           </template>
 
           <!-- Step 2: waiting for the Pay-IT webhook -->
-          <div v-else-if="voteStep === 'waiting'" class="py-4">
-            <span class="material-icons text-5xl text-[#FEBF01] animate-pulse mb-3">phone_iphone</span>
-            <p class="font-black text-gray-900 dark:text-white text-sm mb-1">{{ t('taifa.nani.approveOnPhone') }}</p>
-            <p class="text-xs text-gray-500">{{ t('taifa.nani.approveOnPhoneDesc') }}</p>
+          <div v-else-if="voteStep === 'waiting'">
+            <PaymentWaitingPanel
+              :phone="voterPhone"
+              :checking="checkingVote"
+              @check="checkVoteNow"
+              @back="backToVoteForm"
+            />
           </div>
 
-          <!-- Step 3: failed / still pending -->
+          <!-- Step 3: vote counted -->
+          <div v-else-if="voteStep === 'done'" class="py-4">
+            <span class="material-icons text-5xl text-emerald-500 mb-3">check_circle</span>
+            <p class="font-black text-gray-900 dark:text-white text-sm mb-1">
+              {{ t('taifa.nani.voteDoneTitle') }}
+            </p>
+            <p class="text-xs text-gray-500 mb-4">{{ voteDoneText }}</p>
+            <button
+              type="button"
+              class="w-full py-2.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm transition-all"
+              @click="closeVoteModal"
+            >
+              {{ t('taifa.nani.done') }}
+            </button>
+          </div>
+
+          <!-- Step 4: failed / still pending -->
           <div v-else class="py-4">
             <span
               class="material-icons text-5xl mb-3"
@@ -339,6 +361,7 @@ import { useI18n } from 'vue-i18n'
 import { useNaniNiNaniStore, type Contestant, type BattleRound } from '../../stores/nani-ni-nani'
 import { useUniversitiesStore } from '../../stores/universities'
 import ContestantCard from '../../components/nani/ContestantCard.vue'
+import PaymentWaitingPanel from '../../components/PaymentWaitingPanel.vue'
 import { resolveMediaUrl } from '../../services/api/config'
 
 const { t } = useI18n()
@@ -570,11 +593,14 @@ const VOTE_FEE = 1000
 const showVoteModal = ref(false)
 const selectedContestant = ref<Contestant | null>(null)
 const votingBattle = ref<BattleRound | null>(null)
-const voteStep = ref<'form' | 'waiting' | 'failed' | 'pending'>('form')
+const voteStep = ref<'form' | 'waiting' | 'done' | 'failed' | 'pending'>('form')
 const voterPhone = ref('')
 const voteError = ref('')
 const isVoting = ref(false)
+const checkingVote = ref(false)
+const votePaymentId = ref('')
 const voteSuccessMessage = ref('')
+const voteDoneText = ref('')
 
 // One vote per payment
 const voteTotal = computed(() => VOTE_FEE)
@@ -591,41 +617,71 @@ const openVoteModal = (contestant: Contestant, b: BattleRound) => {
   votingBattle.value = b
   voteStep.value = 'form'
   voteError.value = ''
+  voteDoneText.value = ''
+  votePaymentId.value = ''
   showVoteModal.value = true
 }
 
 const closeVoteModal = () => {
   stopVotePoll()
   showVoteModal.value = false
+  // Surface the "vote counted" toast once the voter dismisses the done step.
+  if (voteStep.value === 'done' && voteDoneText.value) {
+    voteSuccessMessage.value = voteDoneText.value
+    setTimeout(() => (voteSuccessMessage.value = ''), 5000)
+  }
 }
 
-const showVoteSuccess = () => {
+const buildVoteSuccessMessage = () => {
   const c = selectedContestant.value
   const b = naniStore.battles.find((x) => x.id === votingBattle.value?.id) || votingBattle.value
-  if (!c || !b) return
+  if (!c || !b) return ''
   const votes = b.contestantA.id === c.id ? b.contestantA.votes : b.contestantB.votes
-  voteSuccessMessage.value = t('taifa.nani.votedSuccess', {
+  return t('taifa.nani.votedSuccess', {
     name: c.name,
     pct: pctOf(b, votes),
     fee: voteTotal.value.toLocaleString(),
   })
-  setTimeout(() => (voteSuccessMessage.value = ''), 5000)
 }
 
-const pollVote = (voteId: string, deadline: number) => {
+/** Applies a status response to the vote modal. Returns true when the
+ * payment reached a terminal state (confirmed or failed). */
+const applyVoteStatus = (s: { confirmed?: boolean; payment_status?: string } | null): boolean => {
+  if (s?.confirmed) {
+    voteDoneText.value = buildVoteSuccessMessage()
+    voteStep.value = 'done'
+    return true
+  }
+  if (s && ['failed', 'underpaid'].includes(s.payment_status ?? '')) {
+    voteStep.value = 'failed'
+    return true
+  }
+  return false
+}
+
+const pollVote = (paymentId: string, deadline: number) => {
   votePollTimer = setTimeout(async () => {
-    const s = await naniStore.fetchVoteStatus(voteId)
-    if (s?.confirmed) {
-      showVoteModal.value = false
-      showVoteSuccess()
-    } else if (s && ['failed', 'underpaid'].includes(s.payment_status)) {
-      voteStep.value = 'failed'
-    } else if (Date.now() > deadline) {
-      voteStep.value = 'pending'
-    } else {
-      pollVote(voteId, deadline)
+    const s = await naniStore.fetchVoteStatus(paymentId)
+    if (!applyVoteStatus(s)) {
+      if (Date.now() > deadline) voteStep.value = 'pending'
+      else pollVote(paymentId, deadline)
     }
   }, 3000)
+}
+
+const checkVoteNow = async () => {
+  if (!votePaymentId.value || checkingVote.value) return
+  checkingVote.value = true
+  try {
+    applyVoteStatus(await naniStore.fetchVoteStatus(votePaymentId.value))
+  } finally {
+    checkingVote.value = false
+  }
+}
+
+const backToVoteForm = () => {
+  stopVotePoll()
+  voteStep.value = 'form'
 }
 
 const submitVote = async () => {
@@ -639,8 +695,9 @@ const submitVote = async () => {
       votesCount: 1,
       mobileNumber: voterPhone.value,
     })
+    votePaymentId.value = res.payment_id
     voteStep.value = 'waiting'
-    pollVote(res.vote_id, Date.now() + 120_000)
+    pollVote(res.payment_id, Date.now() + 120_000)
   } catch (e: any) {
     voteError.value = e?.response?.data?.detail || e?.message || t('taifa.nani.voteFailed')
   } finally {
