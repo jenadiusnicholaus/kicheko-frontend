@@ -196,6 +196,45 @@
       </div>
     </div>
 
+    <!-- Already Registered Modal — matched an existing paid application -->
+    <div
+      v-if="alreadyRegistered"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+    >
+      <div
+        class="w-full max-w-md bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 sm:p-8 text-center"
+      >
+        <div
+          class="w-16 h-16 rounded-full bg-sky-100 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400 flex items-center justify-center mx-auto mb-4"
+        >
+          <span class="material-icons text-3xl">how_to_reg</span>
+        </div>
+
+        <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-2">
+          {{ t('taifa.register.alreadyRegisteredTitle') }}
+        </h3>
+        <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+          {{ t('taifa.register.alreadyRegisteredDesc') }}
+        </p>
+
+        <div class="space-y-2.5">
+          <RouterLink
+            to="/nani-ni-nani"
+            class="block w-full py-3 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm shadow transition-all"
+          >
+            {{ t('taifa.register.viewNani') }}
+          </RouterLink>
+
+          <RouterLink
+            to="/"
+            class="block w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            {{ t('taifa.register.returnHome') }}
+          </RouterLink>
+        </div>
+      </div>
+    </div>
+
     <!-- Success Screen Modal -->
     <div
       v-if="showSuccessModal"
@@ -285,6 +324,7 @@ const paymentRef = ref('')
 const isSubmitting = ref(false)
 const createdAppId = ref('')
 const submitError = ref('')
+const alreadyRegistered = ref(false)
 
 const handleSubmit = async () => {
   isSubmitting.value = true
@@ -297,6 +337,10 @@ const handleSubmit = async () => {
       university: form.university,
       phone: form.phone,
     })
+    if (app.paymentStatus === 'paid') {
+      alreadyRegistered.value = true
+      return
+    }
     createdAppId.value = app.id
     try {
       sessionStorage.setItem('pending_application_id', app.id)
@@ -305,10 +349,7 @@ const handleSubmit = async () => {
     }
     showPayModal.value = true
   } catch (e: any) {
-    submitError.value =
-      e?.response?.status === 409
-        ? t('taifa.register.alreadyApplied')
-        : e?.response?.data?.detail || e?.message || 'Submission failed'
+    submitError.value = e?.response?.data?.detail || e?.message || 'Submission failed'
   } finally {
     isSubmitting.value = false
   }
