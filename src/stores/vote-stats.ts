@@ -63,7 +63,8 @@ export const useVoteStatsStore = defineStore('voteStats', {
         this.nani = { ...emptySection(), ...(data?.nani || {}) }
         this.fetchedAt = Date.now()
       } catch (e: any) {
-        this.error = e?.message || 'Failed to load vote stats'
+        const code = e?.response?.status
+        this.error = code ? `Failed to load vote stats (HTTP ${code})` : e?.message || 'Failed to load vote stats'
       } finally {
         this.isLoading = false
       }

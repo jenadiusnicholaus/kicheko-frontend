@@ -29,6 +29,15 @@
       </div>
     </div>
 
+    <!-- Error state — e.g. 403 when the logged-in user isn't staff -->
+    <div
+      v-if="store.error"
+      class="flex items-start gap-2.5 px-4 py-3 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/60 text-red-800 dark:text-red-300"
+    >
+      <span class="material-icons text-lg shrink-0 mt-0.5">error</span>
+      <p class="text-xs font-medium leading-relaxed">{{ store.error }}</p>
+    </div>
+
     <!-- Section tabs -->
     <div class="flex items-center gap-1.5 p-1 rounded-xl bg-gray-100 dark:bg-zinc-800 w-fit">
       <button
@@ -112,9 +121,7 @@
             <span
               class="w-7 h-7 rounded-lg text-[11px] font-black flex items-center justify-center shrink-0"
               :class="
-                i === 0
-                  ? 'bg-[#FEBF01] text-gray-950'
-                  : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400'
+                i === 0 ? 'bg-[#FEBF01] text-gray-950' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-gray-400'
               "
             >
               {{ i + 1 }}
@@ -150,7 +157,9 @@
         <div v-else class="overflow-x-auto">
           <table class="w-full text-left">
             <thead>
-              <tr class="text-[10px] uppercase tracking-wider text-gray-400 border-b border-gray-100 dark:border-zinc-800">
+              <tr
+                class="text-[10px] uppercase tracking-wider text-gray-400 border-b border-gray-100 dark:border-zinc-800"
+              >
                 <th class="px-5 py-3 font-bold">{{ t('taifa.voteStats.colVotedFor') }}</th>
                 <th class="px-3 py-3 font-bold">{{ t('taifa.voteStats.colVotes') }}</th>
                 <th class="px-3 py-3 font-bold">{{ t('taifa.voteStats.colAmount') }}</th>
