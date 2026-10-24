@@ -27,7 +27,7 @@
           <span class="material-icons text-2xl sm:text-3xl">arrow_forward</span>
         </RouterLink>
         <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-3 font-medium">
-          {{ t('taifa.home.feeNote') }}
+          {{ t('taifa.home.feeNote', { fee: applicationsStore.applicationFee.toLocaleString() }) }}
         </p>
       </div>
     </template>
@@ -53,6 +53,12 @@
             <p class="mt-1 text-xs sm:text-sm text-white/60">
               {{ t('taifa.home.voteSubtitle') }}
             </p>
+            <span
+              class="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#FEBF01]/15 border border-[#FEBF01]/30 px-2.5 py-1 text-[11px] font-bold text-[#FEBF01]"
+            >
+              <span class="material-icons text-xs">payments</span>
+              {{ t('taifa.home.feePerVote', { fee: applicationsStore.voteFee.toLocaleString() }) }}
+            </span>
           </div>
           <div v-if="applicationsStore.voteList.length" class="shrink-0 text-right">
             <div class="text-2xl sm:text-3xl font-extrabold tabular-nums text-white">
@@ -241,6 +247,7 @@
             :checking="checkingVote"
             @check="checkVoteNow"
             @back="backToVoteForm"
+            @cancel="closeVoteModal"
           />
         </div>
 
@@ -284,10 +291,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 import type { VoteListApplicant } from '../../stores/comedian-applications'
+import { findPendingPayment, savePendingPayment } from '../../lib/pending-payments'
 import PaymentWaitingPanel from '../../components/PaymentWaitingPanel.vue'
 
 const { t } = useI18n()
@@ -339,6 +347,30 @@ const currentShare = computed(() => {
 
 // Payer picks how many votes — backend charges votesCount x voteFee (max 1000).
 const VOTE_COUNT_CHOICES = [1, 5, 10, 25, 50, 100]
+const VOTE_DRAFT_KEY = 'kicheko_vote_draft'
+
+// Restore the in-progress vote form so a refresh/back doesn't wipe it.
+try {
+  const draft = JSON.parse(sessionStorage.getItem(VOTE_DRAFT_KEY) || 'null')
+  if (draft) {
+    voteModal.phone = draft.phone || ''
+    if (VOTE_COUNT_CHOICES.includes(draft.votesCount)) voteModal.votesCount = draft.votesCount
+  }
+} catch {
+  /* ignore storage access error */
+}
+
+watch(
+  () => [voteModal.phone, voteModal.votesCount],
+  ([phone, votesCount]) => {
+    try {
+      sessionStorage.setItem(VOTE_DRAFT_KEY, JSON.stringify({ phone, votesCount }))
+    } catch {
+      /* ignore storage access error */
+    }
+  },
+)
+
 const totalAmount = computed(() => voteModal.votesCount * applicationsStore.voteFee)
 const canPay = computed(() => voteModal.phone.replace(/\D/g, '').length >= 9)
 
@@ -352,7 +384,24 @@ const stopPolling = () => {
 }
 
 const openVoteModal = (applicant: VoteListApplicant) => {
-  Object.assign(voteModal, { applicant, step: 'form', votesCount: 1, submitting: false, error: '' })
+  // A cancelled payment stays in pending-payments — reopen the waiting step
+  // instead of initiating (and charging) a second payment for the same applicant.
+  const pending = findPendingPayment('comedian_vote', applicant.id)
+  if (pending) {
+    Object.assign(voteModal, {
+      applicant,
+      step: 'waiting',
+      votesCount: pending.votesCount || 1,
+      phone: pending.phone || '',
+      submitting: false,
+      error: '',
+    })
+    votePaymentId.value = pending.paymentId
+    pollVote(pending.paymentId, Date.now() + 120_000)
+    checkVoteNow()
+    return
+  }
+  Object.assign(voteModal, { applicant, step: 'form', submitting: false, error: '' })
   votePaymentId.value = ''
 }
 
@@ -401,6 +450,26 @@ const backToVoteForm = () => {
   voteModal.step = 'form'
 }
 
+/** Reopens the vote modal if a vote payment was left unfinished earlier —
+ * the mobile-money prompt may still be on the payer's phone. */
+const resumePendingVote = () => {
+  const pending = findPendingPayment('comedian_vote')
+  if (!pending) return
+  const applicant = applicationsStore.voteList.find((a) => a.id === pending.referenceId)
+  if (!applicant) return
+  Object.assign(voteModal, {
+    applicant,
+    step: 'waiting',
+    votesCount: pending.votesCount || 1,
+    phone: pending.phone || '',
+    submitting: false,
+    error: '',
+  })
+  votePaymentId.value = pending.paymentId
+  pollVote(pending.paymentId, Date.now() + 120_000)
+  checkVoteNow()
+}
+
 const submitVote = async () => {
   if (!voteModal.applicant || !canPay.value) return
   voteModal.submitting = true
@@ -408,6 +477,15 @@ const submitVote = async () => {
   try {
     const res = await applicationsStore.buyVotes(voteModal.applicant.id, voteModal.votesCount, voteModal.phone)
     votePaymentId.value = res.payment_id
+    savePendingPayment({
+      paymentId: res.payment_id,
+      purpose: 'comedian_vote',
+      referenceId: voteModal.applicant.id,
+      label: voteModal.applicant.name,
+      amount: res.amount,
+      votesCount: voteModal.votesCount,
+      phone: voteModal.phone,
+    })
     voteModal.step = 'waiting'
     pollVote(res.payment_id, Date.now() + 120_000)
   } catch (e: any) {
@@ -420,6 +498,7 @@ const submitVote = async () => {
 onMounted(async () => {
   try {
     await applicationsStore.fetchVoteList()
+    resumePendingVote()
   } finally {
     isLoading.value = false
   }

@@ -335,7 +335,7 @@
     "home": {
       "question": "Are you the next comedian?",
       "yes": "Yes",
-      "feeNote": "Registration is free for university students",
+      "feeNote": "One-time application fee: TSh {fee} — payable via mobile money",
       "step1Title": "1. Register Your Application",
       "step1Desc": "Fill your name, university and phone number — no payment needed.",
       "step2Title": "2. Nani ni Nani?",
@@ -371,12 +371,14 @@
       "lastNamePlaceholder": "Enter your last name",
       "username": "Username",
       "usernamePlaceholder": "Choose a username",
+      "email": "Email Address",
+      "emailPlaceholder": "you{'@'}example.com",
       "university": "University",
       "selectUniversity": "Select your university",
       "phone": "Phone Number",
       "phoneNote": "We'll use this number to contact you about your application.",
       "alreadyRegisteredTitle": "You're Already Registered",
-      "alreadyRegisteredDesc": "This phone number or username already has a paid Kicheko Pro application — no need to apply again.",
+      "alreadyRegisteredDesc": "This phone number or email address already has a paid Kicheko Pro application — no need to apply again.",
       "back": "Back",
       "submit": "Submit",
       "confirmTitle": "Confirm Application & Pay Fee",
@@ -417,7 +419,9 @@
       "confirmingTitle": "Confirming your payment…",
       "confirmingDesc": "Please wait — we are confirming your payment with the provider. Do not close this page.",
       "title": "Comedian Registration",
-      "next": "Next"
+      "next": "Next",
+      "submitFailed": "We could not submit your application. Please try again.",
+      "feeNotice": "Application fee: TSh {fee} — you will pay in the next step via mobile money."
     },
     "nani": {
       "title": "Nani ni Nani?",
@@ -447,7 +451,8 @@
       "approveOnPhoneDesc": "Enter your PIN in the mobile money prompt. Your votes are counted once the payment is confirmed.",
       "voteFailed": "Payment failed — no votes were added.",
       "votePending": "Payment is still being confirmed. Your votes will appear once it completes.",
-      "voteShare": "Vote share"
+      "voteShare": "Vote share",
+      "feeNote": "TSh {fee} per vote — charged via mobile money"
     },
     "payment": {
       "loading": "Loading secure checkout…",
@@ -480,7 +485,11 @@
       "stepSent": "Payment prompt sent to your phone",
       "stepApprove": "Approve the prompt with your PIN",
       "stepConfirm": "Confirming your payment",
-      "notReceived": "Didn't get the prompt? Go back"
+      "notReceived": "Didn't get the prompt? Go back",
+      "pendingTitle": "Finish your registration payment",
+      "pendingDesc": "You have an unfinished application payment — complete it to submit your entry.",
+      "resumeBtn": "Complete Payment",
+      "payLater": "Pay later"
     },
     "wall": {
       "title": "Wall of Fame",

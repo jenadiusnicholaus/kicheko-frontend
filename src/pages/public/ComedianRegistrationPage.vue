@@ -5,6 +5,29 @@
       <img src="/taifa/kicheko_pro_logo.png" alt="Kicheko Pro" class="w-40 sm:w-48 mx-auto object-contain" />
     </div>
 
+    <!-- Pending payment banner — an earlier application payment was never finished -->
+    <div
+      v-if="pendingPayment"
+      class="w-full mb-5 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 flex items-center gap-3"
+    >
+      <span class="material-icons text-amber-500 text-2xl shrink-0">schedule</span>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-black text-amber-900 dark:text-amber-200">
+          {{ t('taifa.payment.pendingTitle') }}
+        </p>
+        <p class="text-[11px] text-amber-800/70 dark:text-amber-300/70">
+          {{ t('taifa.payment.pendingDesc') }}
+        </p>
+      </div>
+      <button
+        type="button"
+        class="shrink-0 px-4 py-2.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-xs font-black shadow transition-all cursor-pointer"
+        @click="resumePendingPayment"
+      >
+        {{ t('taifa.payment.resumeBtn') }}
+      </button>
+    </div>
+
     <!-- Registration Card matching Page 2 of PDF -->
     <div
       class="w-full bg-white dark:bg-zinc-900 border border-gray-200/90 dark:border-zinc-800 rounded-3xl shadow-xl p-6 sm:p-10 transition-all relative overflow-hidden"
@@ -16,6 +39,12 @@
         </h2>
         <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1.5">
           {{ t('taifa.register.fillDetails') }}
+        </p>
+        <p
+          class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 text-[11px] font-bold text-amber-800 dark:text-amber-300"
+        >
+          <span class="material-icons text-sm">payments</span>
+          {{ t('taifa.register.feeNotice', { fee: applicationsStore.applicationFee.toLocaleString() }) }}
         </p>
       </div>
 
@@ -61,22 +90,22 @@
             </div>
           </div>
 
-          <!-- Username -->
+          <!-- Email Address — submitted as the applicant's username for login -->
           <div>
             <label class="block text-xs font-bold text-gray-800 dark:text-gray-200 mb-1.5">
-              {{ t('taifa.register.username') }}
+              {{ t('taifa.register.email') }}
             </label>
             <div class="relative">
-              <span
-                class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 font-semibold text-sm"
-              >
-                @
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <span class="material-icons text-lg">alternate_email</span>
               </span>
               <input
-                v-model="form.username"
-                type="text"
-                :placeholder="t('taifa.register.usernamePlaceholder')"
-                class="w-full pl-9 pr-3.5 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] focus:border-[#FEBF01] transition-all"
+                v-model="form.email"
+                type="email"
+                required
+                autocomplete="email"
+                :placeholder="t('taifa.register.emailPlaceholder')"
+                class="w-full pl-10 pr-3.5 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] focus:border-[#FEBF01] transition-all"
               />
             </div>
           </div>
@@ -209,46 +238,117 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 import { useUniversitiesStore } from '../../stores/universities'
+import { findPendingPayment, type PendingPayment } from '../../lib/pending-payments'
 
 const router = useRouter()
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 const uniStore = useUniversitiesStore()
 
-onMounted(() => {
+/** An application payment that was initiated earlier but never confirmed. */
+const pendingPayment = ref<PendingPayment | null>(null)
+
+onMounted(async () => {
   uniStore.fetchUniversities()
+  const pending = findPendingPayment('application_fee')
+  if (!pending) return
+  // If the webhook already confirmed it, fetchPaymentStatus clears the
+  // record — only show the banner while the payment is still outstanding.
+  await applicationsStore.fetchPaymentStatus(pending.paymentId)
+  pendingPayment.value = findPendingPayment('application_fee') || null
 })
+
+const resumePendingPayment = () => {
+  if (!pendingPayment.value) return
+  router.push({
+    name: 'payment-checkout',
+    query: {
+      app: pendingPayment.value.referenceId || '',
+      name: pendingPayment.value.label || '',
+      phone: pendingPayment.value.phone || '',
+    },
+  })
+}
+
+const FORM_DRAFT_KEY = 'kicheko_registration_draft'
 
 const form = reactive({
   firstName: '',
   lastName: '',
-  username: '',
+  email: '',
   university: '',
   phone: '',
 })
+
+// Restore in-progress form details so a refresh or navigating back from
+// the checkout doesn't wipe what the applicant already typed.
+try {
+  const draft = sessionStorage.getItem(FORM_DRAFT_KEY)
+  if (draft) Object.assign(form, JSON.parse(draft))
+} catch {
+  /* ignore storage access error */
+}
+
+watch(
+  form,
+  (v) => {
+    try {
+      sessionStorage.setItem(FORM_DRAFT_KEY, JSON.stringify(v))
+    } catch {
+      /* ignore storage access error */
+    }
+  },
+  { deep: true },
+)
 
 const isSubmitting = ref(false)
 const submitError = ref('')
 const alreadyRegistered = ref(false)
 
+/** Phone match tolerant of formatting/country-code differences (last 9 digits). */
+const samePhone = (a: string, b: string) => {
+  const da = a.replace(/\D/g, '')
+  const db = b.replace(/\D/g, '')
+  return !!da && !!db && da.slice(-9) === db.slice(-9)
+}
+
 const handleSubmit = async () => {
   isSubmitting.value = true
   submitError.value = ''
   try {
+    const email = form.email.trim().toLowerCase()
     const app = await applicationsStore.createApplication({
       firstName: form.firstName,
       lastName: form.lastName,
-      username: form.username,
+      // The email doubles as the username — it's what they'll log in with.
+      username: email,
+      email,
       university: form.university,
       phone: form.phone,
     })
+    // The backend may return an existing application instead of creating a
+    // new one. Only trust it when the record belongs to the details just
+    // submitted (same phone or email) — otherwise it isn't their
+    // application, so don't pay against it and don't claim "already
+    // registered" for a stranger's record.
+    const ownRecord =
+      samePhone(app.phone, form.phone) || app.email?.toLowerCase() === email || app.username?.toLowerCase() === email
+    if (!ownRecord) {
+      submitError.value = t('taifa.register.submitFailed')
+      return
+    }
     if (app.paymentStatus === 'paid') {
       alreadyRegistered.value = true
+      try {
+        sessionStorage.removeItem(FORM_DRAFT_KEY)
+      } catch {
+        /* ignore storage access error */
+      }
       return
     }
     try {
@@ -266,7 +366,7 @@ const handleSubmit = async () => {
       },
     })
   } catch (e: any) {
-    submitError.value = e?.response?.data?.detail || e?.message || 'Submission failed'
+    submitError.value = e?.response?.data?.detail || e?.message || t('taifa.register.submitFailed')
   } finally {
     isSubmitting.value = false
   }

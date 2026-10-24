@@ -35,7 +35,12 @@ export type ApiEndpoints = typeof apiConfig.endpoints
  */
 export function resolveMediaUrl(path?: string | null): string {
   if (!path) return ''
-  if (/^https?:\/\//i.test(path)) return path
+  if (/^https?:\/\//i.test(path)) {
+    // Seeded /media/taifa/ rows (now absolute from the API) still point at
+    // assets shipped in the frontend's public dir — remap back to /taifa/.
+    const m = path.match(/^https?:\/\/[^/]+(\/media\/taifa\/.*)$/i)
+    return m ? m[1].slice('/media'.length) : path
+  }
   if (path.startsWith('/media/taifa/')) return path.slice('/media'.length)
   if (path.startsWith('/media/')) return `${env.VITE_API_PROXY_TARGET}${path}`
   return path

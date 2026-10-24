@@ -8,6 +8,15 @@ export const http = axios.create({
   timeout: 15000,
 })
 
+/** Client for public endpoints — never attaches the session token, so calls
+ * are not associated with a logged-in account (e.g. the open application
+ * form, which must create a fresh application for every submission). */
+export const publicHttp = axios.create({
+  baseURL: apiConfig.baseUrl,
+  headers: { 'Content-Type': 'application/json' },
+  timeout: 15000,
+})
+
 /** Called when the session can no longer be refreshed — registered in main.ts. */
 let onSessionExpired: () => void = () => {}
 export const setOnSessionExpired = (handler: () => void) => {

@@ -19,20 +19,26 @@
         <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-semibold mt-4">
           {{ t('taifa.nani.subtitle') }}
         </p>
+        <p
+          class="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 px-3 py-1 text-[11px] font-bold text-amber-800 dark:text-amber-300"
+        >
+          <span class="material-icons text-sm">payments</span>
+          {{ t('taifa.nani.feeNote', { fee: VOTE_FEE.toLocaleString() }) }}
+        </p>
 
-        <!-- Live Battle Status Pill -->
+        <!-- Live Battle Status Pill — follows the battle on the visible slide -->
         <div
-          v-if="battle.status === 'active'"
+          v-if="currentBattle?.status === 'active'"
           class="inline-flex items-center gap-2 px-3 py-1 mt-2.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 text-xs font-bold border border-emerald-200 dark:border-emerald-800"
         >
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span>{{ t('taifa.nani.roundOngoing', { round: battle.roundNumber }) }}</span>
+          <span>{{ t('taifa.nani.roundOngoing', { round: currentBattle.roundNumber }) }}</span>
         </div>
         <div
-          v-else
+          v-else-if="currentBattle"
           class="inline-flex items-center gap-2 px-3 py-1 mt-2.5 rounded-full bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-300 text-xs font-bold border border-gray-200 dark:border-zinc-700"
         >
-          <span>{{ t('taifa.nani.endedPill', { round: battle.roundNumber }) }}</span>
+          <span>{{ t('taifa.nani.endedPill', { round: currentBattle.roundNumber }) }}</span>
         </div>
       </div>
 
@@ -290,6 +296,7 @@
               :checking="checkingVote"
               @check="checkVoteNow"
               @back="backToVoteForm"
+              @cancel="closeVoteModal"
             />
           </div>
 
@@ -397,10 +404,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useNaniNiNaniStore, type Contestant, type BattleRound } from '../../stores/nani-ni-nani'
 import { useUniversitiesStore } from '../../stores/universities'
+import { savePendingPayment } from '../../lib/pending-payments'
 import ContestantCard from '../../components/nani/ContestantCard.vue'
 import PaymentWaitingPanel from '../../components/PaymentWaitingPanel.vue'
 import { resolveMediaUrl } from '../../services/api/config'
@@ -410,6 +418,14 @@ const naniStore = useNaniNiNaniStore()
 const uniStore = useUniversitiesStore()
 
 onMounted(() => {
+  // Restore the in-progress vote form so a refresh/back doesn't wipe it.
+  try {
+    voterPhone.value = sessionStorage.getItem(VOTE_PHONE_KEY) || ''
+    const savedCount = Number(sessionStorage.getItem(VOTE_COUNT_KEY))
+    if (VOTE_COUNT_CHOICES.includes(savedCount)) votesCount.value = savedCount
+  } catch {
+    /* ignore storage access error */
+  }
   naniStore.fetchActiveBattle()
   naniStore.fetchBattles()
   uniStore.fetchUniversities()
@@ -485,6 +501,9 @@ const onTransitionEnd = (e: TransitionEvent) => {
 }
 
 const activeDot = computed(() => slideIndex.value % Math.max(1, displayBattles.value.length))
+
+/** The battle currently on screen in the carousel — drives the status pill. */
+const currentBattle = computed<BattleRound | null>(() => displayBattles.value[activeDot.value] ?? null)
 
 // ── Manual scrolling: drag/swipe (track follows the pointer) + trackpad/wheel ──
 const dragX = ref(0)
@@ -615,6 +634,8 @@ const votingBattle = ref<BattleRound | null>(null)
 const voteStep = ref<'form' | 'waiting' | 'done' | 'failed' | 'pending'>('form')
 const voterPhone = ref('')
 const voteError = ref('')
+const VOTE_PHONE_KEY = 'kicheko_nani_vote_phone'
+const VOTE_COUNT_KEY = 'kicheko_nani_vote_count'
 const isVoting = ref(false)
 const checkingVote = ref(false)
 const votePaymentId = ref('')
@@ -627,6 +648,22 @@ const votesCount = ref(1)
 const voteTotal = computed(() => votesCount.value * VOTE_FEE)
 const canPayVote = computed(() => voterPhone.value.replace(/\D/g, '').length >= 9)
 
+// Persist the vote form draft so refresh/back keeps the progress.
+watch(voterPhone, (v) => {
+  try {
+    sessionStorage.setItem(VOTE_PHONE_KEY, v)
+  } catch {
+    /* ignore storage access error */
+  }
+})
+watch(votesCount, (v) => {
+  try {
+    sessionStorage.setItem(VOTE_COUNT_KEY, String(v))
+  } catch {
+    /* ignore storage access error */
+  }
+})
+
 let votePollTimer: ReturnType<typeof setTimeout> | undefined
 const stopVotePoll = () => {
   if (votePollTimer) clearTimeout(votePollTimer)
@@ -637,7 +674,6 @@ const openVoteModal = (contestant: Contestant, b: BattleRound) => {
   selectedContestant.value = contestant
   votingBattle.value = b
   voteStep.value = 'form'
-  votesCount.value = 1
   voteError.value = ''
   voteDoneText.value = ''
   votePaymentId.value = ''
@@ -716,8 +752,18 @@ const submitVote = async () => {
       contestantId: selectedContestant.value.id,
       votesCount: votesCount.value,
       mobileNumber: voterPhone.value,
+      amount: voteTotal.value,
     })
     votePaymentId.value = res.payment_id
+    savePendingPayment({
+      paymentId: res.payment_id,
+      purpose: 'nani_vote',
+      referenceId: `${votingBattle.value.id}:${selectedContestant.value.id}`,
+      label: selectedContestant.value.name,
+      amount: res.amount,
+      votesCount: votesCount.value,
+      phone: voterPhone.value,
+    })
     voteStep.value = 'waiting'
     pollVote(res.payment_id, Date.now() + 120_000)
   } catch (e: any) {

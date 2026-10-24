@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { http } from '../services/api/http'
+import { http, publicHttp } from '../services/api/http'
+import { isTerminalPayment, removePendingPayment } from '../lib/pending-payments'
 
 export interface ComedianApplication {
   id: string
@@ -7,6 +8,7 @@ export interface ComedianApplication {
   firstName: string
   lastName: string
   username: string
+  email?: string
   displayName?: string
   university: string
   phone: string
@@ -44,6 +46,7 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
     firstName: raw.first_name || '',
     lastName: raw.last_name || '',
     username: raw.username || '',
+    email: raw.email || '',
     displayName: raw.display_name || '',
     university: raw.university || '',
     phone: raw.phone || raw.phone_number || '',
@@ -117,16 +120,21 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       firstName: string
       lastName: string
       username: string
+      email?: string
       university: string
       phone: string
       bio?: string
     }): Promise<ComedianApplication> {
-      const { data } = await http.post('/applications/', {
+      // Public endpoint — sent without the session token so the backend
+      // doesn't bind the application to a logged-in account.
+      const { data } = await publicHttp.post('/applications/', {
         first_name: payload.firstName.trim(),
         last_name: payload.lastName.trim(),
         ...(payload.username.trim() ? { username: payload.username.trim().replace(/^@/, '') } : {}),
+        ...(payload.email?.trim() ? { email: payload.email.trim() } : {}),
         university: payload.university,
         phone: payload.phone.trim(),
+        phone_number: payload.phone.trim(),
         bio: payload.bio || '',
       })
       const newApp = normalizeBackendApplication(data)
@@ -156,6 +164,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     } | null> {
       try {
         const { data } = await http.get(`/payments/${paymentId}/status/`)
+        if (isTerminalPayment(data)) removePendingPayment(paymentId)
         return data
       } catch {
         return null
@@ -275,6 +284,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     } | null> {
       try {
         const { data } = await http.get(`/payments/${paymentId}/status/`)
+        if (isTerminalPayment(data)) removePendingPayment(paymentId)
         return data
       } catch {
         return null

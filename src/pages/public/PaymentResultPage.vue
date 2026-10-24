@@ -50,6 +50,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { removePendingPayment } from '../../lib/pending-payments'
 
 const route = useRoute()
 const { t } = useI18n()
@@ -67,5 +68,9 @@ onMounted(() => {
   // The signed webhook links the payment to the application via metadata —
   // nothing to record client-side.
   sessionStorage.removeItem('pending_application_id')
+  if (isSuccess.value) {
+    sessionStorage.removeItem('kicheko_registration_draft')
+    if (paymentId.value) removePendingPayment(paymentId.value)
+  }
 })
 </script>

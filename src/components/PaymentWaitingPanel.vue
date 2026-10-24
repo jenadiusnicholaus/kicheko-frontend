@@ -58,13 +58,22 @@
         <span v-if="checking" class="material-icons animate-spin text-base">sync</span>
         <span>{{ t('taifa.register.checkStatus') }}</span>
       </button>
-      <button
-        type="button"
-        class="text-[11px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline underline-offset-2 transition-colors cursor-pointer"
-        @click="$emit('back')"
-      >
-        {{ t('taifa.payment.notReceived') }}
-      </button>
+      <div class="flex items-center justify-between">
+        <button
+          type="button"
+          class="text-[11px] font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline underline-offset-2 transition-colors cursor-pointer"
+          @click="$emit('back')"
+        >
+          {{ t('taifa.payment.notReceived') }}
+        </button>
+        <button
+          type="button"
+          class="text-[11px] font-bold text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white underline underline-offset-2 transition-colors cursor-pointer"
+          @click="$emit('cancel')"
+        >
+          {{ t('taifa.payment.payLater') }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -80,6 +89,7 @@ withDefaults(defineProps<{ phone?: string; checking?: boolean }>(), {
 defineEmits<{
   (e: 'check'): void
   (e: 'back'): void
+  (e: 'cancel'): void
 }>()
 
 const { t } = useI18n()

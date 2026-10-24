@@ -227,7 +227,7 @@
     "home": {
       "question": "Je, wewe ndiye comedian ajae?",
       "yes": "Ndiyo",
-      "feeNote": "Usajili ni bure kwa wanafunzi wa vyuo vikuu",
+      "feeNote": "Ada ya usajili (mara moja): TSh {fee} — unalipa kwa mobile money",
       "step1Title": "1. Sajili Maombi Yako",
       "step1Desc": "Weka jina lako, chuo chako na namba ya simu — bila malipo yoyote.",
       "step2Title": "2. Nani ni Nani?",
@@ -263,12 +263,14 @@
       "lastNamePlaceholder": "Weka jina lako la ukoo",
       "username": "Jina la Mtumiaji",
       "usernamePlaceholder": "Chagua jina la mtumiaji",
+      "email": "Barua Pepe",
+      "emailPlaceholder": "wewe{'@'}mfano.com",
       "university": "Chuo Kikuu",
       "selectUniversity": "Chagua chuo chako",
       "phone": "Namba ya Simu",
       "phoneNote": "Tutatumia namba hii kuwasiliana nawe kuhusu ombi lako.",
       "alreadyRegisteredTitle": "Tayari Umejisajili",
-      "alreadyRegisteredDesc": "Namba hii ya simu au jina hili la mtumiaji tayari lina ombi la Kicheko Pro lililolipwa — huna haja ya kujisajili tena.",
+      "alreadyRegisteredDesc": "Namba hii ya simu au barua hii pepe tayari ina ombi la Kicheko Pro lililolipwa — huna haja ya kujisajili tena.",
       "back": "Nyuma",
       "submit": "Wasilisha",
       "confirmTitle": "Thibitisha Maombi & Lipa Ada",
@@ -309,7 +311,9 @@
       "confirmingTitle": "Tunathibitisha malipo yako…",
       "confirmingDesc": "Tafadhali subiri — tunathibitisha malipo yako na mtoa huduma. Usifunge ukurasa huu.",
       "title": "Usajili wa Comedian",
-      "next": "Endelea"
+      "next": "Endelea",
+      "submitFailed": "Hatukuweza kuwasilisha ombi lako. Tafadhali jaribu tena.",
+      "feeNotice": "Ada ya usajili: TSh {fee} — utalipa katika hatua inayofuata kupitia mobile money."
     },
     "nani": {
       "title": "Nani ni Nani?",
@@ -339,7 +343,8 @@
       "approveOnPhoneDesc": "Weka PIN kwenye ujumbe wa malipo. Kura zako zitahesabiwa malipo yakithibitishwa.",
       "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
       "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika.",
-      "voteShare": "Asilimia ya kura"
+      "voteShare": "Asilimia ya kura",
+      "feeNote": "TSh {fee} kwa kila kura — malipo kupitia mobile money"
     },
     "payment": {
       "loading": "Inapakia malipo salama...",
@@ -372,7 +377,11 @@
       "stepSent": "Ombi la malipo limetumwa kwenye simu yako",
       "stepApprove": "Idhinisha ombi kwa PIN yako",
       "stepConfirm": "Inathibitisha malipo yako",
-      "notReceived": "Hujapokea ombi? Rudi nyuma"
+      "notReceived": "Hujapokea ombi? Rudi nyuma",
+      "pendingTitle": "Kamilisha malipo yako ya usajili",
+      "pendingDesc": "Una malipo ya usajili ambayo hayajakamilika — yakamilishe ili kuwasilisha ombi lako.",
+      "resumeBtn": "Kamilisha Malipo",
+      "payLater": "Lipa baadaye"
     },
     "wall": {
       "title": "Wall of Fame",

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { http } from '../services/api/http'
 import { resolveMediaUrl } from '../services/api/config'
+import { isTerminalPayment, removePendingPayment } from '../lib/pending-payments'
 
 export interface Contestant {
   id: string
@@ -242,6 +243,7 @@ export const useNaniNiNaniStore = defineStore('naniNiNani', {
     async fetchVoteStatus(paymentId: string): Promise<{ confirmed: boolean; payment_status: string } | null> {
       try {
         const { data } = await http.get(`/payments/${paymentId}/status/`)
+        if (isTerminalPayment(data)) removePendingPayment(paymentId)
         if (data?.confirmed) {
           for (const b of [this.activeBattle, ...this.battles]) {
             if (b && b.id === data.battle_id) {
