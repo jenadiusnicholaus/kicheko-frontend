@@ -893,7 +893,8 @@
         "twoFAEnabled": "2FA successfully enabled",
         "twoFADisabled": "2FA successfully disabled",
         "emailSubscriptions": "Email subscriptions",
-        "manageEmails": "To manage what emails you get, visit the"
+        "manageEmails": "To manage what emails you get, visit the",
+        "nameChangeFailed": "Could not update your name. Please try again."
       },
       "faq": {
         "title": "How can we help you?",

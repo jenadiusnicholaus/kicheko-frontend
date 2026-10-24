@@ -1,14 +1,28 @@
 import { defineStore } from 'pinia'
+import { useAuthStore } from './auth-store'
+import { resolveMediaUrl } from '../services/api/config'
 
+/**
+ * Read-only view of the logged-in user's profile, sourced from the auth
+ * store (GET /me data). Kept as a separate store because the preferences
+ * components consume it under the `useUserStore` name.
+ */
 export const useUserStore = defineStore('user', {
-  state: () => {
-    return {
-      userName: 'Vasili Savitski',
-      email: 'vasili@gmail.com',
-      memberSince: '8/12/2020',
-      pfp: 'https://picsum.photos/id/22/200/300',
-      is2FAEnabled: false,
-    }
+  state: () => ({
+    is2FAEnabled: false,
+  }),
+
+  getters: {
+    userName: () => {
+      const user = useAuthStore().user
+      return user?.display_name || user?.username || ''
+    },
+    email: () => useAuthStore().user?.email || '',
+    memberSince: () => {
+      const raw = (useAuthStore().user as { date_joined?: string } | null)?.date_joined
+      return raw ? new Date(raw).toLocaleDateString() : ''
+    },
+    pfp: () => resolveMediaUrl(useAuthStore().user?.avatar),
   },
 
   actions: {
@@ -16,8 +30,8 @@ export const useUserStore = defineStore('user', {
       this.is2FAEnabled = !this.is2FAEnabled
     },
 
-    changeUserName(userName: string) {
-      this.userName = userName
+    async changeUserName(userName: string) {
+      await useAuthStore().updateProfile({ display_name: userName })
     },
   },
 })

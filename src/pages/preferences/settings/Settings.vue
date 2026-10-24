@@ -24,7 +24,7 @@
     <div class="flex-1">
       <div class="max-w-[748px]">•••••••••••••</div>
     </div>
-    <VaButton :style="buttonStyles" class="w-fit h-fit" preset="primary" @click="emits('openResetPasswordModal')">
+    <VaButton :style="buttonStyles" class="w-fit h-fit" preset="primary" :to="{ name: 'recover-password' }">
       {{ t('auth.reset_password') }}
     </VaButton>
   </div>
@@ -96,5 +96,5 @@ const toggle2FA = () => {
   init({ message: toastMessage.value, color: 'success' })
 }
 
-const emits = defineEmits(['openNameModal', 'openResetPasswordModal'])
+const emits = defineEmits(['openNameModal'])
 </script>

@@ -785,7 +785,8 @@
         "twoFAEnabled": "2FA imewashwa kwa mafanikio",
         "twoFADisabled": "2FA imezimwa kwa mafanikio",
         "emailSubscriptions": "Usajili wa barua pepe",
-        "manageEmails": "Ili kudhibiti barua pepe unazopokea, tembelea"
+        "manageEmails": "Ili kudhibiti barua pepe unazopokea, tembelea",
+        "nameChangeFailed": "Imeshindwa kubadilisha jina. Tafadhali jaribu tena."
       },
       "faq": {
         "title": "Tunawezaje kukusaidia?",

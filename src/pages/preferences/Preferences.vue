@@ -5,23 +5,27 @@
       <PreferencesHeader />
     </div>
     <div class="space-y-4 md:space-y-6">
-      <Settings @openNameModal="isEditNameModalOpen = true" @openResetPasswordModal="isResetPasswordModalOpen = true" />
+      <Settings @openNameModal="isEditNameModalOpen = true" />
     </div>
   </div>
   <EditNameModal v-if="isEditNameModalOpen" @cancel="isEditNameModalOpen = false" />
-  <ResetPasswordModal v-if="isResetPasswordModalOpen" @cancel="isResetPasswordModalOpen = false" />
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import PreferencesHeader from './preferences-header/PreferencesHeader.vue'
 import Settings from './settings/Settings.vue'
 import EditNameModal from './modals/EditNameModal.vue'
-import ResetPasswordModal from './modals/ResetPasswordModal.vue'
+import { useAuthStore } from '../../stores/auth-store'
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 
 const isEditNameModalOpen = ref(false)
-const isResetPasswordModalOpen = ref(false)
+
+// Refresh the profile from /me so the page always shows live data.
+onMounted(() => {
+  authStore.fetchMe().catch(() => {})
+})
 </script>

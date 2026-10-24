@@ -100,12 +100,12 @@
           <span class="material-icons text-red-500 group-hover:scale-110 transition-transform">favorite</span>
         </div>
         <div class="text-3xl font-black text-gray-900 dark:text-white">
-          {{ naniStore.totalVotes.toLocaleString() }}
+          {{ naniVotes.toLocaleString() }}
         </div>
         <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1">
           <span
             >{{ t('taifa.dashboard.revenue') }}:
-            <strong class="text-amber-500">TSh {{ naniStore.voteRevenue.toLocaleString() }}</strong></span
+            <strong class="text-amber-500">TSh {{ naniRevenue.toLocaleString() }}</strong></span
           >
           <span>{{ t('taifa.dashboard.perVote') }}</span>
         </div>
@@ -286,13 +286,22 @@ import { defineVaDataTableColumns } from 'vuestic-ui'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
 import { useNaniNiNaniStore } from '../../../stores/nani-ni-nani'
 import { useWallOfFameStore } from '../../../stores/wall-of-fame'
+import { useVoteStatsStore } from '../../../stores/vote-stats'
 
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 const naniStore = useNaniNiNaniStore()
 const fameStore = useWallOfFameStore()
+const voteStatsStore = useVoteStatsStore()
 
 const battle = computed(() => naniStore.activeBattle)
+
+// Confirmed payment totals from /payments/vote-stats/ — fall back to the
+// battle-derived estimate only while the stats endpoint hasn't answered.
+const naniVotes = computed(() => (voteStatsStore.fetchedAt ? voteStatsStore.nani.totals.votes : naniStore.totalVotes))
+const naniRevenue = computed(() =>
+  voteStatsStore.fetchedAt ? voteStatsStore.nani.totals.revenue : naniStore.voteRevenue,
+)
 
 const recentApplications = computed(() => applicationsStore.applications.slice(0, 5))
 
@@ -310,5 +319,6 @@ onMounted(() => {
   naniStore.fetchActiveBattle()
   applicationsStore.fetchApplicationsFromBackend()
   fameStore.fetchInducteesFromBackend()
+  voteStatsStore.fetchVoteStats()
 })
 </script>
