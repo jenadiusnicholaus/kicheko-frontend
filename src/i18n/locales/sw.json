@@ -344,7 +344,9 @@
       "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
       "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika.",
       "voteShare": "Asilimia ya kura",
-      "feeNote": "TSh {fee} kwa kila kura — malipo kupitia mobile money"
+      "feeNote": "TSh {fee} kwa kila kura — malipo kupitia mobile money",
+      "emptyTitle": "Hakuna mashindano kwa sasa",
+      "emptyDesc": "Mashindano mapya yanakuja hivi karibuni — rudi tena kupiga kura."
     },
     "payment": {
       "loading": "Inapakia malipo salama...",

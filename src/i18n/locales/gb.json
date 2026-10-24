@@ -452,7 +452,9 @@
       "voteFailed": "Payment failed — no votes were added.",
       "votePending": "Payment is still being confirmed. Your votes will appear once it completes.",
       "voteShare": "Vote share",
-      "feeNote": "TSh {fee} per vote — charged via mobile money"
+      "feeNote": "TSh {fee} per vote — charged via mobile money",
+      "emptyTitle": "No battles yet",
+      "emptyDesc": "New matchups are on the way — check back soon to vote."
     },
     "payment": {
       "loading": "Loading secure checkout…",

@@ -6,7 +6,7 @@
       <p class="text-sm text-gray-500 dark:text-gray-400 font-semibold mt-4">{{ t('taifa.nani.loading') }}</p>
     </div>
 
-    <template v-else-if="battle">
+    <template v-else-if="displayBattles.length">
       <!-- Brush Highlight Title matching Page 3 of PDF -->
       <div class="text-center mb-8 sm:mb-12 relative">
         <div class="inline-block relative">
@@ -394,10 +394,18 @@
     </template>
 
     <!-- Error / empty state: loading done but no battle found -->
-    <div v-else class="flex flex-col items-center justify-center py-20">
-      <span class="material-icons text-5xl text-gray-400">error_outline</span>
-      <p class="text-sm text-gray-500 dark:text-gray-400 font-semibold mt-4">
-        {{ naniStore.error || t('taifa.nani.loading') }}
+    <div v-else class="flex flex-col items-center justify-center py-20 max-w-md mx-auto text-center">
+      <span
+        class="material-icons text-5xl"
+        :class="naniStore.error ? 'text-red-400' : 'text-gray-300 dark:text-zinc-700'"
+      >
+        {{ naniStore.error ? 'error_outline' : 'sports_kabaddi' }}
+      </span>
+      <p class="text-base font-black text-gray-900 dark:text-white mt-4">
+        {{ naniStore.error || t('taifa.nani.emptyTitle') }}
+      </p>
+      <p v-if="!naniStore.error" class="text-sm text-gray-500 dark:text-gray-400 font-semibold mt-1">
+        {{ t('taifa.nani.emptyDesc') }}
       </p>
     </div>
   </div>

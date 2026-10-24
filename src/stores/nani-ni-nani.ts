@@ -154,8 +154,11 @@ export const useNaniNiNaniStore = defineStore('naniNiNani', {
           this.activeBattle = normalizeBackendBattle(data)
         }
       } catch (e: any) {
-        this.error = e?.message || 'Failed to load battle'
-        console.warn('Failed to fetch active battle from backend', e)
+        // 404 just means there is no active battle — not an error.
+        if (e?.response?.status !== 404) {
+          this.error = e?.message || 'Failed to load battle'
+          console.warn('Failed to fetch active battle from backend', e)
+        }
       } finally {
         this.isLoading = false
       }
