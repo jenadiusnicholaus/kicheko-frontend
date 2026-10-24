@@ -125,6 +125,25 @@ function cancelWaiting(): void {
   paymentInitiated.value = false
 }
 
+/** Resumes a stored pending payment: if it already settled, finish;
+ * otherwise push a fresh mobile-money prompt and keep waiting. */
+async function resumePendingPayment(oldPaymentId: string): Promise<void> {
+  const s = await applicationsStore.fetchPaymentStatus(oldPaymentId)
+  if (s && (s.confirmed || s.payment_status === 'paid')) {
+    stopPolling()
+    const id = s.payment_reference || oldPaymentId
+    emit('success', { payment_id: id, status: 'SUCCEEDED' })
+    router.push({
+      name: 'payment-success',
+      query: { payit_payment_id: id, payit_status: 'SUCCEEDED' },
+    })
+    return
+  }
+  // Push a fresh USSD prompt — the earlier one may have expired on the
+  // payer's phone. Initiating stores the new payment_id automatically.
+  await initiatePayment()
+}
+
 /** Leaves the checkout entirely — the pending payment stays in
  * localStorage so the user can come back and finish it later. */
 function payLater(): void {
@@ -148,15 +167,12 @@ watch(
       payerPhone.value = props.applicantPhone
       if (!props.embedded) document.body.style.overflow = 'hidden'
 
-      // Resume an unfinished payment stored earlier — the prompt may still
-      // be sitting on the payer's phone waiting for approval.
+      // Resume an unfinished payment stored earlier — checks whether it
+      // already settled, otherwise pushes a fresh USSD prompt.
       const pending = props.applicationId ? findPendingPayment('application_fee', props.applicationId) : undefined
       if (pending) {
-        paymentId.value = pending.paymentId
         payerPhone.value = pending.phone || props.applicantPhone
-        paymentInitiated.value = true
-        startPolling()
-        checkPaymentStatus()
+        resumePendingPayment(pending.paymentId)
       }
     } else {
       document.body.style.overflow = ''

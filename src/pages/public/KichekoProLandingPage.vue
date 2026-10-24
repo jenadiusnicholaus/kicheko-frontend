@@ -450,24 +450,25 @@ const backToVoteForm = () => {
   voteModal.step = 'form'
 }
 
-/** Reopens the vote modal if a vote payment was left unfinished earlier —
- * the mobile-money prompt may still be on the payer's phone. */
-const resumePendingVote = () => {
+/** Reopens the vote modal if a vote payment was left unfinished earlier.
+ * If it already settled, show the done state; otherwise reopen the form
+ * prefilled so pressing pay pushes a fresh USSD prompt. */
+const resumePendingVote = async () => {
   const pending = findPendingPayment('comedian_vote')
   if (!pending) return
   const applicant = applicationsStore.voteList.find((a) => a.id === pending.referenceId)
   if (!applicant) return
+  const s = await applicationsStore.fetchVoteStatus(pending.paymentId)
+  const settled = !!(s && (s.confirmed || s.payment_status === 'paid'))
+  if (settled) applicationsStore.fetchVoteList()
   Object.assign(voteModal, {
     applicant,
-    step: 'waiting',
+    step: settled ? 'done' : 'form',
     votesCount: pending.votesCount || 1,
     phone: pending.phone || '',
     submitting: false,
     error: '',
   })
-  votePaymentId.value = pending.paymentId
-  pollVote(pending.paymentId, Date.now() + 120_000)
-  checkVoteNow()
 }
 
 const submitVote = async () => {
