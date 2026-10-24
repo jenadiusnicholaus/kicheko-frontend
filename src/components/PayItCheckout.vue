@@ -120,6 +120,14 @@ function startPolling(): void {
   }, 4000)
 }
 
+/** Manual check from the waiting panel: verifies the payment and, when it
+ * is still unpaid, re-initiates it — pushing a fresh USSD prompt to the
+ * payer's phone. */
+async function recheckPaymentStatus(): Promise<void> {
+  const paid = await checkPaymentStatus()
+  if (!paid) await initiatePayment()
+}
+
 function cancelWaiting(): void {
   stopPolling()
   paymentInitiated.value = false
@@ -349,7 +357,7 @@ onBeforeUnmount(() => {
         <PaymentWaitingPanel
           :phone="payerPhone"
           :checking="isCheckingStatus"
-          @check="checkPaymentStatus"
+          @check="recheckPaymentStatus"
           @back="cancelWaiting"
           @cancel="payLater"
         />

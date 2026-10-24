@@ -439,7 +439,9 @@ const checkVoteNow = async () => {
   if (!votePaymentId.value || checkingVote.value) return
   checkingVote.value = true
   try {
-    applyVoteStatus(await applicationsStore.fetchVoteStatus(votePaymentId.value))
+    const settled = applyVoteStatus(await applicationsStore.fetchVoteStatus(votePaymentId.value))
+    // Still unpaid — re-initiate so a fresh USSD prompt is pushed.
+    if (!settled) await submitVote()
   } finally {
     checkingVote.value = false
   }
