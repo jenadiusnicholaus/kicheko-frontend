@@ -216,7 +216,7 @@
       <span class="text-[11px] text-gray-500 dark:text-gray-400">
         {{ t('taifa.admin.bulkHint') }}
       </span>
-      <div class="flex items-center gap-2 ml-auto">
+      <div class="flex flex-wrap items-center gap-2 ml-auto">
         <select
           v-model.number="bulkLevel"
           class="px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
@@ -232,6 +232,52 @@
           <span v-if="bulkUpdating" class="material-icons text-sm animate-spin align-middle">sync</span>
           {{ bulkUpdating ? t('taifa.admin.bulkUpdating') : t('taifa.admin.bulkApply') }}
         </button>
+        <div class="flex flex-wrap items-center gap-2">
+          <select
+            v-model="batchTarget"
+            :aria-label="t('taifa.admin.batches.selectBatch')"
+            class="max-w-56 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-200"
+          >
+            <option value="">{{ t('taifa.admin.batches.selectBatch') }}</option>
+            <option v-for="batch in votingBatchesStore.batches" :key="batch.id" :value="batch.id">
+              {{ batch.title }} ({{ t('taifa.admin.batches.levelValue', { level: batch.level }) }})
+            </option>
+            <option value="new">{{ t('taifa.admin.batches.newOption') }}</option>
+          </select>
+          <template v-if="batchTarget === 'new'">
+            <label class="sr-only" for="bulk-new-batch-title">
+              {{ t('taifa.admin.batches.newBatchTitle') }}
+            </label>
+            <input
+              id="bulk-new-batch-title"
+              v-model="newBatchTitle"
+              maxlength="120"
+              :placeholder="t('taifa.admin.batches.newBatchTitlePlaceholder')"
+              class="w-40 rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-200"
+            />
+            <label class="sr-only" for="bulk-new-batch-level">
+              {{ t('taifa.admin.batches.newBatchLevel') }}
+            </label>
+            <select
+              id="bulk-new-batch-level"
+              v-model.number="newBatchLevel"
+              class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-200"
+            >
+              <option v-for="level in [2, 3, 4]" :key="level" :value="level">
+                {{ t('taifa.admin.batches.levelValue', { level }) }}
+              </option>
+            </select>
+          </template>
+          <button
+            type="button"
+            class="rounded-xl bg-[#1B2A4A] px-4 py-2 text-xs font-black text-white shadow-sm transition-colors hover:bg-[#263B68] disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="addingToBatch || !validBatchTarget"
+            @click="addSelectedToBatch"
+          >
+            <span v-if="addingToBatch" class="material-icons align-middle text-sm animate-spin">sync</span>
+            {{ addingToBatch ? t('taifa.admin.batches.adding') : t('taifa.admin.batches.addToBatch') }}
+          </button>
+        </div>
         <button
           type="button"
           class="px-3 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-400 text-xs font-bold hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
@@ -373,32 +419,43 @@
 
         <!-- Audition Level + Votes -->
         <template #cell(level)="{ rowData: app }">
-          <div class="flex items-center gap-2">
-            <select
-              :value="app.auditionLevel"
-              :disabled="levelUpdating === app.id || app.status !== 'approved'"
-              :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
-              class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] disabled:opacity-40 disabled:cursor-not-allowed"
-              @change="changeLevel(app, ($event.target as HTMLSelectElement).value)"
-            >
-              <option v-for="n in 4" :key="n" :value="n">
-                {{ t('taifa.admin.levelLabel', { n }) }}
-              </option>
-            </select>
+          <div class="flex flex-col items-start gap-1.5">
+            <div class="flex items-center gap-2">
+              <select
+                :value="app.auditionLevel"
+                :disabled="levelUpdating === app.id || app.status !== 'approved'"
+                :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
+                class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] disabled:opacity-40 disabled:cursor-not-allowed"
+                @change="changeLevel(app, ($event.target as HTMLSelectElement).value, $event)"
+              >
+                <option v-for="n in 4" :key="n" :value="n">
+                  {{ t('taifa.admin.levelLabel', { n }) }}
+                </option>
+              </select>
+              <span
+                v-if="app.auditionLevel >= 2"
+                class="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
+              >
+                <span class="material-icons text-xs">how_to_vote</span>
+                {{ app.voteCount }}
+              </span>
+              <span
+                v-else
+                class="inline-flex items-center gap-0.5 text-[10px] font-bold text-gray-400"
+                :title="t('taifa.admin.notOnVoteList')"
+              >
+                <span class="material-icons text-xs">visibility_off</span>
+              </span>
+            </div>
             <span
-              v-if="app.auditionLevel >= 2"
-              class="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
-              :title="t('taifa.admin.onVoteList')"
+              v-if="app.batchTitle"
+              class="block max-w-[12rem] truncate rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+              :title="app.batchTitle"
             >
-              <span class="material-icons text-xs">how_to_vote</span>
-              {{ app.voteCount }}
+              {{ app.batchTitle }}
             </span>
-            <span
-              v-else
-              class="inline-flex items-center gap-0.5 text-[10px] font-bold text-gray-400"
-              :title="t('taifa.admin.notOnVoteList')"
-            >
-              <span class="material-icons text-xs">visibility_off</span>
+            <span v-else-if="app.auditionLevel >= 2" class="text-[10px] font-semibold text-gray-400 dark:text-gray-500">
+              {{ t('taifa.admin.batches.noBatchVoteList') }}
             </span>
           </div>
         </template>
@@ -460,9 +517,11 @@ import { useI18n } from 'vue-i18n'
 import { defineVaDataTableColumns } from 'vuestic-ui'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
 import type { ComedianApplication } from '../../../stores/comedian-applications'
+import { useVotingBatchesStore } from '../../../stores/voting-batches'
 
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
+const votingBatchesStore = useVotingBatchesStore()
 
 const appColumns = computed(() =>
   defineVaDataTableColumns([
@@ -484,6 +543,7 @@ const savingAppFee = ref(false)
 
 onMounted(async () => {
   applicationsStore.fetchApplicationsFromBackend()
+  votingBatchesStore.fetchBatches()
   await applicationsStore.fetchConfig()
   voteFeeInput.value = applicationsStore.voteFee
   appFeeInput.value = applicationsStore.applicationFee
@@ -521,14 +581,23 @@ const toggleApplicationsOpen = async () => {
   }
 }
 
-const changeLevel = async (app: ComedianApplication, level: string) => {
+const changeLevel = async (app: ComedianApplication, level: string, event: Event) => {
   if (app.status !== 'approved') {
     alert(t('taifa.admin.levelNeedsApproval'))
     return
   }
+  const newLevel = Number(level)
+  if (app.batchId && newLevel !== app.auditionLevel) {
+    const confirmed = window.confirm(t('taifa.admin.batches.levelChangeConfirm', { title: app.batchTitle || '' }))
+    if (!confirmed) {
+      const select = event.target as HTMLSelectElement
+      select.value = String(app.auditionLevel)
+      return
+    }
+  }
   levelUpdating.value = app.id
   try {
-    await applicationsStore.setAuditionLevel(app.id, Number(level))
+    await applicationsStore.setAuditionLevel(app.id, newLevel)
   } catch {
     await applicationsStore.fetchApplicationsFromBackend()
   } finally {
@@ -540,8 +609,17 @@ const changeLevel = async (app: ComedianApplication, level: string) => {
 const selectedIds = ref(new Set<string>())
 const bulkLevel = ref(2)
 const bulkUpdating = ref(false)
+const batchTarget = ref<number | 'new' | ''>('')
+const newBatchTitle = ref('')
+const newBatchLevel = ref(2)
+const addingToBatch = ref(false)
 
 const approvedApplications = computed(() => applicationsStore.applications.filter((a) => a.status === 'approved'))
+const validBatchTarget = computed(
+  () =>
+    selectedIds.value.size > 0 &&
+    (batchTarget.value === 'new' ? newBatchTitle.value.trim().length > 0 : typeof batchTarget.value === 'number'),
+)
 
 const allApprovedSelected = computed(
   () => approvedApplications.value.length > 0 && approvedApplications.value.every((a) => selectedIds.value.has(a.id)),
@@ -572,6 +650,37 @@ const applyBulkLevel = async () => {
     selectedIds.value.clear()
   } finally {
     bulkUpdating.value = false
+  }
+}
+
+const addSelectedToBatch = async () => {
+  if (!validBatchTarget.value) return
+  addingToBatch.value = true
+  try {
+    let batchId: number
+    if (batchTarget.value === 'new') {
+      const createdBatch = await votingBatchesStore.createBatch({
+        title: newBatchTitle.value.trim(),
+        level: newBatchLevel.value,
+      })
+      batchId = createdBatch.id
+    } else if (typeof batchTarget.value === 'number') {
+      batchId = batchTarget.value
+    } else {
+      return
+    }
+
+    const { skipped } = await votingBatchesStore.addApplicants(batchId, [...selectedIds.value])
+    if (skipped.length) {
+      window.alert(t('taifa.admin.batches.skipped', { count: skipped.length }))
+    }
+    await Promise.all([applicationsStore.fetchApplicationsFromBackend(), votingBatchesStore.fetchBatches()])
+    selectedIds.value.clear()
+    batchTarget.value = ''
+    newBatchTitle.value = ''
+    newBatchLevel.value = 2
+  } finally {
+    addingToBatch.value = false
   }
 }
 
