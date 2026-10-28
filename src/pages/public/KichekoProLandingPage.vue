@@ -130,8 +130,13 @@
                     {{ applicant.university || applicant.universityCode }}
                   </p>
                 </td>
-                <td class="py-3 pr-3 text-right text-sm font-bold tabular-nums text-gray-900 dark:text-white">
-                  {{ applicant.votes.toLocaleString() }}
+                <td class="py-3 pr-3 text-right tabular-nums">
+                  <p class="text-sm font-bold text-gray-900 dark:text-white">
+                    {{ sharePercent(applicant.votes, batch.applicants) }}%
+                  </p>
+                  <p class="text-[11px] text-gray-400">
+                    {{ applicant.votes.toLocaleString() }} {{ t('taifa.home.votes') }}
+                  </p>
                 </td>
                 <td class="py-3 pr-6 text-right sm:pr-10">
                   <button
