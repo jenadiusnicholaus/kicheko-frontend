@@ -15,7 +15,8 @@ export interface ComedianApplication {
   bio?: string
   status: 'pending' | 'pending_payment' | 'paid_pending_review' | 'approved' | 'rejected'
   feeAmount: number
-  paymentStatus: 'pending' | 'processing' | 'paid' | 'n/a'
+  amountPaid: number
+  paymentStatus: 'pending' | 'processing' | 'paid' | 'failed' | 'underpaid' | 'n/a'
   paymentMethod: string
   paymentRef: string
   appliedAt: string
@@ -52,6 +53,7 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
     phone: raw.phone || raw.phone_number || '',
     status: raw.status || 'pending',
     feeAmount: raw.fee_amount ?? 0,
+    amountPaid: raw.amount_paid ?? 0,
     paymentStatus: raw.payment_status || 'n/a',
     paymentMethod: raw.payment_method || '',
     paymentRef: raw.payment_reference || '',
@@ -95,8 +97,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       state.applications.filter((a) => a.status === 'pending' || a.status === 'paid_pending_review').length,
     approvedCount: (state) => state.applications.filter((a) => a.status === 'approved').length,
     rejectedCount: (state) => state.applications.filter((a) => a.status === 'rejected').length,
-    totalFeeRevenue: (state) =>
-      state.applications.filter((a) => a.paymentStatus === 'paid').reduce((sum, a) => sum + a.feeAmount, 0),
+    totalFeeRevenue: (state) => state.applications.reduce((sum, a) => sum + a.amountPaid, 0),
   },
 
   actions: {

@@ -309,7 +309,19 @@
           <div v-if="app.paymentStatus === 'paid'" class="flex flex-col">
             <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
               <span class="material-icons text-sm">check_circle</span>
-              <span>{{ t('taifa.admin.feePaidLabel') }}</span>
+              <span>{{ t('taifa.admin.feePaidLabel', { amount: app.amountPaid.toLocaleString() }) }}</span>
+            </span>
+            <span class="text-[10px] text-gray-400 font-mono"> {{ app.paymentMethod }} • {{ app.paymentRef }} </span>
+          </div>
+          <div v-else-if="app.paymentStatus === 'underpaid'" class="flex flex-col">
+            <span class="inline-flex items-center gap-1 text-red-600 dark:text-red-400 font-bold text-xs">
+              <span class="material-icons text-sm">error</span>
+              <span>{{
+                t('taifa.admin.feeUnderpaidLabel', {
+                  amount: app.amountPaid.toLocaleString(),
+                  fee: app.feeAmount.toLocaleString(),
+                })
+              }}</span>
             </span>
             <span class="text-[10px] text-gray-400 font-mono"> {{ app.paymentMethod }} • {{ app.paymentRef }} </span>
           </div>
