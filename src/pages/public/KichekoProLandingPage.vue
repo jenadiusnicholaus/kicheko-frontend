@@ -75,74 +75,90 @@
         <span class="material-icons animate-spin text-3xl">sync</span>
       </div>
 
-      <div v-else-if="applicationsStore.voteList.length === 0" class="py-16 text-center text-gray-400">
+      <div v-else-if="applicationsStore.voteBatches.length === 0" class="py-16 text-center text-gray-400">
         <span class="material-icons mb-3 text-5xl text-gray-300">how_to_vote</span>
         <p class="text-sm font-semibold">{{ t('taifa.home.voteEmpty') }}</p>
       </div>
 
-      <!-- Leaderboard -->
-      <ol v-else class="divide-y divide-gray-100 dark:divide-zinc-800">
-        <li
-          v-for="(applicant, index) in applicationsStore.voteList"
-          :key="applicant.id"
-          class="group flex items-center gap-3 sm:gap-4 px-4 sm:px-7 py-3.5 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40"
-        >
-          <!-- Rank -->
-          <div
-            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums"
-            :class="rankClass(ranks[index], applicant.votes)"
-          >
-            {{ ranks[index] }}
-          </div>
-
-          <!-- Avatar -->
-          <div
-            class="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A]/5 dark:bg-white/5 text-sm font-bold text-[#1B2A4A] dark:text-gray-200"
-          >
-            {{ initials(applicant.name) }}
-          </div>
-
-          <!-- Name -->
-          <div class="w-24 sm:w-44 shrink-0 min-w-0">
-            <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ applicant.name }}</p>
-            <p class="truncate text-[11px] text-gray-500 dark:text-gray-400">
-              {{ applicant.university || applicant.universityCode }}
-            </p>
-          </div>
-
-          <!-- Progress bar (true vote share) -->
-          <div class="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
-            <div
-              class="h-full rounded-full transition-all duration-700 ease-out"
-              :class="isLeader(index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
-              :style="{ width: `${sharePercent(applicant.votes)}%` }"
-            ></div>
-          </div>
-
-          <!-- Votes + percentage -->
-          <div class="w-20 sm:w-24 shrink-0 text-right">
-            <div
-              class="text-sm sm:text-base font-bold tabular-nums leading-tight"
-              :class="isLeader(index) ? 'text-[#B58800] dark:text-[#FEBF01]' : 'text-gray-900 dark:text-white'"
+      <!-- Leaderboards -->
+      <div v-else class="divide-y divide-gray-100 dark:divide-zinc-800">
+        <section v-for="batch in applicationsStore.voteBatches" :key="batch.id">
+          <header class="flex items-center justify-between gap-3 bg-gray-50/70 px-4 py-3 dark:bg-zinc-800/50 sm:px-7">
+            <h2 class="truncate text-sm font-black text-gray-900 dark:text-white">{{ batch.title }}</h2>
+            <span
+              class="shrink-0 rounded-full bg-[#FEBF01]/20 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#8A6800] dark:text-[#FEBF01]"
             >
-              {{ sharePercent(applicant.votes) }}%
-            </div>
-            <div class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 tabular-nums">
-              {{ applicant.votes.toLocaleString() }} {{ t('taifa.home.votes') }}
-            </div>
-          </div>
+              {{ t('taifa.admin.batches.levelValue', { level: batch.level }) }}
+            </span>
+          </header>
+          <ol class="divide-y divide-gray-100 dark:divide-zinc-800">
+            <li
+              v-for="(applicant, index) in batch.applicants"
+              :key="applicant.id"
+              class="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40 sm:gap-4 sm:px-7"
+            >
+              <!-- Rank -->
+              <div
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums"
+                :class="rankClass(ranksFor(batch.applicants)[index], applicant.votes)"
+              >
+                {{ ranksFor(batch.applicants)[index] }}
+              </div>
 
-          <!-- Vote -->
-          <button
-            type="button"
-            class="shrink-0 inline-flex h-9 items-center gap-1.5 rounded-lg border border-[#1B2A4A]/15 dark:border-white/15 px-3 sm:px-4 text-xs font-semibold text-[#1B2A4A] dark:text-white transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95"
-            @click="openVoteModal(applicant)"
-          >
-            <span class="material-icons text-base">how_to_vote</span>
-            <span class="hidden sm:inline">{{ t('taifa.home.vote') }}</span>
-          </button>
-        </li>
-      </ol>
+              <!-- Avatar -->
+              <div
+                class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A]/5 text-sm font-bold text-[#1B2A4A] dark:bg-white/5 dark:text-gray-200 sm:flex"
+              >
+                {{ initials(applicant.name) }}
+              </div>
+
+              <!-- Name -->
+              <div class="w-24 min-w-0 shrink-0 sm:w-44">
+                <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ applicant.name }}</p>
+                <p class="truncate text-[11px] text-gray-500 dark:text-gray-400">
+                  {{ applicant.university || applicant.universityCode }}
+                </p>
+              </div>
+
+              <!-- Progress bar (true vote share) -->
+              <div class="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
+                <div
+                  class="h-full rounded-full transition-all duration-700 ease-out"
+                  :class="isLeader(batch.applicants, index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
+                  :style="{ width: `${sharePercent(applicant.votes, batch.applicants)}%` }"
+                ></div>
+              </div>
+
+              <!-- Votes + percentage -->
+              <div class="w-20 shrink-0 text-right sm:w-24">
+                <div
+                  class="text-sm font-bold leading-tight tabular-nums sm:text-base"
+                  :class="
+                    isLeader(batch.applicants, index)
+                      ? 'text-[#B58800] dark:text-[#FEBF01]'
+                      : 'text-gray-900 dark:text-white'
+                  "
+                >
+                  {{ sharePercent(applicant.votes, batch.applicants) }}%
+                </div>
+                <div class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 tabular-nums">
+                  {{ applicant.votes.toLocaleString() }} {{ t('taifa.home.votes') }}
+                </div>
+              </div>
+
+              <!-- Vote -->
+              <button
+                type="button"
+                class="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[#1B2A4A]/15 px-3 text-xs font-semibold text-[#1B2A4A] transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95 dark:border-white/15 dark:text-white sm:px-4"
+                @click="openVoteModal(applicant)"
+              >
+                <span class="material-icons text-base">how_to_vote</span>
+                <span class="hidden sm:inline">{{ t('taifa.home.vote') }}</span>
+              </button>
+            </li>
+          </ol>
+        </section>
+      </div>
 
       <!-- Footer -->
       <footer
@@ -303,15 +319,16 @@ const applicationsStore = useComedianApplicationsStore()
 
 const isLoading = ref(true)
 
-const totalVotes = computed(() => applicationsStore.voteList.reduce((sum, a) => sum + a.votes, 0))
-const sharePercent = (votes: number) => (totalVotes.value > 0 ? ((votes / totalVotes.value) * 100).toFixed(1) : '0.0')
+const sharePercent = (votes: number, applicants: VoteListApplicant[]) => {
+  const total = applicants.reduce((sum, applicant) => sum + applicant.votes, 0)
+  return total > 0 ? ((votes / total) * 100).toFixed(1) : '0.0'
+}
 
 /** Competition ranking — tied vote counts share the same rank. */
-const ranks = computed(() => {
-  const list = applicationsStore.voteList
-  return list.map((a) => 1 + list.filter((o) => o.votes > a.votes).length)
-})
-const isLeader = (index: number) => ranks.value[index] === 1 && (applicationsStore.voteList[index]?.votes ?? 0) > 0
+const ranksFor = (applicants: VoteListApplicant[]) =>
+  applicants.map((applicant) => 1 + applicants.filter((other) => other.votes > applicant.votes).length)
+const isLeader = (applicants: VoteListApplicant[], index: number) =>
+  ranksFor(applicants)[index] === 1 && (applicants[index]?.votes ?? 0) > 0
 const rankClass = (rank: number, votes: number) => {
   if (votes <= 0) return 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-gray-400'
   if (rank === 1) return 'bg-[#FEBF01] text-gray-950 shadow-sm'
@@ -342,7 +359,8 @@ const voteModal = reactive({
 /** The voted applicant's share after the vote list refreshes. */
 const currentShare = computed(() => {
   const a = applicationsStore.voteList.find((x) => x.id === voteModal.applicant?.id)
-  return sharePercent(a?.votes ?? 0)
+  const batch = applicationsStore.voteBatches.find((candidate) => candidate.id === a?.batchId)
+  return sharePercent(a?.votes ?? 0, batch?.applicants ?? [])
 })
 
 // Payer picks how many votes — backend charges votesCount x voteFee (max 1000).

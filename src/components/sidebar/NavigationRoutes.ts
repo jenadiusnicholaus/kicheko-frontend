@@ -33,6 +33,13 @@ export default {
       },
     },
     {
+      name: 'admin-voting-batches',
+      displayName: 'taifa.admin.batches.nav',
+      meta: {
+        icon: 'how_to_vote',
+      },
+    },
+    {
       name: 'admin-vote-stats',
       displayName: 'taifa.voteStats.nav',
       meta: {

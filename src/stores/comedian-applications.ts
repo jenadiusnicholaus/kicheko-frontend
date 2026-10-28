@@ -27,6 +27,8 @@ export interface ComedianApplication {
   auditionStatus?: string
   auditionLevel: number
   voteCount: number
+  batchId: number | null
+  batchTitle: string | null
 }
 
 export interface VoteListApplicant {
@@ -38,6 +40,15 @@ export interface VoteListApplicant {
   universityBadge: string
   auditionLevel: number
   votes: number
+  batchId: number | null
+  batchTitle: string | null
+}
+
+export interface VoteBatch {
+  id: number
+  title: string
+  level: number
+  applicants: VoteListApplicant[]
 }
 
 function normalizeBackendApplication(raw: any): ComedianApplication {
@@ -65,6 +76,8 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
     auditionStatus: raw.audition_status || 'pending',
     auditionLevel: raw.audition_level ?? 1,
     voteCount: raw.vote_count ?? 0,
+    batchId: raw.batch ?? null,
+    batchTitle: raw.batch_title ?? null,
   }
 }
 
@@ -86,6 +99,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     voteFee: 1000,
     applicationFee: 10000,
     voteList: [] as VoteListApplicant[],
+    voteBatches: [] as VoteBatch[],
     isLoading: false,
     error: null as string | null,
   }),
@@ -241,12 +255,12 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       return { skipped: data?.skipped || [] }
     },
 
-    /** Public vote list — paid applicants at audition level >= 2. */
+    /** Public vote list — applicants in open voting batches. */
     async fetchVoteList(): Promise<void> {
       const { data } = await http.get('/applications/vote-list/')
       this.applicationsOpen = !!data?.applications_open
       this.voteFee = data?.vote_fee ?? this.voteFee
-      this.voteList = (data?.applicants || []).map((a: any) => ({
+      const normalizeVoteApplicant = (a: any): VoteListApplicant => ({
         id: String(a.id),
         name: a.name || '',
         username: a.username || '',
@@ -255,6 +269,15 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
         universityBadge: a.university_badge || '',
         auditionLevel: a.audition_level ?? 2,
         votes: a.votes ?? 0,
+        batchId: a.batch_id ?? null,
+        batchTitle: a.batch_title ?? null,
+      })
+      this.voteList = (data?.applicants || []).map(normalizeVoteApplicant)
+      this.voteBatches = (data?.batches || []).map((batch: any) => ({
+        id: batch.id,
+        title: batch.title,
+        level: batch.level,
+        applicants: (batch.applicants || []).map(normalizeVoteApplicant),
       }))
     },
 
