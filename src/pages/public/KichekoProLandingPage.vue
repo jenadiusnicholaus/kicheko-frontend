@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 flex flex-col items-center justify-center px-4 py-8 sm:py-12 max-w-4xl mx-auto w-full text-center">
+  <div class="flex-1 flex flex-col items-center justify-center px-4 py-8 sm:py-12 max-w-6xl mx-auto w-full text-center">
     <!-- Brand Logo with Sunburst Effect -->
     <div class="mb-6 sm:mb-8 animate-fade-in">
       <img
@@ -35,10 +35,10 @@
     <!-- Applications CLOSED: paid vote leaderboard -->
     <section
       v-else
-      class="w-full max-w-3xl mb-24 overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_12px_40px_rgba(15,23,42,0.08)] text-left"
+      class="w-full max-w-5xl mb-24 overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_12px_40px_rgba(15,23,42,0.08)] text-left"
     >
       <!-- Header -->
-      <header class="bg-gradient-to-br from-[#1B2A4A] to-[#0F1A30] px-5 sm:px-7 py-5 sm:py-6">
+      <header class="bg-gradient-to-br from-[#1B2A4A] to-[#0F1A30] px-6 sm:px-10 py-8 sm:py-10">
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0">
             <div class="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5">
@@ -47,14 +47,14 @@
                 {{ t('taifa.home.liveLabel') }}
               </span>
             </div>
-            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
               {{
                 applicationsStore.voteBatches.length === 1
                   ? applicationsStore.voteBatches[0].title
                   : t('taifa.home.voteTitle')
               }}
             </h1>
-            <p class="mt-1 text-xs sm:text-sm text-white/60">
+            <p class="mt-2 text-sm sm:text-base text-white/60">
               {{ t('taifa.home.voteSubtitle') }}
             </p>
             <span
@@ -87,7 +87,7 @@
       <!-- Leaderboards -->
       <div v-else class="divide-y divide-gray-100 dark:divide-zinc-800">
         <section v-for="batch in applicationsStore.voteBatches" :key="batch.id">
-          <header class="flex items-center justify-between gap-3 bg-gray-50/70 px-4 py-3 dark:bg-zinc-800/50 sm:px-7">
+          <header class="flex items-center justify-between gap-3 bg-gray-50/70 px-5 py-4 dark:bg-zinc-800/50 sm:px-10">
             <h2 class="truncate text-base sm:text-lg font-black text-gray-900 dark:text-white">{{ batch.title }}</h2>
             <span
               class="shrink-0 rounded-full bg-[#FEBF01]/20 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#8A6800] dark:text-[#FEBF01]"
@@ -99,11 +99,11 @@
             <li
               v-for="(applicant, index) in batch.applicants"
               :key="applicant.id"
-              class="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40 sm:gap-4 sm:px-7"
+              class="group flex items-center gap-3 px-5 py-5 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40 sm:gap-6 sm:px-10 sm:py-6"
             >
               <!-- Rank -->
               <div
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums"
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold tabular-nums"
                 :class="rankClass(ranksFor(batch.applicants)[index], applicant.votes)"
               >
                 {{ ranksFor(batch.applicants)[index] }}
@@ -111,21 +111,23 @@
 
               <!-- Avatar -->
               <div
-                class="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A]/5 text-sm font-bold text-[#1B2A4A] dark:bg-white/5 dark:text-gray-200 sm:flex"
+                class="hidden h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A]/5 text-base font-bold text-[#1B2A4A] dark:bg-white/5 dark:text-gray-200 sm:flex"
               >
                 {{ initials(applicant.name) }}
               </div>
 
               <!-- Name -->
-              <div class="w-24 min-w-0 shrink-0 sm:w-44">
-                <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ applicant.name }}</p>
-                <p class="truncate text-[11px] text-gray-500 dark:text-gray-400">
+              <div class="w-28 min-w-0 shrink-0 sm:w-72">
+                <p class="truncate text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
+                  {{ applicant.name }}
+                </p>
+                <p class="truncate text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
                   {{ applicant.university || applicant.universityCode }}
                 </p>
               </div>
 
               <!-- Progress bar (true vote share) -->
-              <div class="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
+              <div class="h-3 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
                 <div
                   class="h-full rounded-full transition-all duration-700 ease-out"
                   :class="isLeader(batch.applicants, index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
@@ -134,9 +136,9 @@
               </div>
 
               <!-- Votes + percentage -->
-              <div class="w-20 shrink-0 text-right sm:w-24">
+              <div class="w-20 shrink-0 text-right sm:w-28">
                 <div
-                  class="text-sm font-bold leading-tight tabular-nums sm:text-base"
+                  class="text-base font-bold leading-tight tabular-nums sm:text-xl"
                   :class="
                     isLeader(batch.applicants, index)
                       ? 'text-[#B58800] dark:text-[#FEBF01]'
@@ -153,7 +155,7 @@
               <!-- Vote -->
               <button
                 type="button"
-                class="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[#1B2A4A]/15 px-3 text-xs font-semibold text-[#1B2A4A] transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95 dark:border-white/15 dark:text-white sm:px-4"
+                class="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-[#1B2A4A]/15 px-3 text-xs font-semibold text-[#1B2A4A] transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95 dark:border-white/15 dark:text-white sm:px-5 sm:text-sm"
                 @click="openVoteModal(applicant)"
               >
                 <span class="material-icons text-base">how_to_vote</span>
@@ -166,7 +168,7 @@
 
       <!-- Footer -->
       <footer
-        class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900 px-5 sm:px-7 py-3.5"
+        class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900 px-6 sm:px-10 py-4"
       >
         <p class="text-[11px] text-gray-500 dark:text-gray-400">
           {{ t('taifa.home.voteFooter', { fee: applicationsStore.voteFee.toLocaleString() }) }}
