@@ -166,7 +166,7 @@
 
     <!-- Filter Tabs & Search -->
     <div
-      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#18181b] p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm"
+      class="sticky top-0 z-20 flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-3.5 shadow-sm dark:border-gray-800 dark:bg-[#18181b] sm:flex-row sm:items-center sm:justify-between"
     >
       <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
         <button
@@ -192,16 +192,37 @@
       </div>
 
       <!-- Search Input -->
-      <div class="relative w-full sm:w-64">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-          <span class="material-icons text-sm">search</span>
-        </span>
-        <input
-          v-model="searchQuery"
-          type="text"
-          :placeholder="t('taifa.admin.searchPlaceholder')"
-          class="w-full pl-8 pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800/80 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
-        />
+      <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+        <div class="relative w-full sm:w-64">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 pointer-events-none">
+            <span class="material-icons text-sm">search</span>
+          </span>
+          <input
+            v-model="searchQuery"
+            type="text"
+            :placeholder="t('taifa.admin.searchPlaceholder')"
+            class="w-full rounded-xl border border-gray-200 bg-gray-50 py-1.5 pl-8 pr-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-white"
+          />
+        </div>
+        <div class="w-full sm:w-60">
+          <label class="sr-only" for="application-batch-filter">
+            {{ t('taifa.admin.batches.filterLabel') }}
+          </label>
+          <select
+            id="application-batch-filter"
+            :value="batchFilter"
+            class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-gray-200"
+            @change="setBatchFilter"
+          >
+            <option value="all">{{ t('taifa.admin.batches.filterAll') }}</option>
+            <option v-for="batch in votingBatchesStore.batches" :key="batch.id" :value="batch.id">
+              {{ batch.title }} ({{ t('taifa.admin.batches.levelValue', { level: batch.level }) }}){{
+                batch.votingOpen ? ` ${t('taifa.admin.batches.openSuffix')}` : ''
+              }}
+            </option>
+            <option value="none">{{ t('taifa.admin.batches.filterNone') }}</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -512,7 +533,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { defineVaDataTableColumns } from 'vuestic-ui'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
@@ -523,6 +544,8 @@ import type { VotingBatch } from '../../../stores/voting-batches'
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 const votingBatchesStore = useVotingBatchesStore()
+const batchFilter = ref<'all' | 'none' | number>('all')
+const batchFilterStorageKey = 'kicheko.admin.applications.batchFilter'
 
 const appColumns = computed(() =>
   defineVaDataTableColumns([
@@ -544,7 +567,8 @@ const savingAppFee = ref(false)
 
 onMounted(async () => {
   applicationsStore.fetchApplicationsFromBackend()
-  votingBatchesStore.fetchBatches()
+  await votingBatchesStore.fetchBatches()
+  restoreBatchFilter()
   await applicationsStore.fetchConfig()
   voteFeeInput.value = applicationsStore.voteFee
   appFeeInput.value = applicationsStore.applicationFee
@@ -698,15 +722,74 @@ const addSelectedToBatch = async () => {
 const currentFilter = ref<'all' | 'pending_review' | 'approved' | 'rejected'>('all')
 const searchQuery = ref('')
 
+const restoreBatchFilter = () => {
+  const storedValue = window.localStorage.getItem(batchFilterStorageKey)
+  if (storedValue === 'all' || storedValue === 'none') {
+    batchFilter.value = storedValue
+  } else {
+    const storedBatchId = storedValue ? Number(storedValue) : Number.NaN
+    const storedBatchExists =
+      Number.isSafeInteger(storedBatchId) && votingBatchesStore.batches.some((batch) => batch.id === storedBatchId)
+
+    if (storedBatchExists) {
+      batchFilter.value = storedBatchId
+    } else {
+      const newestOpenBatch = [...votingBatchesStore.batches]
+        .filter((batch) => batch.votingOpen)
+        .sort((first, second) => Date.parse(second.createdAt) - Date.parse(first.createdAt))[0]
+      batchFilter.value = newestOpenBatch?.id ?? 'all'
+    }
+  }
+  window.localStorage.setItem(batchFilterStorageKey, String(batchFilter.value))
+}
+
+const setBatchFilter = (event: Event) => {
+  const value = (event.target as HTMLSelectElement).value
+  batchFilter.value = value === 'all' || value === 'none' ? value : Number(value)
+  window.localStorage.setItem(batchFilterStorageKey, String(batchFilter.value))
+}
+
+watch(
+  () => votingBatchesStore.batches.map((batch) => batch.id),
+  (batchIds) => {
+    if (typeof batchFilter.value === 'number' && !batchIds.includes(batchFilter.value)) {
+      batchFilter.value = 'all'
+      window.localStorage.setItem(batchFilterStorageKey, 'all')
+    }
+  },
+)
+
+const batchFilteredApplications = computed(() =>
+  applicationsStore.applications.filter((app) => {
+    if (batchFilter.value === 'none') return app.batchId === null
+    if (typeof batchFilter.value === 'number') return app.batchId === batchFilter.value
+    return true
+  }),
+)
+
 const filterTabs = computed(() => [
-  { id: 'all' as const, label: t('taifa.admin.all'), count: applicationsStore.totalApplications },
-  { id: 'pending_review' as const, label: t('taifa.admin.filterPending'), count: applicationsStore.pendingReviewCount },
-  { id: 'approved' as const, label: t('taifa.admin.filterApproved'), count: applicationsStore.approvedCount },
-  { id: 'rejected' as const, label: t('taifa.admin.filterRejected'), count: applicationsStore.rejectedCount },
+  { id: 'all' as const, label: t('taifa.admin.all'), count: batchFilteredApplications.value.length },
+  {
+    id: 'pending_review' as const,
+    label: t('taifa.admin.filterPending'),
+    count: batchFilteredApplications.value.filter(
+      (app) => app.status === 'pending' || app.status === 'paid_pending_review',
+    ).length,
+  },
+  {
+    id: 'approved' as const,
+    label: t('taifa.admin.filterApproved'),
+    count: batchFilteredApplications.value.filter((app) => app.status === 'approved').length,
+  },
+  {
+    id: 'rejected' as const,
+    label: t('taifa.admin.filterRejected'),
+    count: batchFilteredApplications.value.filter((app) => app.status === 'rejected').length,
+  },
 ])
 
 const filteredApplications = computed(() => {
-  return applicationsStore.applications.filter((app) => {
+  return batchFilteredApplications.value.filter((app) => {
     if (currentFilter.value === 'pending_review' && app.status !== 'pending' && app.status !== 'paid_pending_review')
       return false
     if (currentFilter.value === 'approved' && app.status !== 'approved') return false
