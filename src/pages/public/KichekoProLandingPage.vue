@@ -48,7 +48,11 @@
               </span>
             </div>
             <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
-              {{ t('taifa.home.voteTitle') }}
+              {{
+                applicationsStore.voteBatches.length === 1
+                  ? applicationsStore.voteBatches[0].title
+                  : t('taifa.home.voteTitle')
+              }}
             </h1>
             <p class="mt-1 text-xs sm:text-sm text-white/60">
               {{ t('taifa.home.voteSubtitle') }}
@@ -84,7 +88,7 @@
       <div v-else class="divide-y divide-gray-100 dark:divide-zinc-800">
         <section v-for="batch in applicationsStore.voteBatches" :key="batch.id">
           <header class="flex items-center justify-between gap-3 bg-gray-50/70 px-4 py-3 dark:bg-zinc-800/50 sm:px-7">
-            <h2 class="truncate text-sm font-black text-gray-900 dark:text-white">{{ batch.title }}</h2>
+            <h2 class="truncate text-base sm:text-lg font-black text-gray-900 dark:text-white">{{ batch.title }}</h2>
             <span
               class="shrink-0 rounded-full bg-[#FEBF01]/20 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#8A6800] dark:text-[#FEBF01]"
             >
