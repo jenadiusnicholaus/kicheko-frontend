@@ -360,6 +360,11 @@
       "liveLabel": "Live voting",
       "voteSubtitle": "Applications are closed — support your favourite comedian.",
       "contestantsShort": "Contestants",
+      "colRank": "Rank",
+      "colComedian": "Comedian",
+      "colUniversity": "University",
+      "colShare": "Share",
+      "colVotes": "Votes",
       "voteFooter": "Share of all paid votes · TSh {fee} per vote via Pay-IT"
     },
     "register": {

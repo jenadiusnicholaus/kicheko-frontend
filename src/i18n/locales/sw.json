@@ -252,6 +252,11 @@
       "liveLabel": "Kura zinaendelea",
       "voteSubtitle": "Usajili umefungwa — mpe sapoti mchekeshaji unayempenda.",
       "contestantsShort": "Washindani",
+      "colRank": "Nafasi",
+      "colComedian": "Mchekeshaji",
+      "colUniversity": "Chuo",
+      "colShare": "Asilimia",
+      "colVotes": "Kura",
       "voteFooter": "Asilimia ya kura zote zilizolipiwa · TSh {fee} kwa kura kupitia Pay-IT"
     },
     "register": {

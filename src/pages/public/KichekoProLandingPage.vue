@@ -105,74 +105,96 @@
               {{ t('taifa.admin.batches.levelValue', { level: batch.level }) }}
             </span>
           </header>
-          <ol class="divide-y divide-gray-100 dark:divide-zinc-800">
-            <li
-              v-for="(applicant, index) in batch.applicants"
-              :key="applicant.id"
-              class="group flex items-center gap-3 px-5 py-5 transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40 sm:gap-6 sm:px-10 sm:py-6"
-            >
-              <!-- Rank -->
-              <div
-                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold tabular-nums"
-                :class="rankClass(ranksFor(batch.applicants)[index], applicant.votes)"
-              >
-                {{ ranksFor(batch.applicants)[index] }}
-              </div>
-
-              <!-- Avatar -->
-              <div
-                class="hidden h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A]/5 text-base font-bold text-[#1B2A4A] dark:bg-white/5 dark:text-gray-200 sm:flex"
-              >
-                {{ initials(applicant.name) }}
-              </div>
-
-              <!-- Name -->
-              <div class="w-28 min-w-0 shrink-0 sm:w-72">
-                <p class="truncate text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
-                  {{ applicant.name }}
-                </p>
-                <p class="truncate text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
-                  {{ applicant.university || applicant.universityCode }}
-                </p>
-              </div>
-
-              <!-- Progress bar (true vote share) -->
-              <div class="h-3 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
-                <div
-                  class="h-full rounded-full transition-all duration-700 ease-out"
-                  :class="isLeader(batch.applicants, index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
-                  :style="{ width: `${sharePercent(applicant.votes, batch.applicants)}%` }"
-                ></div>
-              </div>
-
-              <!-- Votes + percentage -->
-              <div class="w-20 shrink-0 text-right sm:w-28">
-                <div
-                  class="text-base font-bold leading-tight tabular-nums sm:text-xl"
-                  :class="
-                    isLeader(batch.applicants, index)
-                      ? 'text-[#B58800] dark:text-[#FEBF01]'
-                      : 'text-gray-900 dark:text-white'
-                  "
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[640px] table-fixed text-left">
+              <thead>
+                <tr
+                  class="border-b border-gray-100 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:border-zinc-800"
                 >
-                  {{ sharePercent(applicant.votes, batch.applicants) }}%
-                </div>
-                <div class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 tabular-nums">
-                  {{ applicant.votes.toLocaleString() }} {{ t('taifa.home.votes') }}
-                </div>
-              </div>
-
-              <!-- Vote -->
-              <button
-                type="button"
-                class="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-[#1B2A4A]/15 px-3 text-xs font-semibold text-[#1B2A4A] transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95 dark:border-white/15 dark:text-white sm:px-5 sm:text-sm"
-                @click="openVoteModal(applicant)"
-              >
-                <span class="material-icons text-base">how_to_vote</span>
-                <span class="hidden sm:inline">{{ t('taifa.home.vote') }}</span>
-              </button>
-            </li>
-          </ol>
+                  <th scope="col" class="w-20 py-2.5 pl-6 pr-3 sm:w-24 sm:pl-10">{{ t('taifa.home.colRank') }}</th>
+                  <th scope="col" class="px-3 py-2.5">{{ t('taifa.home.colComedian') }}</th>
+                  <th scope="col" class="hidden px-3 py-2.5 md:table-cell">{{ t('taifa.home.colUniversity') }}</th>
+                  <th scope="col" class="w-48 px-3 py-2.5">{{ t('taifa.home.colShare') }}</th>
+                  <th scope="col" class="w-20 px-3 py-2.5 text-right">{{ t('taifa.home.colVotes') }}</th>
+                  <th scope="col" class="w-40 py-2.5 pl-3 pr-6 text-right sm:pr-10">
+                    <span class="sr-only">{{ t('taifa.home.vote') }}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100 dark:divide-zinc-800">
+                <tr
+                  v-for="(applicant, index) in batch.applicants"
+                  :key="applicant.id"
+                  class="transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40"
+                >
+                  <td class="py-3 pl-6 pr-3 sm:pl-10">
+                    <div
+                      class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold tabular-nums"
+                      :class="rankClass(ranksFor(batch.applicants)[index], applicant.votes)"
+                    >
+                      {{ ranksFor(batch.applicants)[index] }}
+                    </div>
+                  </td>
+                  <td class="px-3 py-3">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A]/5 text-xs font-bold text-[#1B2A4A] dark:bg-white/5 dark:text-gray-200"
+                      >
+                        {{ initials(applicant.name) }}
+                      </div>
+                      <div class="min-w-0">
+                        <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                          {{ applicant.name }}
+                        </p>
+                        <p class="truncate text-xs text-gray-500 dark:text-gray-400 md:hidden">
+                          {{ applicant.university || applicant.universityCode }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="hidden px-3 py-3 md:table-cell">
+                    <p class="truncate text-sm text-gray-600 dark:text-gray-300">
+                      {{ applicant.university || applicant.universityCode }}
+                    </p>
+                  </td>
+                  <td class="px-3 py-3">
+                    <div class="flex items-center gap-2">
+                      <div class="h-2 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
+                        <div
+                          class="h-full rounded-full transition-all duration-700 ease-out"
+                          :class="isLeader(batch.applicants, index) ? 'bg-[#FEBF01]' : 'bg-[#1B2A4A] dark:bg-gray-300'"
+                          :style="{ width: `${sharePercent(applicant.votes, batch.applicants)}%` }"
+                        ></div>
+                      </div>
+                      <span
+                        class="w-12 text-right text-xs font-bold tabular-nums"
+                        :class="
+                          isLeader(batch.applicants, index)
+                            ? 'text-[#B58800] dark:text-[#FEBF01]'
+                            : 'text-gray-700 dark:text-gray-200'
+                        "
+                      >
+                        {{ sharePercent(applicant.votes, batch.applicants) }}%
+                      </span>
+                    </div>
+                  </td>
+                  <td class="px-3 py-3 text-right text-sm font-bold tabular-nums text-gray-900 dark:text-white">
+                    {{ applicant.votes.toLocaleString() }}
+                  </td>
+                  <td class="py-3 pl-3 pr-6 text-right sm:pr-10">
+                    <button
+                      type="button"
+                      class="inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-lg border border-[#1B2A4A]/15 px-3 text-xs font-semibold text-[#1B2A4A] transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95 dark:border-white/15 dark:text-white sm:px-4"
+                      @click="openVoteModal(applicant)"
+                    >
+                      <span class="material-icons text-base">how_to_vote</span>
+                      <span>{{ t('taifa.home.vote') }}</span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
       </div>
 
