@@ -62,7 +62,7 @@
             @click="isShown = false"
           >
             <span class="material-icons text-base text-gray-500 dark:text-gray-400">how_to_reg</span>
-            <span>Maombi ya Wachekeshaji (10k)</span>
+            <span>Maombi ya Wachekeshaji</span>
           </RouterLink>
 
           <RouterLink
