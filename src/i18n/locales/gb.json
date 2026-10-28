@@ -739,7 +739,7 @@
       "viewAll": "View All",
       "applicantTh": "Comedian",
       "universityTh": "University",
-      "feeTh": "Fee (10k TSh)",
+      "feeTh": "Fee (TSh)",
       "statusTh": "Status",
       "actionsTh": "Action",
       "paid": "Paid",
@@ -1066,8 +1066,8 @@
         "wasCreated": "was created"
       },
       "navbar": {
-        "applicationsTitle": "Comedian Applications (10k)",
-        "applications": "Applications (10k)",
+        "applicationsTitle": "Comedian Applications",
+        "applications": "Applications",
         "toLight": "Switch to light mode",
         "toDark": "Switch to dark mode"
       },

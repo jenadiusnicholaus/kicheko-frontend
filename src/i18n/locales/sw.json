@@ -631,7 +631,7 @@
       "viewAll": "Tazama Yote",
       "applicantTh": "Mchekeshaji",
       "universityTh": "Chuo Kikuu",
-      "feeTh": "Ada (10k TSh)",
+      "feeTh": "Ada (TSh)",
       "statusTh": "Hali",
       "actionsTh": "Kitendo",
       "paid": "Imelipwa",
@@ -958,8 +958,8 @@
         "wasCreated": "umeundwa"
       },
       "navbar": {
-        "applicationsTitle": "Maombi ya Wachekeshaji (10k)",
-        "applications": "Maombi (10k)",
+        "applicationsTitle": "Maombi ya Wachekeshaji",
+        "applications": "Maombi",
         "toLight": "Badili kwenda mwanga",
         "toDark": "Badili kwenda giza"
       },
