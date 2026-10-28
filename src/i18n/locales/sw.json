@@ -413,6 +413,7 @@
         "newBatchLevel": "Kiwango cha kundi jipya",
         "addToBatch": "Ongeza kwenye kundi",
         "adding": "Inaongezwa…",
+        "openVotingNowConfirm": "Ungependa kufungua kura kwa kundi “{title}” sasa? Kundi hili litaonekana kwenye Kicheko Pro.",
         "noBatchVoteList": "Hakuna kundi – hayupo kwenye orodha ya kura",
         "levelChangeConfirm": "Kubadilisha kiwango kutamwondoa mwombaji huyu kwenye kundi “{title}”. Unaendelea?",
         "empty": "Bado hakuna vikundi vya kura. Tengeneza kundi la kwanza hapo juu.",

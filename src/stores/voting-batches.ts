@@ -40,8 +40,12 @@ export const useVotingBatchesStore = defineStore('votingBatches', {
       }
     },
 
-    async createBatch(payload: { title: string; level: number }): Promise<VotingBatch> {
-      const { data } = await http.post('/voting-batches/', payload)
+    async createBatch(payload: { title: string; level: number; votingOpen?: boolean }): Promise<VotingBatch> {
+      const { data } = await http.post('/voting-batches/', {
+        title: payload.title,
+        level: payload.level,
+        ...(payload.votingOpen !== undefined ? { voting_open: payload.votingOpen } : {}),
+      })
       return normalizeBatch(data)
     },
 

@@ -521,6 +521,7 @@
         "newBatchLevel": "New batch level",
         "addToBatch": "Add to batch",
         "adding": "Adding…",
+        "openVotingNowConfirm": "Open voting for “{title}” now? It will appear on Kicheko Pro.",
         "noBatchVoteList": "No batch – not on vote list",
         "levelChangeConfirm": "Changing the level will remove this applicant from “{title}”. Continue?",
         "empty": "No voting batches yet. Create the first batch above.",

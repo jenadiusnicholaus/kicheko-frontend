@@ -518,6 +518,7 @@ import { defineVaDataTableColumns } from 'vuestic-ui'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
 import type { ComedianApplication } from '../../../stores/comedian-applications'
 import { useVotingBatchesStore } from '../../../stores/voting-batches'
+import type { VotingBatch } from '../../../stores/voting-batches'
 
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
@@ -658,14 +659,17 @@ const addSelectedToBatch = async () => {
   addingToBatch.value = true
   try {
     let batchId: number
+    let existingBatch: VotingBatch | undefined
     if (batchTarget.value === 'new') {
       const createdBatch = await votingBatchesStore.createBatch({
         title: newBatchTitle.value.trim(),
         level: newBatchLevel.value,
+        votingOpen: true,
       })
       batchId = createdBatch.id
     } else if (typeof batchTarget.value === 'number') {
       batchId = batchTarget.value
+      existingBatch = votingBatchesStore.batches.find((batch) => batch.id === batchId)
     } else {
       return
     }
@@ -673,6 +677,13 @@ const addSelectedToBatch = async () => {
     const { skipped } = await votingBatchesStore.addApplicants(batchId, [...selectedIds.value])
     if (skipped.length) {
       window.alert(t('taifa.admin.batches.skipped', { count: skipped.length }))
+    }
+    if (
+      existingBatch &&
+      !existingBatch.votingOpen &&
+      window.confirm(t('taifa.admin.batches.openVotingNowConfirm', { title: existingBatch.title }))
+    ) {
+      await votingBatchesStore.updateBatch(batchId, { votingOpen: true })
     }
     await Promise.all([applicationsStore.fetchApplicationsFromBackend(), votingBatchesStore.fetchBatches()])
     selectedIds.value.clear()
