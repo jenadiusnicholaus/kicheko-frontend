@@ -38,40 +38,42 @@
       class="w-full max-w-5xl mb-24 overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 ring-1 ring-black/5 dark:ring-white/10 shadow-[0_12px_40px_rgba(15,23,42,0.08)] text-left"
     >
       <!-- Header -->
-      <header class="bg-gradient-to-br from-[#1B2A4A] to-[#0F1A30] px-6 sm:px-10 py-8 sm:py-10">
-        <div class="flex items-start justify-between gap-4">
-          <div class="min-w-0">
-            <div class="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-0.5">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80">
-                {{ t('taifa.home.liveLabel') }}
-              </span>
-            </div>
-            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-              {{
-                applicationsStore.voteBatches.length === 1
-                  ? applicationsStore.voteBatches[0].title
-                  : t('taifa.home.voteTitle')
-              }}
-            </h1>
-            <p class="mt-2 text-sm sm:text-base text-white/60">
-              {{ t('taifa.home.voteSubtitle') }}
-            </p>
-            <span
-              class="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-[#FEBF01]/15 border border-[#FEBF01]/30 px-2.5 py-1 text-[11px] font-bold text-[#FEBF01]"
-            >
-              <span class="material-icons text-xs">payments</span>
-              {{ t('taifa.home.feePerVote', { fee: applicationsStore.voteFee.toLocaleString() }) }}
+      <header
+        class="flex flex-col gap-3 bg-gradient-to-r from-[#1B2A4A] to-[#0F1A30] px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-10"
+      >
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-300/90">
+              {{ t('taifa.home.liveLabel') }}
             </span>
           </div>
-          <div v-if="applicationsStore.voteList.length" class="shrink-0 text-right">
-            <div class="text-2xl sm:text-3xl font-extrabold tabular-nums text-white">
-              {{ applicationsStore.voteList.length }}
-            </div>
-            <div class="text-[10px] font-semibold uppercase tracking-wider text-white/50">
-              {{ t('taifa.home.contestantsShort') }}
-            </div>
-          </div>
+          <h1 class="mt-1 truncate text-lg font-bold tracking-tight text-white sm:text-xl">
+            {{
+              applicationsStore.voteBatches.length === 1
+                ? applicationsStore.voteBatches[0].title
+                : t('taifa.home.voteTitle')
+            }}
+          </h1>
+          <p class="mt-0.5 text-xs text-white/50">
+            {{ t('taifa.home.voteSubtitle') }}
+          </p>
+        </div>
+        <div class="flex shrink-0 items-center gap-2 text-[11px] font-semibold">
+          <span
+            class="inline-flex items-center gap-1 rounded-md border border-[#FEBF01]/30 bg-[#FEBF01]/10 px-2.5 py-1 text-[#FEBF01]"
+          >
+            <span class="material-icons text-xs">payments</span>
+            {{ t('taifa.home.feePerVote', { fee: applicationsStore.voteFee.toLocaleString() }) }}
+          </span>
+          <span
+            v-if="applicationsStore.voteList.length"
+            class="inline-flex items-center gap-1 rounded-md bg-white/10 px-2.5 py-1 text-white/80"
+          >
+            <span class="material-icons text-xs">groups</span>
+            <span class="tabular-nums">{{ applicationsStore.voteList.length }}</span>
+            {{ t('taifa.home.contestantsShort') }}
+          </span>
         </div>
       </header>
 
@@ -87,10 +89,18 @@
       <!-- Leaderboards -->
       <div v-else class="divide-y divide-gray-100 dark:divide-zinc-800">
         <section v-for="batch in applicationsStore.voteBatches" :key="batch.id">
-          <header class="flex items-center justify-between gap-3 bg-gray-50/70 px-5 py-4 dark:bg-zinc-800/50 sm:px-10">
-            <h2 class="truncate text-base sm:text-lg font-black text-gray-900 dark:text-white">{{ batch.title }}</h2>
+          <header
+            class="flex items-center justify-between gap-3 border-b border-gray-100 bg-gray-50/60 px-6 py-3 dark:border-zinc-800 dark:bg-zinc-800/40 sm:px-10"
+          >
+            <div class="flex min-w-0 items-center gap-2.5">
+              <span class="h-4 w-1 shrink-0 rounded-full bg-[#FEBF01]"></span>
+              <h2 class="truncate text-sm font-bold tracking-wide text-gray-800 dark:text-gray-100">
+                {{ batch.title }}
+              </h2>
+              <span class="shrink-0 text-xs text-gray-400">· {{ batch.applicants.length }}</span>
+            </div>
             <span
-              class="shrink-0 rounded-full bg-[#FEBF01]/20 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#8A6800] dark:text-[#FEBF01]"
+              class="shrink-0 rounded-md bg-[#FEBF01]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#8A6800] dark:text-[#FEBF01]"
             >
               {{ t('taifa.admin.batches.levelValue', { level: batch.level }) }}
             </span>
