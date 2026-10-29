@@ -11,7 +11,9 @@
         <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
           {{ notification.name }}
         </span>
-        <VaSwitch v-model="notification.isEnabled" size="small" color="primary" />
+        <div class="shrink-0 overflow-hidden">
+          <VaSwitch v-model="notification.isEnabled" size="small" color="primary" />
+        </div>
       </div>
       <div class="border-b border-gray-100 dark:border-gray-800 group-last:border-0" />
     </div>

@@ -4,14 +4,14 @@
     <div
       class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm"
     >
-      <div class="flex items-center gap-3.5">
+      <div class="flex items-center gap-3.5 min-w-0">
         <div
           class="w-12 h-12 rounded-2xl bg-[#FEBF01] text-gray-950 flex items-center justify-center font-black shadow-md shrink-0"
         >
           <span class="material-icons text-2xl">school</span>
         </div>
-        <div>
-          <div class="flex items-center gap-2">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
             <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
               {{ t('taifa.admin.universities.title') }}
             </h1>
@@ -74,7 +74,7 @@
           >
             {{ uni.code }}
           </div>
-          <h3 class="text-base font-black text-gray-900 dark:text-white leading-snug">
+          <h3 class="text-base font-black text-gray-900 dark:text-white leading-snug break-words">
             {{ uni.name }}
           </h3>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
@@ -108,7 +108,7 @@
     <!-- Modal Form -->
     <div v-if="showModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div
-        class="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4"
+        class="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
       >
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-zinc-800 pb-3">
           <h2 class="text-lg font-black text-gray-900 dark:text-white">

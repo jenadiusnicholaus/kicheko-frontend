@@ -4,15 +4,15 @@
     <div
       class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm"
     >
-      <div class="flex items-center gap-3.5">
+      <div class="flex items-center gap-3.5 min-w-0">
         <div
           class="w-12 h-12 rounded-2xl bg-[#FEBF01] text-gray-950 flex items-center justify-center font-black shadow-md shrink-0"
         >
           <span class="material-icons text-2xl">sports_kabaddi</span>
         </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight break-words">
               {{ t('taifa.admin.nani.title') }}
             </h1>
             <span
@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-2.5">
+      <div class="flex flex-wrap items-center gap-2.5">
         <RouterLink
           to="/nani-ni-nani"
           target="_blank"

@@ -29,7 +29,7 @@
           Kicheko
         </span>
         <span
-          class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-400 text-gray-950 shadow-sm"
+          class="hidden sm:inline text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-400 text-gray-950 shadow-sm"
         >
           TZ
         </span>

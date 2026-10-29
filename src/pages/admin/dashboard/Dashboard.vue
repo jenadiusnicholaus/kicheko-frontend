@@ -4,15 +4,15 @@
     <div
       class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm"
     >
-      <div class="flex items-center gap-3.5">
+      <div class="flex items-center gap-3.5 min-w-0">
         <div
           class="w-12 h-12 rounded-2xl bg-amber-400 text-gray-950 flex items-center justify-center font-black shadow-md shrink-0"
         >
           <img src="/taifa/taifa_icon.png" alt="Taifa House" class="w-8 h-8 object-contain" />
         </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight break-words">
               {{ t('taifa.admin.title') }} (Taifa House Admin)
             </h1>
             <span
@@ -130,7 +130,7 @@
     <!-- Active "Nani ni Nani" Battle Spotlight Card -->
     <div
       v-if="battle"
-      class="p-6 rounded-3xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm"
+      class="p-4 sm:p-6 rounded-3xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm"
     >
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-gray-100 dark:border-zinc-800 mb-6"
@@ -209,9 +209,13 @@
     </div>
 
     <!-- Recent Applications Table with Quick Approve -->
-    <div class="bg-white dark:bg-[#18181b] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm p-6">
-      <div class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-zinc-800 mb-4">
-        <div>
+    <div
+      class="bg-white dark:bg-[#18181b] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm p-4 sm:p-6"
+    >
+      <div
+        class="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-gray-100 dark:border-zinc-800 mb-4"
+      >
+        <div class="min-w-0">
           <h2 class="text-base sm:text-lg font-black text-gray-900 dark:text-white flex items-center gap-2">
             <span class="material-icons text-blue-500">how_to_reg</span>
             <span>{{ t('taifa.dashboard.recentApps') }}</span>
@@ -221,7 +225,7 @@
 
         <RouterLink
           to="/admin/applications"
-          class="text-xs font-bold text-amber-600 hover:text-amber-700 dark:text-amber-400 flex items-center gap-1"
+          class="text-xs font-bold text-amber-600 hover:text-amber-700 dark:text-amber-400 flex items-center gap-1 shrink-0"
         >
           <span>{{ t('taifa.dashboard.viewAll') }} ({{ applicationsStore.totalApplications }})</span>
           <span class="material-icons text-sm">arrow_forward</span>
@@ -310,8 +314,13 @@ const recentApplications = computed(() => applicationsStore.applications.slice(0
 const recentAppColumns = computed(() =>
   defineVaDataTableColumns([
     { label: t('taifa.dashboard.applicantTh'), key: 'applicant' },
-    { label: t('taifa.dashboard.universityTh'), key: 'university' },
-    { label: t('taifa.dashboard.feeTh'), key: 'fee' },
+    {
+      label: t('taifa.dashboard.universityTh'),
+      key: 'university',
+      thClass: 'hidden sm:table-cell',
+      tdClass: 'hidden sm:table-cell',
+    },
+    { label: t('taifa.dashboard.feeTh'), key: 'fee', thClass: 'hidden sm:table-cell', tdClass: 'hidden sm:table-cell' },
     { label: t('taifa.dashboard.statusTh'), key: 'status' },
     { label: ' ', key: 'actions', thAlign: 'right', tdAlign: 'right' },
   ]),

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-navbar-actions flex items-center gap-1.5">
+  <div class="app-navbar-actions flex items-center gap-1 sm:gap-1.5">
     <!-- Switch to Public Video Platform -->
     <RouterLink
       to="/"

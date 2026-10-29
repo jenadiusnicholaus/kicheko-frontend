@@ -9,7 +9,12 @@
     </template>
 
     <template #left>
-      <AppSidebar :minimized="isSidebarMinimized" :animated="!isMobile" :mobile="isMobile" />
+      <AppSidebar
+        v-if="!isTablet || !isSidebarMinimized"
+        :minimized="isSidebarMinimized"
+        :animated="!isMobile"
+        :mobile="isMobile"
+      />
     </template>
 
     <template #content>

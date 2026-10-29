@@ -586,7 +586,9 @@
         "currentBatch": "Currently in {title}",
         "noAvailableApplicants": "There are no other approved applicants to add.",
         "addSelected": "Add selected",
-        "skipped": "{count} applicants were skipped because they are not approved."
+        "skipped": "{count} applicants were skipped because they are not approved.",
+        "batchColumn": "Current batch",
+        "selectedCount": "{count} selected"
       },
       "universitiesNav": "Universities",
       "totalApps": "Total Applications",

@@ -9,7 +9,7 @@
           >
             how_to_vote
           </span>
-          <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
+          <h1 class="text-lg sm:text-2xl font-black break-words text-gray-900 dark:text-white">
             {{ t('taifa.voteStats.title') }}
           </h1>
         </div>
@@ -58,42 +58,50 @@
 
     <!-- Stat cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.voteStats.purchases') }}</span>
           <span class="material-icons text-blue-500">shopping_cart</span>
         </div>
-        <div class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white">
+        <div class="text-xl sm:text-3xl font-black break-words text-gray-900 dark:text-white">
           {{ section.totals.purchases.toLocaleString() }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.voteStats.purchasesDesc') }}</span>
       </div>
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.voteStats.confirmed') }}</span>
           <span class="material-icons text-emerald-500">verified</span>
         </div>
-        <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
+        <div class="text-xl sm:text-3xl font-black break-words text-emerald-600 dark:text-emerald-400">
           {{ section.totals.confirmed.toLocaleString() }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.voteStats.confirmedDesc') }}</span>
       </div>
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.voteStats.votesCast') }}</span>
           <span class="material-icons text-purple-500">how_to_vote</span>
         </div>
-        <div class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white">
+        <div class="text-xl sm:text-3xl font-black break-words text-gray-900 dark:text-white">
           {{ section.totals.votes.toLocaleString() }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.voteStats.votesCastDesc') }}</span>
       </div>
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.voteStats.revenue') }}</span>
           <span class="material-icons text-[#FEBF01]">payments</span>
         </div>
-        <div class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
+        <div class="text-lg sm:text-2xl font-black break-words text-gray-900 dark:text-white">
           TSh {{ section.totals.revenue.toLocaleString() }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.voteStats.revenueDesc') }}</span>

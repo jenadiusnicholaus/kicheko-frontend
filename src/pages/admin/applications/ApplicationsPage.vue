@@ -4,15 +4,15 @@
     <div
       class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm"
     >
-      <div class="flex items-center gap-3.5">
+      <div class="flex items-center gap-3.5 min-w-0">
         <div
           class="w-12 h-12 rounded-2xl bg-[#FEBF01] text-gray-950 flex items-center justify-center font-black shadow-md shrink-0"
         >
           <span class="material-icons text-2xl">how_to_reg</span>
         </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white tracking-tight break-words">
               {{ t('taifa.admin.applicationsTitle') }}
             </h1>
             <span
@@ -30,16 +30,16 @@
       <!-- Quick Actions: Vote fee + Open/Close window + Refresh -->
       <div class="flex flex-wrap items-center gap-2">
         <div
-          class="flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-xl border border-gray-200 dark:border-zinc-700"
+          class="flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-xl border border-gray-200 dark:border-zinc-700 w-full sm:w-auto"
           :title="t('taifa.admin.voteFeeLabel')"
         >
-          <span class="text-[11px] font-bold text-gray-500">{{ t('taifa.admin.voteFeeLabel') }}</span>
+          <span class="text-[11px] font-bold text-gray-500 shrink-0">{{ t('taifa.admin.voteFeeLabel') }}</span>
           <input
             v-model.number="voteFeeInput"
             type="number"
             min="100"
             step="100"
-            class="w-20 px-2 py-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+            class="flex-1 min-w-0 sm:w-20 sm:flex-none px-2 py-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
           />
           <button
             type="button"
@@ -51,16 +51,16 @@
           </button>
         </div>
         <div
-          class="flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-xl border border-gray-200 dark:border-zinc-700"
+          class="flex items-center gap-1.5 pl-3 pr-1 py-1 rounded-xl border border-gray-200 dark:border-zinc-700 w-full sm:w-auto"
           :title="t('taifa.admin.appFeeLabel')"
         >
-          <span class="text-[11px] font-bold text-gray-500">{{ t('taifa.admin.appFeeLabel') }}</span>
+          <span class="text-[11px] font-bold text-gray-500 shrink-0">{{ t('taifa.admin.appFeeLabel') }}</span>
           <input
             v-model.number="appFeeInput"
             type="number"
             min="100"
             step="100"
-            class="w-24 px-2 py-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
+            class="flex-1 min-w-0 sm:w-24 sm:flex-none px-2 py-1.5 rounded-lg bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
           />
           <button
             type="button"
@@ -73,7 +73,7 @@
         </div>
         <button
           type="button"
-          class="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
+          class="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-sm flex-1 sm:flex-none"
           :class="
             applicationsStore.applicationsOpen
               ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
@@ -94,7 +94,7 @@
         </button>
         <button
           type="button"
-          class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center gap-1.5 transition-colors"
+          class="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors flex-1 sm:flex-none"
           @click="applicationsStore.fetchApplicationsFromBackend()"
         >
           <span class="material-icons text-base">refresh</span>
@@ -106,48 +106,56 @@
     <!-- Stat Summary Cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Total Applications -->
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.totalApps') }}</span>
           <span class="material-icons text-blue-500">assignment</span>
         </div>
-        <div class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white">
+        <div class="text-xl sm:text-3xl font-black break-words text-gray-900 dark:text-white">
           {{ applicationsStore.totalApplications }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.admin.totalAppsDesc') }}</span>
       </div>
 
       <!-- Paid & Pending Review -->
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.pendingApproval') }}</span>
           <span class="material-icons text-amber-500">pending_actions</span>
         </div>
-        <div class="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400">
+        <div class="text-xl sm:text-3xl font-black break-words text-amber-600 dark:text-amber-400">
           {{ applicationsStore.pendingReviewCount }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.admin.pendingPaidDesc') }}</span>
       </div>
 
       <!-- Approved Comedians -->
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.confirmedApps') }}</span>
           <span class="material-icons text-emerald-500">check_circle</span>
         </div>
-        <div class="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
+        <div class="text-xl sm:text-3xl font-black break-words text-emerald-600 dark:text-emerald-400">
           {{ applicationsStore.approvedCount }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.admin.confirmedDesc') }}</span>
       </div>
 
       <!-- Total Fee Revenue Collected -->
-      <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div
+        class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
+      >
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.admin.feeRevenueTitle') }}</span>
           <span class="material-icons text-[#FEBF01]">payments</span>
         </div>
-        <div class="text-xl sm:text-2xl font-black text-gray-900 dark:text-white">
+        <div class="text-lg sm:text-2xl font-black break-words text-gray-900 dark:text-white">
           TSh {{ applicationsStore.totalFeeRevenue.toLocaleString() }}
         </div>
         <span class="text-[11px] text-gray-500">{{ t('taifa.admin.feeRevenueDesc') }}</span>
@@ -558,8 +566,13 @@ const appColumns = computed(() =>
   defineVaDataTableColumns([
     { label: ' ', key: 'select', width: '2.5rem', thAlign: 'center', tdAlign: 'center' },
     { label: t('taifa.admin.applicantTh'), key: 'applicant' },
-    { label: t('taifa.admin.universityTh'), key: 'university' },
-    { label: t('taifa.admin.phoneTh'), key: 'phone' },
+    {
+      label: t('taifa.admin.universityTh'),
+      key: 'university',
+      thClass: 'hidden sm:table-cell',
+      tdClass: 'hidden sm:table-cell',
+    },
+    { label: t('taifa.admin.phoneTh'), key: 'phone', thClass: 'hidden sm:table-cell', tdClass: 'hidden sm:table-cell' },
     { label: t('taifa.admin.feeTh'), key: 'fee' },
     { label: t('taifa.admin.statusTh'), key: 'status' },
     { label: t('taifa.admin.levelTh'), key: 'level' },

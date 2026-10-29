@@ -1,6 +1,6 @@
 <template>
   <VaNavbar
-    class="app-layout-navbar py-2 px-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f0f12]"
+    class="app-layout-navbar py-2 px-2 sm:px-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f0f12]"
   >
     <template #left>
       <div class="left flex items-center gap-3">

@@ -478,7 +478,9 @@
         "currentBatch": "Yupo kwenye {title}",
         "noAvailableApplicants": "Hakuna waombaji wengine walioidhinishwa wa kuongeza.",
         "addSelected": "Ongeza waliochaguliwa",
-        "skipped": "Waombaji {count} wamerukwa kwa kuwa hawajaidhinishwa."
+        "skipped": "Waombaji {count} wamerukwa kwa kuwa hawajaidhinishwa.",
+        "batchColumn": "Kundi la sasa",
+        "selectedCount": "{count} wamechaguliwa"
       },
       "universitiesNav": "Vyuo Vikuu",
       "totalApps": "Jumla ya Maombi",

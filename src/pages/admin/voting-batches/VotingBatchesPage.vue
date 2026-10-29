@@ -131,53 +131,55 @@
         </p>
       </div>
 
-      <div class="space-y-6 p-5 sm:p-6">
+      <div class="space-y-3 p-4 sm:p-5">
+        <!-- Members -->
         <div class="overflow-x-auto rounded-2xl border border-gray-100 dark:border-zinc-800">
-          <table class="w-full min-w-[34rem] text-left text-sm">
-            <thead
-              class="bg-gray-50 text-[11px] font-bold uppercase tracking-wide text-gray-500 dark:bg-zinc-800/70 dark:text-gray-400"
-            >
-              <tr>
-                <th class="w-10 px-4 py-3">
-                  <span class="sr-only">{{ t('taifa.admin.batches.selectApplicant') }}</span>
-                </th>
-                <th class="px-4 py-3">{{ t('taifa.admin.batches.applicant') }}</th>
-                <th class="px-4 py-3">{{ t('taifa.admin.batches.university') }}</th>
-                <th class="px-4 py-3 text-right">{{ t('taifa.admin.batches.votes') }}</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-zinc-800">
-              <tr v-for="app in batchApplicants(batch)" :key="app.id">
-                <td class="px-4 py-3">
-                  <input
-                    type="checkbox"
-                    :checked="selectedByBatch[batch.id]?.includes(app.id) || false"
-                    :aria-label="t('taifa.admin.batches.selectApplicant')"
-                    class="h-4 w-4 accent-[#FEBF01]"
-                    @change="toggleSelection(selectedByBatch, batch.id, app.id)"
-                  />
-                </td>
-                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">
-                  {{ applicantName(app) }}
-                </td>
-                <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ app.university || '—' }}</td>
-                <td class="px-4 py-3 text-right font-bold tabular-nums text-gray-900 dark:text-white">
-                  {{ app.voteCount.toLocaleString() }}
-                </td>
-              </tr>
-              <tr v-if="batchApplicants(batch).length === 0">
-                <td colspan="4" class="px-4 py-6 text-center text-xs text-gray-400">
-                  {{ t('taifa.admin.batches.noApplicants') }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <VaDataTable
+            :columns="memberColumns"
+            :items="batchApplicants(batch)"
+            items-track-by="id"
+            :no-data-html="t('taifa.admin.batches.noApplicants')"
+          >
+            <template #header(select)>
+              <input
+                type="checkbox"
+                class="accent-[#FEBF01] cursor-pointer"
+                :checked="allSelected(selectedByBatch[batch.id], batchApplicants(batch))"
+                :title="t('taifa.admin.batches.selectApplicant')"
+                @change="toggleAll(selectedByBatch, batch.id, batchApplicants(batch))"
+              />
+            </template>
+            <template #cell(select)="{ rowData: app }">
+              <input
+                type="checkbox"
+                class="accent-[#FEBF01] cursor-pointer"
+                :checked="selectedByBatch[batch.id]?.includes(app.id) || false"
+                :aria-label="t('taifa.admin.batches.selectApplicant')"
+                @change="toggleSelection(selectedByBatch, batch.id, app.id)"
+              />
+            </template>
+            <template #cell(applicant)="{ rowData: app }">
+              <span class="font-semibold text-gray-900 dark:text-white">{{ applicantName(app) }}</span>
+            </template>
+            <template #cell(university)="{ rowData: app }">
+              <span class="text-gray-500 dark:text-gray-400">{{ app.university || '—' }}</span>
+            </template>
+            <template #cell(votes)="{ rowData: app }">
+              <span class="font-bold tabular-nums text-gray-900 dark:text-white">
+                {{ app.voteCount.toLocaleString() }}
+              </span>
+            </template>
+          </VaDataTable>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
+        <!-- Member actions -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="font-semibold text-gray-400">
+            {{ t('taifa.admin.batches.selectedCount', { count: selectedByBatch[batch.id]?.length || 0 }) }}
+          </span>
           <button
             type="button"
-            class="rounded-xl border border-gray-200 px-3.5 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-800"
+            class="rounded-lg border border-gray-200 px-3 py-1.5 font-bold text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-800"
             :disabled="!selectedByBatch[batch.id]?.length"
             @click="removeSelected(batch)"
           >
@@ -187,7 +189,7 @@
           <select
             :id="`promote-${batch.id}`"
             v-model.number="promotionTargets[batch.id]"
-            class="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-200"
+            class="max-w-full rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-gray-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-200"
           >
             <option :value="undefined">{{ t('taifa.admin.batches.promoteTo') }}</option>
             <option v-for="target in higherLevelBatches(batch)" :key="target.id" :value="target.id">
@@ -196,44 +198,66 @@
           </select>
           <button
             type="button"
-            class="rounded-xl bg-[#FEBF01] px-3.5 py-2 text-xs font-black text-gray-950 hover:bg-[#E5AC00] disabled:cursor-not-allowed disabled:opacity-40"
+            class="rounded-lg bg-[#FEBF01] px-3 py-1.5 font-black text-gray-950 hover:bg-[#E5AC00] disabled:cursor-not-allowed disabled:opacity-40"
             :disabled="!selectedByBatch[batch.id]?.length || !promotionTargets[batch.id]"
             @click="promoteSelected(batch)"
           >
             {{ t('taifa.admin.batches.promote') }}
           </button>
+
+          <button
+            type="button"
+            class="ml-auto inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 font-bold text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-zinc-800"
+            @click="addSectionOpen[batch.id] = !addSectionOpen[batch.id]"
+          >
+            <span class="material-icons text-base">
+              {{ addSectionOpen[batch.id] ? 'expand_less' : 'person_add' }}
+            </span>
+            {{ t('taifa.admin.batches.addApplicants') }}
+          </button>
         </div>
 
-        <div class="rounded-2xl border border-gray-100 p-4 dark:border-zinc-800">
-          <h3 class="mb-3 text-sm font-black text-gray-900 dark:text-white">
-            {{ t('taifa.admin.batches.addApplicants') }}
-          </h3>
-          <div class="max-h-64 space-y-2 overflow-y-auto">
-            <label
-              v-for="app in addableApplicants(batch)"
-              :key="app.id"
-              class="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 hover:bg-gray-50 dark:hover:bg-zinc-800"
+        <!-- Add applicants (collapsible) -->
+        <div v-if="addSectionOpen[batch.id]" class="space-y-2">
+          <div class="overflow-x-auto rounded-2xl border border-gray-100 dark:border-zinc-800">
+            <VaDataTable
+              :columns="addColumns"
+              :items="addableApplicants(batch)"
+              items-track-by="id"
+              :no-data-html="t('taifa.admin.batches.noAvailableApplicants')"
             >
-              <input
-                type="checkbox"
-                :checked="addSelectedByBatch[batch.id]?.includes(app.id) || false"
-                class="h-4 w-4 accent-[#FEBF01]"
-                @change="toggleSelection(addSelectedByBatch, batch.id, app.id)"
-              />
-              <span class="min-w-0 flex-1 truncate text-xs font-semibold text-gray-800 dark:text-gray-200">
-                {{ applicantName(app) }} · {{ app.university || '—' }}
-              </span>
-              <span v-if="app.batchTitle" class="shrink-0 text-[10px] text-gray-500 dark:text-gray-400">
-                {{ t('taifa.admin.batches.currentBatch', { title: app.batchTitle }) }}
-              </span>
-            </label>
-            <p v-if="addableApplicants(batch).length === 0" class="py-3 text-xs text-gray-400">
-              {{ t('taifa.admin.batches.noAvailableApplicants') }}
-            </p>
+              <template #header(select)>
+                <input
+                  type="checkbox"
+                  class="accent-[#FEBF01] cursor-pointer"
+                  :checked="allSelected(addSelectedByBatch[batch.id], addableApplicants(batch))"
+                  :title="t('taifa.admin.batches.selectApplicant')"
+                  @change="toggleAll(addSelectedByBatch, batch.id, addableApplicants(batch))"
+                />
+              </template>
+              <template #cell(select)="{ rowData: app }">
+                <input
+                  type="checkbox"
+                  class="accent-[#FEBF01] cursor-pointer"
+                  :checked="addSelectedByBatch[batch.id]?.includes(app.id) || false"
+                  :aria-label="t('taifa.admin.batches.selectApplicant')"
+                  @change="toggleSelection(addSelectedByBatch, batch.id, app.id)"
+                />
+              </template>
+              <template #cell(applicant)="{ rowData: app }">
+                <span class="font-semibold text-gray-900 dark:text-white">{{ applicantName(app) }}</span>
+              </template>
+              <template #cell(university)="{ rowData: app }">
+                <span class="text-gray-500 dark:text-gray-400">{{ app.university || '—' }}</span>
+              </template>
+              <template #cell(batch)="{ rowData: app }">
+                <span class="text-xs text-gray-500 dark:text-gray-400">{{ app.batchTitle || '—' }}</span>
+              </template>
+            </VaDataTable>
           </div>
           <button
             type="button"
-            class="mt-3 rounded-xl bg-[#FEBF01] px-4 py-2 text-xs font-black text-gray-950 hover:bg-[#E5AC00] disabled:cursor-not-allowed disabled:opacity-40"
+            class="rounded-lg bg-[#FEBF01] px-4 py-2 text-xs font-black text-gray-950 hover:bg-[#E5AC00] disabled:cursor-not-allowed disabled:opacity-40"
             :disabled="!addSelectedByBatch[batch.id]?.length"
             @click="addSelected(batch)"
           >
@@ -248,6 +272,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { defineVaDataTableColumns } from 'vuestic-ui'
 import { useComedianApplicationsStore } from '../../../stores/comedian-applications'
 import type { ComedianApplication } from '../../../stores/comedian-applications'
 import { useVotingBatchesStore } from '../../../stores/voting-batches'
@@ -264,6 +289,35 @@ const titleDrafts = reactive<Record<number, string>>({})
 const selectedByBatch = reactive<Record<number, string[]>>({})
 const addSelectedByBatch = reactive<Record<number, string[]>>({})
 const promotionTargets = reactive<Record<number, number | undefined>>({})
+const addSectionOpen = reactive<Record<number, boolean>>({})
+
+const memberColumns = computed(() =>
+  defineVaDataTableColumns([
+    { label: ' ', key: 'select', width: '2.5rem', thAlign: 'center', tdAlign: 'center' },
+    { label: t('taifa.admin.batches.applicant'), key: 'applicant' },
+    {
+      label: t('taifa.admin.batches.university'),
+      key: 'university',
+      thClass: 'hidden sm:table-cell',
+      tdClass: 'hidden sm:table-cell',
+    },
+    { label: t('taifa.admin.batches.votes'), key: 'votes', thAlign: 'right', tdAlign: 'right' },
+  ]),
+)
+
+const addColumns = computed(() =>
+  defineVaDataTableColumns([
+    { label: ' ', key: 'select', width: '2.5rem', thAlign: 'center', tdAlign: 'center' },
+    { label: t('taifa.admin.batches.applicant'), key: 'applicant' },
+    {
+      label: t('taifa.admin.batches.university'),
+      key: 'university',
+      thClass: 'hidden sm:table-cell',
+      tdClass: 'hidden sm:table-cell',
+    },
+    { label: t('taifa.admin.batches.batchColumn'), key: 'batch', thAlign: 'right', tdAlign: 'right' },
+  ]),
+)
 
 const approvedApplications = computed(() => applicationsStore.applications.filter((app) => app.status === 'approved'))
 
@@ -281,6 +335,13 @@ const toggleSelection = (selections: Record<number, string[]>, batchId: number, 
   const index = ids.indexOf(id)
   if (index === -1) ids.push(id)
   else ids.splice(index, 1)
+}
+
+const allSelected = (ids: string[] | undefined, items: ComedianApplication[]) =>
+  items.length > 0 && (ids?.length || 0) === items.length
+
+const toggleAll = (selections: Record<number, string[]>, batchId: number, items: ComedianApplication[]) => {
+  selections[batchId] = allSelected(selections[batchId], items) ? [] : items.map((app) => app.id)
 }
 
 const refreshData = async () => {
