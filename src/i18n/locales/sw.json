@@ -428,7 +428,9 @@
       "justNow": "sasa hivi",
       "minsAgo": "dak {n} zilizopita",
       "hoursAgo": "saa {n} zilizopita",
-      "daysAgo": "siku {n} zilizopita"
+      "daysAgo": "siku {n} zilizopita",
+      "loginToComment": "Ingia kutoa maoni",
+      "loginToCommentDesc": "Lazima uingie kwanza ili kutoa maoni."
     },
     "admin": {
       "title": "Dashibodi Kuu ya Usimamizi",

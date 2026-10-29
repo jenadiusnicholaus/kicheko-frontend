@@ -2,7 +2,7 @@
   <div class="flex-1 flex flex-col items-center justify-center px-4 py-8 max-w-2xl mx-auto w-full">
     <!-- Brand Logo -->
     <div class="mb-5 text-center">
-      <img src="/taifa/kicheko_pro_logo.png" alt="Kicheko Pro" class="w-40 sm:w-48 mx-auto object-contain" />
+      <img src="/image/KICHEKO PRO LOGO.png" alt="Kicheko Pro" class="w-40 sm:w-48 mx-auto object-contain" />
     </div>
 
     <!-- Pending payment banner — an earlier application payment was never finished -->

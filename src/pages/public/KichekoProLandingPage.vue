@@ -3,7 +3,7 @@
     <!-- Brand Logo with Sunburst Effect -->
     <div class="mb-6 sm:mb-8 animate-fade-in">
       <img
-        src="/taifa/kicheko_pro_logo.png"
+        src="/image/KICHEKO PRO LOGO.png"
         :alt="t('taifa.pages.pro.logoAlt')"
         class="max-w-full mx-auto object-contain drop-shadow-sm hover:scale-102 transition-transform duration-300"
         :class="applicationsStore.applicationsOpen ? 'w-48 sm:w-64' : 'w-28 sm:w-36'"

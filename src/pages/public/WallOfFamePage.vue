@@ -1,28 +1,56 @@
 <template>
   <div class="flex-1 flex flex-col min-h-full bg-gray-50 dark:bg-zinc-950">
-    <!-- Navy header -->
-    <header class="bg-[#0F1A30] text-white sticky top-0 z-40 shadow-md">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-        <RouterLink to="/wall-of-fame" class="flex items-center gap-2 shrink-0" @click="selectedArticle = null">
-          <span class="text-xl">👑</span>
-          <div class="leading-tight">
-            <div class="font-black text-sm tracking-wide">{{ t('taifa.wall.title') }}</div>
-            <div class="text-[10px] text-white/50 font-semibold">{{ t('taifa.wall.byTaifa') }}</div>
-          </div>
-        </RouterLink>
-        <div class="flex-1 max-w-md ml-auto">
-          <div class="relative">
-            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-white/40 text-base">search</span>
-            <input
-              v-model="search"
-              type="search"
-              :placeholder="t('taifa.wall.searchPlaceholder')"
-              class="w-full pl-9 pr-3 py-2 rounded-full bg-white/10 border border-white/10 text-sm placeholder-white/40 focus:outline-none focus:border-[#FEBF01]/60 focus:bg-white/15 transition-colors"
-            />
-          </div>
+    <!-- Centered logo + search -->
+    <div class="flex flex-col items-center gap-4 px-4 pt-6 pb-2">
+      <RouterLink to="/wall-of-fame" class="inline-flex items-center justify-center" @click="selectedArticle = null">
+        <img
+          src="/image/WALL OF FAME LOGO.png"
+          :alt="t('taifa.wall.title')"
+          class="h-36 sm:h-48 w-auto object-contain drop-shadow-sm"
+        />
+      </RouterLink>
+      <div class="relative w-full max-w-md">
+        <span class="material-icons absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base">search</span>
+        <input
+          v-model="search"
+          type="search"
+          :placeholder="t('taifa.wall.searchPlaceholder')"
+          class="w-full pl-10 pr-4 py-2.5 rounded-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 shadow-sm focus:outline-none focus:border-[#FEBF01] focus:ring-2 focus:ring-[#FEBF01]/30 transition-colors"
+        />
+      </div>
+
+      <!-- Mobile category chips — the left sidebar is hidden on small screens -->
+      <div v-if="!selectedArticle" class="md:hidden w-full max-w-3xl overflow-x-auto -mx-1 px-1 pb-1">
+        <div class="flex items-center gap-2 w-max">
+          <button
+            type="button"
+            class="px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors"
+            :class="
+              activeCategory === null
+                ? 'bg-[#FEBF01] text-gray-950'
+                : 'bg-white dark:bg-zinc-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-zinc-700'
+            "
+            @click="activeCategory = null"
+          >
+            {{ t('taifa.wall.home') }}
+          </button>
+          <button
+            v-for="cat in WALL_CATEGORIES"
+            :key="cat"
+            type="button"
+            class="px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors"
+            :class="
+              activeCategory === cat
+                ? 'bg-[#FEBF01] text-gray-950'
+                : 'bg-white dark:bg-zinc-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-zinc-700'
+            "
+            @click="activeCategory = cat"
+          >
+            {{ categoryLabel(cat) }}
+          </button>
         </div>
       </div>
-    </header>
+    </div>
 
     <div class="max-w-6xl mx-auto w-full px-4 py-6 flex gap-6 items-start">
       <!-- ───── Article detail ───── -->
@@ -120,8 +148,25 @@
             </button>
           </div>
 
+          <!-- Login gate — only signed-in users can comment -->
+          <div
+            v-if="!isLoggedIn"
+            class="mb-5 rounded-xl bg-gray-50 dark:bg-zinc-800/60 border border-gray-200 dark:border-zinc-700 px-4 py-3.5 flex items-center gap-3"
+          >
+            <span class="material-icons text-gray-400">lock_outline</span>
+            <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold flex-1">
+              {{ t('taifa.wall.loginToCommentDesc') }}
+            </p>
+            <RouterLink
+              :to="{ name: 'login', query: { redirect: route.fullPath } }"
+              class="px-4 py-1.5 rounded-full bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-xs font-black transition-colors shrink-0"
+            >
+              {{ t('taifa.wall.loginToComment') }}
+            </RouterLink>
+          </div>
+
           <!-- New comment -->
-          <form class="space-y-2.5 mb-5" @submit.prevent="submitComment">
+          <form v-else class="space-y-2.5 mb-5" @submit.prevent="submitComment">
             <div class="flex items-center gap-3">
               <div
                 class="w-9 h-9 rounded-full bg-[#183153] text-white flex items-center justify-center text-sm font-black shrink-0"
@@ -363,14 +408,18 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { useWallOfFameStore, WALL_CATEGORIES, type WallOfFameArticle } from '../../stores/wall-of-fame'
 import { useWallCommentsStore, type WallComment } from '../../stores/wall-comments'
 import { useAuthStore } from '../../stores/auth-store'
 
 const { t } = useI18n()
+const route = useRoute()
 const fameStore = useWallOfFameStore()
 const commentsStore = useWallCommentsStore()
 const authStore = useAuthStore()
+
+const isLoggedIn = computed(() => Boolean(authStore.user))
 
 const search = ref('')
 const activeCategory = ref<string | null>(null)

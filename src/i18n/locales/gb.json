@@ -536,7 +536,9 @@
       "justNow": "just now",
       "minsAgo": "{n}m ago",
       "hoursAgo": "{n}h ago",
-      "daysAgo": "{n}d ago"
+      "daysAgo": "{n}d ago",
+      "loginToComment": "Log in to comment",
+      "loginToCommentDesc": "You need to log in to post a comment."
     },
     "admin": {
       "title": "Main Management Studio",
