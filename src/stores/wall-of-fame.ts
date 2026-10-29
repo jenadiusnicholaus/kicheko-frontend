@@ -2,132 +2,135 @@ import { defineStore } from 'pinia'
 import { http } from '../services/api/http'
 import { resolveMediaUrl } from '../services/api/config'
 
-export interface WallOfFameInductee {
+/** Category slugs rendered in the feed sidebar; labels live in i18n
+ * (`taifa.wall.categories.<slug>`). */
+export const WALL_CATEGORIES = [
+  'campus-life',
+  'fursa-mafanikio',
+  'teknolojia',
+  'burudani',
+  'maisha-ya-chuo',
+  'maisha-ya-kijamii',
+] as const
+
+export type WallCategory = (typeof WALL_CATEGORIES)[number] | string
+
+export interface WallOfFameArticle {
   id: string
-  name: string
-  university: string
-  universityId?: string
-  universityCode?: string
-  universityBadge?: string
-  competitionYear: number
-  totalVotes: number
-  bio: string
-  photo: string
-  featuredQuote?: string
-  awards?: string[]
+  title: string
+  category: WallCategory
+  excerpt: string
+  body: string
+  image: string
+  author: string
+  publishedAt: string
+  readMinutes: number
+  likes: number
+  commentsCount: number
 }
 
-function normalizeBackendInductee(raw: any): WallOfFameInductee {
+/** Accepts the new article shape and legacy inductee rows (name/bio/photo)
+ * so the feed keeps working until the backend fields land. */
+function normalizeBackendArticle(raw: any): WallOfFameArticle {
   return {
-    id: raw.id,
-    name: raw.name || '',
-    university: raw.university || '',
-    universityId: raw.university_id || undefined,
-    universityCode: raw.university_code || raw.universityCode || '',
-    universityBadge: raw.university_badge || undefined,
-    competitionYear: raw.competition_year || raw.competitionYear || 0,
-    totalVotes: raw.total_votes ?? raw.totalVotes ?? 0,
-    bio: raw.bio || '',
-    photo: resolveMediaUrl(raw.photo) || '/image/Kicheko.png',
-    featuredQuote: raw.featured_quote || raw.featuredQuote || '',
-    awards: raw.awards || [],
+    id: String(raw.id),
+    title: raw.title || raw.name || '',
+    category: raw.category || 'campus-life',
+    excerpt: raw.excerpt || raw.bio || '',
+    body: raw.body || raw.content || raw.bio || '',
+    image: resolveMediaUrl(raw.image || raw.photo) || '/image/Kicheko.png',
+    author: raw.author || 'Wall of Fame',
+    publishedAt: raw.published_at || raw.created_at || '',
+    readMinutes: raw.read_minutes ?? raw.read_time ?? 5,
+    likes: raw.likes ?? raw.likes_count ?? 0,
+    commentsCount: raw.comments_count ?? raw.commentsCount ?? 0,
   }
 }
 
+/** @deprecated alias kept for the inductee-shaped callers */
+export type WallOfFameInductee = WallOfFameArticle
+
 export const useWallOfFameStore = defineStore('wallOfFame', {
   state: () => ({
-    inductees: [] as WallOfFameInductee[],
-    selectedIndex: 0,
+    articles: [] as WallOfFameArticle[],
     isLoading: false,
     error: null as string | null,
   }),
 
   getters: {
-    totalInductees: (state) => state.inductees.length,
-    currentInductee: (state): WallOfFameInductee | null => {
-      if (!state.inductees || state.inductees.length === 0) return null
-      return state.inductees[state.selectedIndex] || state.inductees[0] || null
-    },
+    /** @deprecated dashboard compat — article count. */
+    totalInductees: (state) => state.articles.length,
+    trending: (state) => [...state.articles].sort((a, b) => b.likes - a.likes).slice(0, 5),
   },
 
   actions: {
-    async fetchInducteesFromBackend() {
+    async fetchArticles() {
       this.isLoading = true
       this.error = null
       try {
         const { data } = await http.get('/wall-of-fame/')
-        if (Array.isArray(data)) {
-          this.inductees = data.map(normalizeBackendInductee)
-        }
+        const raw = Array.isArray(data) ? data : data?.results || []
+        this.articles = raw.map(normalizeBackendArticle)
       } catch (e: any) {
-        this.error = e?.message || 'Failed to load inductees'
+        this.error = e?.message || 'Failed to load articles'
         console.warn('Failed to fetch wall of fame from backend', e)
       } finally {
         this.isLoading = false
       }
     },
 
-    selectInductee(index: number) {
-      if (index >= 0 && index < this.inductees.length) {
-        this.selectedIndex = index
-      }
+    /** @deprecated compat alias */
+    async fetchInducteesFromBackend() {
+      return this.fetchArticles()
     },
 
-    nextInductee() {
-      if (this.inductees.length === 0) return
-      this.selectedIndex = (this.selectedIndex + 1) % this.inductees.length
-    },
-
-    prevInductee() {
-      if (this.inductees.length === 0) return
-      this.selectedIndex = (this.selectedIndex - 1 + this.inductees.length) % this.inductees.length
-    },
-
-    async addInductee(item: Omit<WallOfFameInductee, 'id'>, photoFile?: File) {
+    async createArticle(item: Omit<WallOfFameArticle, 'id'>, imageFile?: File) {
       const fd = new FormData()
-      fd.append('name', item.name)
-      fd.append('university', item.university)
-      fd.append('competition_year', String(item.competitionYear))
-      fd.append('total_votes', String(item.totalVotes))
-      fd.append('bio', item.bio)
-      fd.append('featured_quote', item.featuredQuote || '')
-      if (photoFile) fd.append('photo', photoFile)
+      fd.append('title', item.title)
+      fd.append('category', item.category)
+      fd.append('excerpt', item.excerpt)
+      fd.append('body', item.body)
+      fd.append('read_minutes', String(item.readMinutes))
+      if (imageFile) fd.append('image', imageFile)
       const { data } = await http.post('/wall-of-fame/', fd)
-      const newEntry = normalizeBackendInductee(data)
-      this.inductees.unshift(newEntry)
-      return newEntry
+      const created = normalizeBackendArticle(data)
+      this.articles.unshift(created)
+      return created
     },
 
-    async updateInductee(id: string, updates: Partial<WallOfFameInductee>, photoFile?: File) {
+    /** @deprecated compat alias */
+    async addInductee(item: Omit<WallOfFameArticle, 'id'>, imageFile?: File) {
+      return this.createArticle(item, imageFile)
+    },
+
+    async updateArticle(id: string, updates: Partial<WallOfFameArticle>, imageFile?: File) {
       const fd = new FormData()
-      if (updates.name !== undefined) fd.append('name', updates.name)
-      if (updates.university !== undefined) fd.append('university', updates.university)
-      if (updates.competitionYear !== undefined) fd.append('competition_year', String(updates.competitionYear))
-      if (updates.totalVotes !== undefined) fd.append('total_votes', String(updates.totalVotes))
-      if (updates.bio !== undefined) fd.append('bio', updates.bio)
-      if (updates.featuredQuote !== undefined) fd.append('featured_quote', updates.featuredQuote)
-      if (photoFile) fd.append('photo', photoFile)
+      if (updates.title !== undefined) fd.append('title', updates.title)
+      if (updates.category !== undefined) fd.append('category', updates.category)
+      if (updates.excerpt !== undefined) fd.append('excerpt', updates.excerpt)
+      if (updates.body !== undefined) fd.append('body', updates.body)
+      if (updates.readMinutes !== undefined) fd.append('read_minutes', String(updates.readMinutes))
+      if (imageFile) fd.append('image', imageFile)
       const { data } = await http.put(`/wall-of-fame/${id}/`, fd)
-      const updated = normalizeBackendInductee(data)
-      const idx = this.inductees.findIndex((x) => x.id === id)
-      if (idx !== -1) {
-        this.inductees[idx] = updated
-      }
+      const updated = normalizeBackendArticle(data)
+      const idx = this.articles.findIndex((x) => x.id === id)
+      if (idx !== -1) this.articles[idx] = updated
     },
 
-    async deleteInductee(id: string) {
+    /** @deprecated compat alias */
+    async updateInductee(id: string, updates: Partial<WallOfFameArticle>, imageFile?: File) {
+      return this.updateArticle(id, updates, imageFile)
+    },
+
+    async deleteArticle(id: string) {
       await http.delete(`/wall-of-fame/${id}/`)
-      const idx = this.inductees.findIndex((x) => x.id === id)
-      if (idx !== -1) {
-        this.inductees.splice(idx, 1)
-        if (this.selectedIndex >= this.inductees.length) {
-          this.selectedIndex = Math.max(0, this.inductees.length - 1)
-        }
-      }
+      const idx = this.articles.findIndex((x) => x.id === id)
+      if (idx !== -1) this.articles.splice(idx, 1)
     },
 
-    async resetToDefault() {
-      await this.fetchInducteesFromBackend()
+    /** @deprecated compat alias */
+    async deleteInductee(id: string) {
+      return this.deleteArticle(id)
     },
   },
 })

@@ -499,12 +499,44 @@
       "payLater": "Pay later"
     },
     "wall": {
-      "title": "Wall of Fame",
-      "subtitle": "Celebrating the comedians who made an impact. Their talent, creativity and humour inspired many.",
-      "competitionYear": "Competition Year",
-      "totalVotes": "Total Votes",
-      "prev": "Previous Comedian",
-      "next": "Next Comedian"
+      "title": "WALL OF FAME",
+      "byTaifa": "by Taifa House",
+      "home": "Home",
+      "searchPlaceholder": "Search articles...",
+      "categories": {
+        "campuslife": "Campus Life",
+        "fursamafanikio": "Success & Opportunities",
+        "teknolojia": "Technology",
+        "burudani": "Entertainment",
+        "maishayachuo": "Student Stories",
+        "maishayakijamii": "Social Life"
+      },
+      "advertise": {
+        "kicker": "Sponsored",
+        "title": "Advertise with us",
+        "sub": "Reach thousands of students",
+        "cta": "Learn more"
+      },
+      "trending": "Trending",
+      "minRead": "{min} min read",
+      "likesShort": "likes",
+      "commentsShort": "comments",
+      "share": "Share",
+      "save": "Save",
+      "backToFeed": "Back to articles",
+      "comments": "Comments ({count})",
+      "commentInput": "Write a comment...",
+      "commentsSoon": "Comments are coming soon — the comments service is being wired up.",
+      "emptyFeed": "No articles yet",
+      "emptyFeedDesc": "New stories are on the way — check back soon.",
+      "commentsRefresh": "Refresh",
+      "commentsEmpty": "No comments yet — be the first!",
+      "commentName": "Your name",
+      "commentFailed": "Could not post your comment. Please try again.",
+      "justNow": "just now",
+      "minsAgo": "{n}m ago",
+      "hoursAgo": "{n}h ago",
+      "daysAgo": "{n}d ago"
     },
     "admin": {
       "title": "Main Management Studio",
@@ -619,24 +651,22 @@
         "deleteConfirm": "Are you sure you want to delete this university?"
       },
       "manageFame": {
-        "title": "Wall of Fame Management",
-        "count": "{count} Champions",
-        "subtitle": "Manage the list of famous comedians inducted into the Taifa House Wall of Fame.",
-        "viewBtn": "View Wall",
-        "addBtn": "Add New Champion",
-        "yearBadge": "Year {year}",
-        "votesCount": "{count} Votes",
-        "deleteTitle": "Delete Champion",
-        "editTitle": "Edit Wall of Fame Champion",
-        "addTitle": "Add Champion to Wall of Fame",
-        "nameLabel": "Full Name",
-        "codeLabel": "University Abbreviation",
-        "codePlaceholder": "e.g. UDSM",
-        "bioLabel": "Bio",
-        "photoLabel": "Champion Photo",
-        "quoteLabel": "Their Famous Quote (Optional)",
-        "saveBtn": "Save Champion",
-        "deleteConfirm": "Are you sure you want to remove this champion from the Wall of Fame?"
+        "title": "Wall of Fame Articles",
+        "count": "{count} Articles",
+        "subtitle": "Publish and manage the articles shown on the Wall of Fame feed.",
+        "viewBtn": "View Feed",
+        "addBtn": "Add Article",
+        "deleteTitle": "Delete Article",
+        "editTitle": "Edit Article",
+        "addTitle": "Add New Article",
+        "titleLabel": "Title",
+        "categoryLabel": "Category",
+        "excerptLabel": "Excerpt (short summary)",
+        "bodyLabel": "Article body",
+        "readTimeLabel": "Read time (min)",
+        "imageLabel": "Cover image",
+        "saveBtn": "Save Article",
+        "deleteConfirm": "Are you sure you want to delete this article?"
       },
       "nani": {
         "title": "\"Nani ni Nani?\" Management",
@@ -679,7 +709,10 @@
         "emptyBattles": "No battles yet — create your first battle.",
         "deleteBattleConfirm": "Are you sure you want to delete this battle?",
         "themeColorLabel": "Theme Color",
-        "feeFixed": "The vote fee is fixed at TSh 1,000"
+        "feeFixed": "The vote fee is fixed at TSh 1,000",
+        "colBattle": "Battle",
+        "colContestantA": "Contestant A",
+        "colContestantB": "Contestant B"
       },
       "videos": {
         "title": "Kicheko Video Management & Upload",

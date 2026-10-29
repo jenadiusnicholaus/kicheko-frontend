@@ -8,7 +8,7 @@
         <div
           class="w-12 h-12 rounded-2xl bg-amber-400 text-gray-950 flex items-center justify-center font-black shadow-md shrink-0"
         >
-          <span class="material-icons text-2xl">emoji_events</span>
+          <span class="material-icons text-2xl">article</span>
         </div>
         <div>
           <div class="flex items-center gap-2">
@@ -49,56 +49,53 @@
       </div>
     </div>
 
-    <!-- Inductees Grid -->
+    <!-- Articles Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
-        v-for="item in fameStore.inductees"
+        v-for="item in fameStore.articles"
         :key="item.id"
         class="bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm overflow-hidden flex flex-col justify-between group hover:shadow-md transition-all"
       >
-        <!-- Top Photo & Crown -->
         <div class="relative w-full aspect-[16/10] bg-slate-900 overflow-hidden">
           <img
-            :src="item.photo"
-            :alt="item.name"
+            :src="item.image"
+            :alt="item.title"
             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
 
-          <!-- Year Badge -->
           <div
-            class="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#FEBF01] text-gray-950 font-black text-xs shadow-md"
+            class="absolute top-3 left-3 px-3 py-1 rounded-md text-white font-black text-[10px] uppercase tracking-wide shadow-md"
+            :style="{ backgroundColor: categoryColor(item.category) }"
           >
-            {{ t('taifa.admin.manageFame.yearBadge', { year: item.competitionYear }) }}
+            {{ categoryLabel(item.category) }}
           </div>
 
-          <!-- Total Votes Badge -->
-          <div class="absolute bottom-3 left-3 text-white text-xs font-bold flex items-center gap-1">
-            <span class="material-icons text-amber-400 text-sm">star</span>
-            <span>{{ t('taifa.admin.manageFame.votesCount', { count: item.totalVotes.toLocaleString() }) }}</span>
+          <div class="absolute bottom-3 left-3 text-white text-xs font-bold flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-red-400 text-sm">favorite</span>
+              {{ item.likes.toLocaleString() }}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-icons text-sm">chat_bubble_outline</span>
+              {{ item.commentsCount.toLocaleString() }}
+            </span>
           </div>
         </div>
 
-        <!-- Details -->
         <div class="p-5 flex-1 flex flex-col justify-between">
           <div>
-            <div
-              class="inline-block px-2.5 py-0.5 rounded-md bg-[#183153] text-white text-[10px] font-black uppercase mb-1.5"
-            >
-              {{ item.universityCode }}
-            </div>
-            <h3 class="text-lg font-black text-gray-900 dark:text-white">
-              {{ item.name }}
+            <h3 class="text-base font-black text-gray-900 dark:text-white line-clamp-2">
+              {{ item.title }}
             </h3>
-            <p class="text-xs text-gray-400 mb-2">
-              {{ item.university }}
+            <p class="text-[11px] text-gray-400 mb-2">
+              {{ formatDate(item.publishedAt) }} · {{ t('taifa.wall.minRead', { min: item.readMinutes }) }}
             </p>
             <p class="text-xs text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
-              {{ item.bio }}
+              {{ item.excerpt }}
             </p>
           </div>
 
-          <!-- Action Buttons -->
           <div class="flex items-center justify-end gap-2 pt-4 mt-4 border-t border-gray-100 dark:border-zinc-800">
             <button
               type="button"
@@ -120,7 +117,7 @@
       </div>
     </div>
 
-    <!-- Modal for Adding / Editing Inductee -->
+    <!-- Modal for Adding / Editing an Article -->
     <div
       v-if="showModal"
       class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
@@ -140,54 +137,42 @@
           {{ isEditing ? t('taifa.admin.manageFame.editTitle') : t('taifa.admin.manageFame.addTitle') }}
         </h3>
 
-        <form class="space-y-4 text-xs" @submit.prevent="saveInductee">
+        <form class="space-y-4 text-xs" @submit.prevent="saveArticle">
           <div>
             <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-              t('taifa.admin.manageFame.nameLabel')
+              t('taifa.admin.manageFame.titleLabel')
             }}</label>
             <input
-              v-model="modalForm.name"
+              v-model="modalForm.title"
               type="text"
               required
               class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
             />
           </div>
 
-          <div>
-            <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-              t('taifa.admin.universityTh')
-            }}</label>
-            <select
-              v-model="modalForm.university"
-              required
-              class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
-            >
-              <option value="" disabled>{{ t('taifa.register.selectUniversity') }}</option>
-              <option v-for="u in uniStore.universities" :key="u.id" :value="u.code">
-                {{ u.code }} — {{ u.name }}
-              </option>
-            </select>
-          </div>
-
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-                t('taifa.wall.competitionYear')
+                t('taifa.admin.manageFame.categoryLabel')
               }}</label>
-              <input
-                v-model.number="modalForm.competitionYear"
-                type="number"
+              <select
+                v-model="modalForm.category"
                 required
-                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white font-mono"
-              />
+                class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
+              >
+                <option v-for="cat in WALL_CATEGORIES" :key="cat" :value="cat">
+                  {{ categoryLabel(cat) }}
+                </option>
+              </select>
             </div>
             <div>
               <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-                t('taifa.wall.totalVotes')
+                t('taifa.admin.manageFame.readTimeLabel')
               }}</label>
               <input
-                v-model.number="modalForm.totalVotes"
+                v-model.number="modalForm.readMinutes"
                 type="number"
+                min="1"
                 required
                 class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white font-mono"
               />
@@ -196,11 +181,11 @@
 
           <div>
             <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-              t('taifa.admin.manageFame.bioLabel')
+              t('taifa.admin.manageFame.excerptLabel')
             }}</label>
             <textarea
-              v-model="modalForm.bio"
-              rows="3"
+              v-model="modalForm.excerpt"
+              rows="2"
               required
               class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
             ></textarea>
@@ -208,31 +193,31 @@
 
           <div>
             <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-              t('taifa.admin.manageFame.quoteLabel')
+              t('taifa.admin.manageFame.bodyLabel')
             }}</label>
-            <input
-              v-model="modalForm.featuredQuote"
-              type="text"
+            <textarea
+              v-model="modalForm.body"
+              rows="6"
               required
               class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white"
-            />
+            ></textarea>
           </div>
 
           <div>
             <label class="block font-bold text-gray-700 dark:text-gray-300 mb-1">{{
-              t('taifa.admin.manageFame.photoLabel')
+              t('taifa.admin.manageFame.imageLabel')
             }}</label>
             <input
               type="file"
               accept="image/*"
               :required="!isEditing"
               class="w-full text-xs text-gray-600 dark:text-gray-300 file:mr-3 file:px-3.5 file:py-2 file:rounded-xl file:border-0 file:bg-[#FEBF01] file:text-gray-950 file:font-black file:text-xs file:cursor-pointer"
-              @change="onPhotoChange"
+              @change="onImageChange"
             />
             <img
-              v-if="photoPreview"
-              :src="photoPreview"
-              :alt="modalForm.name"
+              v-if="imagePreview"
+              :src="imagePreview"
+              :alt="modalForm.title"
               class="mt-2 h-20 w-auto rounded-xl object-cover border border-gray-200 dark:border-zinc-700"
             />
           </div>
@@ -265,87 +250,101 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useWallOfFameStore, type WallOfFameInductee } from '../../../stores/wall-of-fame'
-import { useUniversitiesStore } from '../../../stores/universities'
+import { useWallOfFameStore, WALL_CATEGORIES, type WallOfFameArticle } from '../../../stores/wall-of-fame'
 import { compressImage } from '../../../utils/image'
 
 const { t } = useI18n()
 const fameStore = useWallOfFameStore()
-const uniStore = useUniversitiesStore()
 
 onMounted(() => {
-  fameStore.fetchInducteesFromBackend()
-  uniStore.fetchUniversities()
+  fameStore.fetchArticles()
 })
+
+const CATEGORY_COLORS: Record<string, string> = {
+  'campus-life': '#0d9488',
+  'fursa-mafanikio': '#16a34a',
+  teknolojia: '#2563eb',
+  burudani: '#ea580c',
+  'maisha-ya-chuo': '#d97706',
+  'maisha-ya-kijamii': '#7c3aed',
+}
+const categoryColor = (cat: string) => CATEGORY_COLORS[cat] || '#475569'
+const categoryLabel = (cat: string) => t(`taifa.wall.categories.${cat.replace(/-/g, '')}`)
+
+const formatDate = (iso: string) => {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString()
+}
 
 const showModal = ref(false)
 const isEditing = ref(false)
 const editingId = ref('')
 
 const modalForm = reactive({
-  name: '',
-  university: '',
-  competitionYear: 2026,
-  totalVotes: 0,
-  bio: '',
-  featuredQuote: '',
-  photo: '',
+  title: '',
+  category: 'campus-life',
+  excerpt: '',
+  body: '',
+  readMinutes: 5,
+  image: '',
 })
 
-const photoFile = ref<File | null>(null)
-const photoPreview = ref('')
+const imageFile = ref<File | null>(null)
+const imagePreview = ref('')
 
-const onPhotoChange = async (e: Event) => {
+const onImageChange = async (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0] || null
   if (!file) {
-    photoFile.value = null
+    imageFile.value = null
     return
   }
-  photoFile.value = await compressImage(file)
-  photoPreview.value = URL.createObjectURL(photoFile.value)
+  imageFile.value = await compressImage(file)
+  imagePreview.value = URL.createObjectURL(imageFile.value)
 }
 
 const openAddModal = () => {
   isEditing.value = false
   editingId.value = ''
-  modalForm.name = ''
-  modalForm.university = ''
-  modalForm.competitionYear = 2026
-  modalForm.totalVotes = 0
-  modalForm.bio = ''
-  modalForm.featuredQuote = ''
-  modalForm.photo = ''
-  photoFile.value = null
-  photoPreview.value = ''
+  modalForm.title = ''
+  modalForm.category = 'campus-life'
+  modalForm.excerpt = ''
+  modalForm.body = ''
+  modalForm.readMinutes = 5
+  modalForm.image = ''
+  imageFile.value = null
+  imagePreview.value = ''
   showModal.value = true
 }
 
-const openEditModal = (item: WallOfFameInductee) => {
+const openEditModal = (item: WallOfFameArticle) => {
   isEditing.value = true
   editingId.value = item.id
-  modalForm.name = item.name
-  modalForm.university = item.universityCode || item.universityId || item.university
-  modalForm.competitionYear = item.competitionYear
-  modalForm.totalVotes = item.totalVotes
-  modalForm.bio = item.bio
-  modalForm.featuredQuote = item.featuredQuote || ''
-  modalForm.photo = item.photo
-  photoFile.value = null
-  photoPreview.value = item.photo
+  modalForm.title = item.title
+  modalForm.category = item.category
+  modalForm.excerpt = item.excerpt
+  modalForm.body = item.body
+  modalForm.readMinutes = item.readMinutes
+  modalForm.image = item.image
+  imageFile.value = null
+  imagePreview.value = item.image
   showModal.value = true
 }
 
 const isSaving = ref(false)
 const saveError = ref('')
 
-const saveInductee = async () => {
+const saveArticle = async () => {
   isSaving.value = true
   saveError.value = ''
   try {
     if (isEditing.value) {
-      await fameStore.updateInductee(editingId.value, { ...modalForm }, photoFile.value || undefined)
+      await fameStore.updateArticle(editingId.value, { ...modalForm }, imageFile.value || undefined)
     } else {
-      await fameStore.addInductee({ ...modalForm }, photoFile.value || undefined)
+      await fameStore.createArticle(
+        { ...modalForm, author: 'Wall of Fame', publishedAt: '', likes: 0, commentsCount: 0 },
+        imageFile.value || undefined,
+      )
     }
     showModal.value = false
   } catch (e: any) {
@@ -364,7 +363,7 @@ const saveInductee = async () => {
 
 const deleteItem = async (id: string) => {
   if (confirm(t('taifa.admin.manageFame.deleteConfirm'))) {
-    await fameStore.deleteInductee(id)
+    await fameStore.deleteArticle(id)
   }
 }
 </script>

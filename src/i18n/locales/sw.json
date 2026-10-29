@@ -391,12 +391,44 @@
       "payLater": "Lipa baadaye"
     },
     "wall": {
-      "title": "Wall of Fame",
-      "subtitle": "Kuadhimisha wachekeshaji walioweka alama. Vipaji na ucheshi wao unawatia moyo wengi.",
-      "competitionYear": "Mwaka wa Mashindano",
-      "totalVotes": "Jumla ya Kura",
-      "prev": "Mchekeshaji Aliyetangulia",
-      "next": "Mchekeshaji Anayefuata"
+      "title": "WALL OF FAME",
+      "byTaifa": "na Taifa House",
+      "home": "Nyumbani",
+      "searchPlaceholder": "Tafuta makala...",
+      "categories": {
+        "campuslife": "Maisha ya Chuo",
+        "fursamafanikio": "Fursa & Mafanikio",
+        "teknolojia": "Teknolojia",
+        "burudani": "Burudani",
+        "maishayachuo": "Hadithi za Wanafunzi",
+        "maishayakijamii": "Maisha ya Kijamii"
+      },
+      "advertise": {
+        "kicker": "Matangazo",
+        "title": "Tangaza nasi",
+        "sub": "Fikia maelfu ya wanafunzi",
+        "cta": "Jifunze zaidi"
+      },
+      "trending": "Makala Yanayovuma",
+      "minRead": "Dakika {min} kusoma",
+      "likesShort": "penda",
+      "commentsShort": "maoni",
+      "share": "Share",
+      "save": "Hifadhi",
+      "backToFeed": "Rudi kwenye makala",
+      "comments": "Maoni ({count})",
+      "commentInput": "Andika maoni yako...",
+      "commentsSoon": "Maoni yanakuja hivi karibuni — huduma ya maoni inaunganishwa.",
+      "emptyFeed": "Hakuna makala bado",
+      "emptyFeedDesc": "Hadithi mpya zinakuja hivi karibuni.",
+      "commentsRefresh": "Sasisha",
+      "commentsEmpty": "Hakuna maoni bado — kuwa wa kwanza!",
+      "commentName": "Jina lako",
+      "commentFailed": "Imeshindwa kutuma maoni yako. Jaribu tena.",
+      "justNow": "sasa hivi",
+      "minsAgo": "dak {n} zilizopita",
+      "hoursAgo": "saa {n} zilizopita",
+      "daysAgo": "siku {n} zilizopita"
     },
     "admin": {
       "title": "Dashibodi Kuu ya Usimamizi",
@@ -511,24 +543,22 @@
         "deleteConfirm": "Una uhakika unataka kufuta chuo hiki?"
       },
       "manageFame": {
-        "title": "Usimamizi wa Wall of Fame",
-        "count": "Mabingwa {count}",
-        "subtitle": "Dhibiti orodha ya wachekeshaji mashuhuri wanaoingia kwenye Wall of Fame ya Taifa House.",
-        "viewBtn": "Tazama Ukumbi",
-        "addBtn": "Ongeza Bingwa Mpya",
-        "yearBadge": "Mwaka {year}",
-        "votesCount": "{count} Kura",
-        "deleteTitle": "Futa Bingwa",
-        "editTitle": "Hariri Bingwa wa Wall of Fame",
-        "addTitle": "Ongeza Bingwa Kwenye Wall of Fame",
-        "nameLabel": "Jina Kamili",
-        "codeLabel": "Kifupi cha Chuo",
-        "codePlaceholder": "mf. UDSM",
-        "bioLabel": "Maelezo (Bio)",
-        "photoLabel": "Picha ya Bingwa",
-        "quoteLabel": "Nukuu Yake Maarufu (Optional)",
-        "saveBtn": "Hifadhi Bingwa",
-        "deleteConfirm": "Una uhakika unataka kuondoa bingwa huyu kwenye Wall of Fame?"
+        "title": "Makala ya Wall of Fame",
+        "count": "Makala {count}",
+        "subtitle": "Chapisha na dhibiti makala yanayoonekana kwenye Wall of Fame.",
+        "viewBtn": "Tazama",
+        "addBtn": "Ongeza Makala",
+        "deleteTitle": "Futa Makala",
+        "editTitle": "Hariri Makala",
+        "addTitle": "Ongeza Makala Jipya",
+        "titleLabel": "Kichwa",
+        "categoryLabel": "Kategoria",
+        "excerptLabel": "Muhtasari mfupi",
+        "bodyLabel": "Mwili wa makala",
+        "readTimeLabel": "Muda wa kusoma (dak)",
+        "imageLabel": "Picha ya jalada",
+        "saveBtn": "Hifadhi Makala",
+        "deleteConfirm": "Una uhakika unataka kufuta makala haya?"
       },
       "nani": {
         "title": "Usimamizi wa \"Nani ni Nani?\"",
@@ -571,7 +601,10 @@
         "emptyBattles": "Hakuna mapambano bado — tengeneza pambano jipya.",
         "deleteBattleConfirm": "Una uhakika unataka kufuta pambano hili?",
         "themeColorLabel": "Rangi ya Pambano",
-        "feeFixed": "Bei ya kura ni TSh 1,000 (haibadiliki)"
+        "feeFixed": "Bei ya kura ni TSh 1,000 (haibadiliki)",
+        "colBattle": "Pambano",
+        "colContestantA": "Mshiriki A",
+        "colContestantB": "Mshiriki B"
       },
       "videos": {
         "title": "Usimamizi na Upakiaji wa Video za Kicheko",
