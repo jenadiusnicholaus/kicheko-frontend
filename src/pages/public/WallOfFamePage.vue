@@ -9,7 +9,7 @@
           class="h-36 sm:h-48 w-auto object-contain drop-shadow-sm"
         />
       </RouterLink>
-      <div class="relative w-full max-w-md">
+      <div v-if="!selectedArticle" class="relative w-full max-w-md">
         <span class="material-icons absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-base">search</span>
         <input
           v-model="search"
@@ -225,7 +225,7 @@
                   <span class="text-xs font-black text-gray-900 dark:text-white">{{ c.author }}</span>
                   <span class="text-[10px] text-gray-400">{{ relativeTime(c.createdAt) }}</span>
                 </div>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mt-0.5 leading-relaxed">{{ c.text }}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-0.5 leading-relaxed break-words">{{ c.text }}</p>
                 <button
                   type="button"
                   class="mt-1 flex items-center gap-1 text-[11px] font-bold transition-colors"
@@ -322,7 +322,7 @@
             <img
               :src="article.image"
               :alt="article.title"
-              class="w-36 sm:w-44 aspect-[4/3] rounded-xl object-cover shrink-0"
+              class="w-28 sm:w-44 aspect-[4/3] rounded-xl object-cover shrink-0"
             />
             <div class="flex-1 min-w-0 py-1">
               <span

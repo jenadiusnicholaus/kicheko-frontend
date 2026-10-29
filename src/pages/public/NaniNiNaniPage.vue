@@ -198,7 +198,7 @@
         class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
       >
         <div
-          class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 sm:p-7 relative text-center"
+          class="w-full max-w-sm max-h-[92vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-5 sm:p-7 relative text-center"
         >
           <!-- Close 'X' Button -->
           <button
@@ -345,7 +345,7 @@
         @click.self="showVideoModal = false"
       >
         <div
-          class="w-full max-w-2xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-4 sm:p-5 relative"
+          class="w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-4 sm:p-5 relative"
         >
           <button
             type="button"

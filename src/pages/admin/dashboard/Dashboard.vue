@@ -228,53 +228,55 @@
         </RouterLink>
       </div>
 
-      <VaDataTable :columns="recentAppColumns" :items="recentApplications" items-track-by="id">
-        <template #cell(applicant)="{ rowData: app }">
-          <div class="font-black text-gray-900 dark:text-white text-xs">{{ app.firstName }} {{ app.lastName }}</div>
-          <div class="text-[11px] text-gray-400">@{{ app.username }} • {{ app.phone }}</div>
-        </template>
+      <div class="overflow-x-auto">
+        <VaDataTable :columns="recentAppColumns" :items="recentApplications" items-track-by="id">
+          <template #cell(applicant)="{ rowData: app }">
+            <div class="font-black text-gray-900 dark:text-white text-xs">{{ app.firstName }} {{ app.lastName }}</div>
+            <div class="text-[11px] text-gray-400">@{{ app.username }} • {{ app.phone }}</div>
+          </template>
 
-        <template #cell(university)="{ rowData: app }">
-          <span class="font-medium text-gray-800 dark:text-gray-200 text-xs">{{ app.university }}</span>
-        </template>
+          <template #cell(university)="{ rowData: app }">
+            <span class="font-medium text-gray-800 dark:text-gray-200 text-xs">{{ app.university }}</span>
+          </template>
 
-        <template #cell(fee)="{ rowData: app }">
-          <span v-if="app.paymentStatus === 'paid'" class="text-emerald-600 font-bold text-xs">
-            ✓ {{ t('taifa.dashboard.paid') }} ({{ app.paymentMethod }})
-          </span>
-          <span v-else class="text-amber-600 font-semibold text-xs"> ⏳ {{ t('taifa.dashboard.unpaid') }} </span>
-        </template>
+          <template #cell(fee)="{ rowData: app }">
+            <span v-if="app.paymentStatus === 'paid'" class="text-emerald-600 font-bold text-xs">
+              ✓ {{ t('taifa.dashboard.paid') }} ({{ app.paymentMethod }})
+            </span>
+            <span v-else class="text-amber-600 font-semibold text-xs"> ⏳ {{ t('taifa.dashboard.unpaid') }} </span>
+          </template>
 
-        <template #cell(status)="{ rowData: app }">
-          <span
-            v-if="app.status === 'approved'"
-            class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold"
-          >
-            {{ t('taifa.dashboard.statusApproved') }}
-          </span>
-          <span
-            v-else-if="app.status === 'paid_pending_review'"
-            class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold"
-          >
-            {{ t('taifa.dashboard.statusPendingReview') }}
-          </span>
-          <span v-else class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px]">
-            {{ app.status }}
-          </span>
-        </template>
+          <template #cell(status)="{ rowData: app }">
+            <span
+              v-if="app.status === 'approved'"
+              class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold"
+            >
+              {{ t('taifa.dashboard.statusApproved') }}
+            </span>
+            <span
+              v-else-if="app.status === 'paid_pending_review'"
+              class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold"
+            >
+              {{ t('taifa.dashboard.statusPendingReview') }}
+            </span>
+            <span v-else class="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px]">
+              {{ app.status }}
+            </span>
+          </template>
 
-        <template #cell(actions)="{ rowData: app }">
-          <button
-            v-if="app.status !== 'approved'"
-            type="button"
-            class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] transition-all"
-            @click="applicationsStore.approveApplication(app.id)"
-          >
-            {{ t('taifa.dashboard.approveBtn') }}
-          </button>
-          <span v-else class="text-emerald-600 text-xs font-bold"> {{ t('taifa.dashboard.complete') }} </span>
-        </template>
-      </VaDataTable>
+          <template #cell(actions)="{ rowData: app }">
+            <button
+              v-if="app.status !== 'approved'"
+              type="button"
+              class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] transition-all"
+              @click="applicationsStore.approveApplication(app.id)"
+            >
+              {{ t('taifa.dashboard.approveBtn') }}
+            </button>
+            <span v-else class="text-emerald-600 text-xs font-bold"> {{ t('taifa.dashboard.complete') }} </span>
+          </template>
+        </VaDataTable>
+      </div>
     </div>
   </div>
 </template>

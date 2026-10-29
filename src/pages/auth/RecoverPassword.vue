@@ -1,7 +1,7 @@
 <template>
   <VaForm ref="resetForm" @submit.prevent>
     <template v-if="step === 'email'">
-      <h1 class="font-semibold text-4xl mb-4">Forgot your password?</h1>
+      <h1 class="font-semibold text-2xl sm:text-4xl mb-4">Forgot your password?</h1>
       <p class="text-base mb-4 leading-5">
         Enter your email address and we'll send you a 6-digit code to reset your password.
       </p>
@@ -18,7 +18,7 @@
     </template>
 
     <template v-else-if="step === 'otp'">
-      <h1 class="font-semibold text-4xl mb-4">Check your email</h1>
+      <h1 class="font-semibold text-2xl sm:text-4xl mb-4">Check your email</h1>
       <p class="text-base mb-4 leading-5">
         If an account exists for <strong>{{ form.email }}</strong
         >, we've sent a 6-digit code. It expires in 10 minutes.
@@ -37,7 +37,7 @@
     </template>
 
     <template v-else-if="step === 'password'">
-      <h1 class="font-semibold text-4xl mb-4">Set a new password</h1>
+      <h1 class="font-semibold text-2xl sm:text-4xl mb-4">Set a new password</h1>
       <VaValue v-slot="isPasswordVisible" :default-value="false">
         <VaInput
           v-model="form.new_password"
@@ -81,7 +81,7 @@
     </template>
 
     <div v-else>
-      <h1 class="font-semibold text-4xl mb-4">Password updated</h1>
+      <h1 class="font-semibold text-2xl sm:text-4xl mb-4">Password updated</h1>
       <p class="text-base mb-4 leading-5">Your password has been reset. You can now log in with your new password.</p>
       <div class="flex justify-center mt-4">
         <VaButton :to="{ name: 'login' }" class="w-full">Back to login</VaButton>

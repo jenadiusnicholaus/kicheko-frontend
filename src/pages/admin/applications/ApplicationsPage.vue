@@ -313,221 +313,228 @@
     <div
       class="bg-white dark:bg-[#18181b] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden"
     >
-      <VaDataTable class="applications-table" :columns="appColumns" :items="filteredApplications" items-track-by="id">
-        <!-- Select-all checkbox (approved rows only) -->
-        <template #header(select)>
-          <input
-            type="checkbox"
-            class="accent-[#FEBF01] cursor-pointer"
-            :checked="allApprovedSelected"
-            :indeterminate.prop="someApprovedSelected && !allApprovedSelected"
-            :title="t('taifa.admin.bulkSelectAll')"
-            @change="toggleSelectAll"
-          />
-        </template>
+      <div class="overflow-x-auto">
+        <VaDataTable class="applications-table" :columns="appColumns" :items="filteredApplications" items-track-by="id">
+          <!-- Select-all checkbox (approved rows only) -->
+          <template #header(select)>
+            <input
+              type="checkbox"
+              class="accent-[#FEBF01] cursor-pointer"
+              :checked="allApprovedSelected"
+              :indeterminate.prop="someApprovedSelected && !allApprovedSelected"
+              :title="t('taifa.admin.bulkSelectAll')"
+              @change="toggleSelectAll"
+            />
+          </template>
 
-        <!-- Bulk select -->
-        <template #cell(select)="{ rowData: app }">
-          <input
-            type="checkbox"
-            class="accent-[#FEBF01] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-            :value="app.id"
-            :disabled="app.status !== 'approved'"
-            :checked="selectedIds.has(app.id)"
-            :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
-            @change="toggleSelect(app.id)"
-          />
-        </template>
+          <!-- Bulk select -->
+          <template #cell(select)="{ rowData: app }">
+            <input
+              type="checkbox"
+              class="accent-[#FEBF01] cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+              :value="app.id"
+              :disabled="app.status !== 'approved'"
+              :checked="selectedIds.has(app.id)"
+              :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
+              @change="toggleSelect(app.id)"
+            />
+          </template>
 
-        <!-- Name & Username -->
-        <template #cell(applicant)="{ rowData: app }">
-          <div class="flex items-center gap-3 py-1">
-            <div
-              class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 font-black flex items-center justify-center text-sm shadow-sm shrink-0"
-            >
-              {{ app.firstName.charAt(0) }}{{ app.lastName.charAt(0) }}
-            </div>
-            <div>
-              <div class="font-black text-gray-900 dark:text-white text-sm">{{ app.firstName }} {{ app.lastName }}</div>
-              <div class="text-[11px] text-gray-400">@{{ app.username }}</div>
-            </div>
-          </div>
-        </template>
-
-        <!-- University -->
-        <template #cell(university)="{ rowData: app }">
-          <div class="font-semibold text-gray-800 dark:text-gray-200 text-xs">
-            {{ app.university }}
-          </div>
-        </template>
-
-        <!-- Phone & Date -->
-        <template #cell(phone)="{ rowData: app }">
-          <div class="font-mono text-gray-800 dark:text-gray-200 text-xs">
-            {{ app.phone }}
-          </div>
-          <div class="text-[11px] text-gray-400">
-            {{ app.appliedAt }}
-          </div>
-        </template>
-
-        <!-- Fee Status -->
-        <template #cell(fee)="{ rowData: app }">
-          <div v-if="app.paymentStatus === 'paid'" class="flex flex-col">
-            <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
-              <span class="material-icons text-sm">check_circle</span>
-              <span>{{ t('taifa.admin.feePaidLabel', { amount: app.amountPaid.toLocaleString() }) }}</span>
-            </span>
-            <span class="text-[10px] text-gray-400 font-mono"> {{ app.paymentMethod }} • {{ app.paymentRef }} </span>
-          </div>
-          <div v-else-if="app.paymentStatus === 'underpaid'" class="flex flex-col">
-            <span class="inline-flex items-center gap-1 text-red-600 dark:text-red-400 font-bold text-xs">
-              <span class="material-icons text-sm">error</span>
-              <span>{{
-                t('taifa.admin.feeUnderpaidLabel', {
-                  amount: app.amountPaid.toLocaleString(),
-                  fee: app.feeAmount.toLocaleString(),
-                })
-              }}</span>
-            </span>
-            <span class="text-[10px] text-gray-400 font-mono"> {{ app.paymentMethod }} • {{ app.paymentRef }} </span>
-          </div>
-          <div v-else-if="app.paymentStatus === 'processing'" class="flex flex-col">
-            <span class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs">
-              <span class="material-icons text-sm animate-spin">sync</span>
-              <span>{{ t('taifa.admin.feeProcessingLabel') }}</span>
-            </span>
-            <span class="text-[10px] text-gray-400 font-mono">{{ app.paymentRef }}</span>
-          </div>
-          <div v-else class="flex flex-col">
-            <span class="inline-flex items-center gap-1 text-gray-500 dark:text-gray-400 font-bold text-xs">
-              <span class="material-icons text-sm">schedule</span>
-              <span>{{ t('taifa.admin.feePendingLabel') }}</span>
-            </span>
-            <span class="text-[10px] text-gray-400">TSh {{ app.feeAmount.toLocaleString() }}</span>
-          </div>
-        </template>
-
-        <!-- Application Status -->
-        <template #cell(status)="{ rowData: app }">
-          <span
-            v-if="app.status === 'approved'"
-            class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-bold text-[11px] inline-flex items-center gap-1"
-          >
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            {{ t('taifa.dashboard.statusApproved') }}
-          </span>
-          <span
-            v-else-if="app.status === 'pending' || app.status === 'paid_pending_review'"
-            class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 font-bold text-[11px] inline-flex items-center gap-1"
-          >
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-            {{ t('taifa.admin.statusPendingAdmin') }}
-          </span>
-          <span
-            v-else-if="app.status === 'pending_payment'"
-            class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 font-bold text-[11px]"
-          >
-            {{ t('taifa.admin.statusPendingFee') }}
-          </span>
-          <span
-            v-else-if="app.status === 'rejected'"
-            class="px-2.5 py-1 rounded-full bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold text-[11px]"
-          >
-            {{ t('taifa.admin.statusRejected') }}
-          </span>
-        </template>
-
-        <!-- Audition Level + Votes -->
-        <template #cell(level)="{ rowData: app }">
-          <div class="flex flex-col items-start gap-1.5">
-            <div class="flex items-center gap-2">
-              <select
-                :value="app.auditionLevel"
-                :disabled="levelUpdating === app.id || app.status !== 'approved'"
-                :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
-                class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] disabled:opacity-40 disabled:cursor-not-allowed"
-                @change="changeLevel(app, ($event.target as HTMLSelectElement).value, $event)"
+          <!-- Name & Username -->
+          <template #cell(applicant)="{ rowData: app }">
+            <div class="flex items-center gap-3 py-1">
+              <div
+                class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 font-black flex items-center justify-center text-sm shadow-sm shrink-0"
               >
-                <option v-for="n in 4" :key="n" :value="n">
-                  {{ t('taifa.admin.levelLabel', { n }) }}
-                </option>
-              </select>
-              <span
-                v-if="app.auditionLevel >= 2"
-                class="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
-              >
-                <span class="material-icons text-xs">how_to_vote</span>
-                {{ app.voteCount }}
+                {{ app.firstName.charAt(0) }}{{ app.lastName.charAt(0) }}
+              </div>
+              <div>
+                <div class="font-black text-gray-900 dark:text-white text-sm">
+                  {{ app.firstName }} {{ app.lastName }}
+                </div>
+                <div class="text-[11px] text-gray-400">@{{ app.username }}</div>
+              </div>
+            </div>
+          </template>
+
+          <!-- University -->
+          <template #cell(university)="{ rowData: app }">
+            <div class="font-semibold text-gray-800 dark:text-gray-200 text-xs">
+              {{ app.university }}
+            </div>
+          </template>
+
+          <!-- Phone & Date -->
+          <template #cell(phone)="{ rowData: app }">
+            <div class="font-mono text-gray-800 dark:text-gray-200 text-xs">
+              {{ app.phone }}
+            </div>
+            <div class="text-[11px] text-gray-400">
+              {{ app.appliedAt }}
+            </div>
+          </template>
+
+          <!-- Fee Status -->
+          <template #cell(fee)="{ rowData: app }">
+            <div v-if="app.paymentStatus === 'paid'" class="flex flex-col">
+              <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
+                <span class="material-icons text-sm">check_circle</span>
+                <span>{{ t('taifa.admin.feePaidLabel', { amount: app.amountPaid.toLocaleString() }) }}</span>
               </span>
-              <span
-                v-else
-                class="inline-flex items-center gap-0.5 text-[10px] font-bold text-gray-400"
-                :title="t('taifa.admin.notOnVoteList')"
-              >
-                <span class="material-icons text-xs">visibility_off</span>
-              </span>
+              <span class="text-[10px] text-gray-400 font-mono"> {{ app.paymentMethod }} • {{ app.paymentRef }} </span>
             </div>
+            <div v-else-if="app.paymentStatus === 'underpaid'" class="flex flex-col">
+              <span class="inline-flex items-center gap-1 text-red-600 dark:text-red-400 font-bold text-xs">
+                <span class="material-icons text-sm">error</span>
+                <span>{{
+                  t('taifa.admin.feeUnderpaidLabel', {
+                    amount: app.amountPaid.toLocaleString(),
+                    fee: app.feeAmount.toLocaleString(),
+                  })
+                }}</span>
+              </span>
+              <span class="text-[10px] text-gray-400 font-mono"> {{ app.paymentMethod }} • {{ app.paymentRef }} </span>
+            </div>
+            <div v-else-if="app.paymentStatus === 'processing'" class="flex flex-col">
+              <span class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs">
+                <span class="material-icons text-sm animate-spin">sync</span>
+                <span>{{ t('taifa.admin.feeProcessingLabel') }}</span>
+              </span>
+              <span class="text-[10px] text-gray-400 font-mono">{{ app.paymentRef }}</span>
+            </div>
+            <div v-else class="flex flex-col">
+              <span class="inline-flex items-center gap-1 text-gray-500 dark:text-gray-400 font-bold text-xs">
+                <span class="material-icons text-sm">schedule</span>
+                <span>{{ t('taifa.admin.feePendingLabel') }}</span>
+              </span>
+              <span class="text-[10px] text-gray-400">TSh {{ app.feeAmount.toLocaleString() }}</span>
+            </div>
+          </template>
+
+          <!-- Application Status -->
+          <template #cell(status)="{ rowData: app }">
             <span
-              v-if="app.batchTitle"
-              class="block max-w-[12rem] truncate rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
-              :title="app.batchTitle"
+              v-if="app.status === 'approved'"
+              class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-bold text-[11px] inline-flex items-center gap-1"
             >
-              {{ app.batchTitle }}
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              {{ t('taifa.dashboard.statusApproved') }}
             </span>
-            <span v-else-if="app.auditionLevel >= 2" class="text-[10px] font-semibold text-gray-400 dark:text-gray-500">
-              {{ t('taifa.admin.batches.noBatchVoteList') }}
+            <span
+              v-else-if="app.status === 'pending' || app.status === 'paid_pending_review'"
+              class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-400 font-bold text-[11px] inline-flex items-center gap-1"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+              {{ t('taifa.admin.statusPendingAdmin') }}
             </span>
-          </div>
-        </template>
-
-        <!-- Actions -->
-        <template #cell(actions)="{ rowData: app }">
-          <div class="flex items-center justify-end gap-1.5 flex-wrap">
-            <!-- Approve Button -->
-            <button
-              v-if="app.status !== 'approved'"
-              type="button"
-              class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1 shadow-sm transition-all"
-              :title="t('taifa.admin.approveBtn')"
-              @click="confirmApp(app.id)"
+            <span
+              v-else-if="app.status === 'pending_payment'"
+              class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 font-bold text-[11px]"
             >
-              <span class="material-icons text-sm">verified</span>
-              <span>{{ t('taifa.admin.approveBtn') }}</span>
-            </button>
-
-            <!-- Reject Button -->
-            <button
-              v-if="app.status !== 'rejected'"
-              type="button"
-              class="px-2.5 py-1.5 rounded-xl border border-red-200 dark:border-red-900/60 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 text-xs font-bold transition-all"
-              :title="t('taifa.admin.rejectBtn')"
-              @click="rejectApp(app.id)"
+              {{ t('taifa.admin.statusPendingFee') }}
+            </span>
+            <span
+              v-else-if="app.status === 'rejected'"
+              class="px-2.5 py-1 rounded-full bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 font-bold text-[11px]"
             >
-              {{ t('taifa.admin.rejectBtn') }}
-            </button>
+              {{ t('taifa.admin.statusRejected') }}
+            </span>
+          </template>
 
-            <!-- Delete -->
-            <button
-              type="button"
-              class="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
-              :title="t('taifa.admin.deleteBtn')"
-              @click="deleteApp(app.id)"
-            >
-              <span class="material-icons text-base">delete_outline</span>
-            </button>
-          </div>
-        </template>
+          <!-- Audition Level + Votes -->
+          <template #cell(level)="{ rowData: app }">
+            <div class="flex flex-col items-start gap-1.5">
+              <div class="flex items-center gap-2">
+                <select
+                  :value="app.auditionLevel"
+                  :disabled="levelUpdating === app.id || app.status !== 'approved'"
+                  :title="app.status !== 'approved' ? t('taifa.admin.levelNeedsApproval') : ''"
+                  class="px-2 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-xs font-bold text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] disabled:opacity-40 disabled:cursor-not-allowed"
+                  @change="changeLevel(app, ($event.target as HTMLSelectElement).value, $event)"
+                >
+                  <option v-for="n in 4" :key="n" :value="n">
+                    {{ t('taifa.admin.levelLabel', { n }) }}
+                  </option>
+                </select>
+                <span
+                  v-if="app.auditionLevel >= 2"
+                  class="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
+                >
+                  <span class="material-icons text-xs">how_to_vote</span>
+                  {{ app.voteCount }}
+                </span>
+                <span
+                  v-else
+                  class="inline-flex items-center gap-0.5 text-[10px] font-bold text-gray-400"
+                  :title="t('taifa.admin.notOnVoteList')"
+                >
+                  <span class="material-icons text-xs">visibility_off</span>
+                </span>
+              </div>
+              <span
+                v-if="app.batchTitle"
+                class="block max-w-[12rem] truncate rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
+                :title="app.batchTitle"
+              >
+                {{ app.batchTitle }}
+              </span>
+              <span
+                v-else-if="app.auditionLevel >= 2"
+                class="text-[10px] font-semibold text-gray-400 dark:text-gray-500"
+              >
+                {{ t('taifa.admin.batches.noBatchVoteList') }}
+              </span>
+            </div>
+          </template>
 
-        <!-- Empty State -->
-        <template #no-data>
-          <div class="py-12 text-center text-gray-400">
-            <span class="material-icons text-4xl mb-2 text-gray-300">inbox</span>
-            <p class="font-bold text-sm">{{ t('taifa.admin.emptyTitle') }}</p>
-            <p class="text-xs text-gray-400">{{ t('taifa.admin.emptyDesc') }}</p>
-          </div>
-        </template>
-      </VaDataTable>
+          <!-- Actions -->
+          <template #cell(actions)="{ rowData: app }">
+            <div class="flex items-center justify-end gap-1.5 flex-wrap">
+              <!-- Approve Button -->
+              <button
+                v-if="app.status !== 'approved'"
+                type="button"
+                class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1 shadow-sm transition-all"
+                :title="t('taifa.admin.approveBtn')"
+                @click="confirmApp(app.id)"
+              >
+                <span class="material-icons text-sm">verified</span>
+                <span>{{ t('taifa.admin.approveBtn') }}</span>
+              </button>
+
+              <!-- Reject Button -->
+              <button
+                v-if="app.status !== 'rejected'"
+                type="button"
+                class="px-2.5 py-1.5 rounded-xl border border-red-200 dark:border-red-900/60 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 text-xs font-bold transition-all"
+                :title="t('taifa.admin.rejectBtn')"
+                @click="rejectApp(app.id)"
+              >
+                {{ t('taifa.admin.rejectBtn') }}
+              </button>
+
+              <!-- Delete -->
+              <button
+                type="button"
+                class="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                :title="t('taifa.admin.deleteBtn')"
+                @click="deleteApp(app.id)"
+              >
+                <span class="material-icons text-base">delete_outline</span>
+              </button>
+            </div>
+          </template>
+
+          <!-- Empty State -->
+          <template #no-data>
+            <div class="py-12 text-center text-gray-400">
+              <span class="material-icons text-4xl mb-2 text-gray-300">inbox</span>
+              <p class="font-bold text-sm">{{ t('taifa.admin.emptyTitle') }}</p>
+              <p class="text-xs text-gray-400">{{ t('taifa.admin.emptyDesc') }}</p>
+            </div>
+          </template>
+        </VaDataTable>
+      </div>
     </div>
   </div>
 </template>

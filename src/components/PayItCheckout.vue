@@ -212,7 +212,7 @@ onBeforeUnmount(() => {
         :class="embedded ? '' : 'max-w-md max-h-[92vh] animate-fade-in'"
       >
         <!-- Header -->
-        <div class="px-6 pt-6 pb-2 flex items-start justify-between gap-4">
+        <div class="px-4 sm:px-6 pt-5 sm:pt-6 pb-2 flex items-start justify-between gap-4">
           <div>
             <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight">
               {{ t('taifa.register.confirmTitle') }}
@@ -232,7 +232,7 @@ onBeforeUnmount(() => {
           </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto px-6 pt-3 pb-6 space-y-5">
+        <div class="flex-1 overflow-y-auto px-4 sm:px-6 pt-3 pb-6 space-y-5">
           <!-- Application summary -->
           <dl
             class="rounded-2xl border border-gray-200/80 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-800/40 divide-y divide-gray-100 dark:divide-zinc-800 overflow-hidden"
@@ -325,7 +325,7 @@ onBeforeUnmount(() => {
 
         <!-- Footer -->
         <footer
-          class="px-6 py-3.5 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-800/40 flex items-center justify-between gap-3 text-[11px] text-gray-400"
+          class="px-4 sm:px-6 py-3.5 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-800/40 flex items-center justify-between gap-3 text-[11px] text-gray-400"
         >
           <span class="flex items-center gap-1.5 min-w-0">
             <span class="material-icons text-sm shrink-0">verified_user</span>
@@ -352,7 +352,7 @@ onBeforeUnmount(() => {
       aria-modal="true"
     >
       <div
-        class="w-full max-w-sm bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-7 sm:p-8"
+        class="w-full max-w-sm max-h-[92vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-5 sm:p-8"
       >
         <PaymentWaitingPanel
           :phone="payerPhone"

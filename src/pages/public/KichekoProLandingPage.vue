@@ -6,7 +6,7 @@
         src="/image/KICHEKO PRO LOGO.png"
         :alt="t('taifa.pages.pro.logoAlt')"
         class="max-w-full mx-auto object-contain drop-shadow-sm hover:scale-102 transition-transform duration-300"
-        :class="applicationsStore.applicationsOpen ? 'w-48 sm:w-64' : 'w-28 sm:w-36'"
+        :class="applicationsStore.applicationsOpen ? 'w-48 sm:w-64' : 'w-40 sm:w-48'"
       />
     </div>
 
@@ -90,7 +90,7 @@
       <div v-else class="divide-y divide-gray-100 dark:divide-zinc-800">
         <section v-for="batch in applicationsStore.voteBatches" :key="batch.id">
           <header
-            class="flex items-center justify-between gap-3 border-b border-gray-100 bg-gray-50/60 px-6 py-3 dark:border-zinc-800 dark:bg-zinc-800/40 sm:px-10"
+            class="flex items-center justify-between gap-3 border-b border-gray-100 bg-gray-50/60 px-3 py-3 dark:border-zinc-800 dark:bg-zinc-800/40 sm:px-10"
           >
             <div class="flex min-w-0 items-center gap-2.5">
               <span class="h-4 w-1 shrink-0 rounded-full bg-[#FEBF01]"></span>
@@ -107,10 +107,10 @@
           <table class="w-full table-fixed text-left">
             <thead>
               <tr class="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                <th scope="col" class="w-14 py-2 pl-6 sm:w-20 sm:pl-10">#</th>
-                <th scope="col" class="py-2 pr-3">{{ t('taifa.home.colComedian') }}</th>
-                <th scope="col" class="w-20 py-2 pr-3 text-right">{{ t('taifa.home.colVotes') }}</th>
-                <th scope="col" class="w-32 py-2 pr-6 sm:w-40 sm:pr-10">
+                <th scope="col" class="w-8 py-2 pl-3 sm:w-20 sm:pl-10">#</th>
+                <th scope="col" class="py-2 pr-2 sm:pr-3">{{ t('taifa.home.colComedian') }}</th>
+                <th scope="col" class="w-16 py-2 pr-2 text-right sm:w-20 sm:pr-3">{{ t('taifa.home.colVotes') }}</th>
+                <th scope="col" class="w-14 py-2 pr-3 min-[420px]:w-[7.5rem] sm:w-40 sm:pr-10">
                   <span class="sr-only">{{ t('taifa.home.vote') }}</span>
                 </th>
               </tr>
@@ -121,16 +121,16 @@
                 :key="applicant.id"
                 class="transition-colors hover:bg-gray-50/80 dark:hover:bg-zinc-800/40"
               >
-                <td class="py-3 pl-6 text-sm font-bold tabular-nums text-gray-500 sm:pl-10">
+                <td class="py-3 pl-3 text-sm font-bold tabular-nums text-gray-500 sm:pl-10">
                   {{ ranksFor(batch.applicants)[index] }}
                 </td>
-                <td class="py-3 pr-3">
+                <td class="py-3 pr-2 sm:pr-3">
                   <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">{{ applicant.name }}</p>
                   <p class="truncate text-xs text-gray-500 dark:text-gray-400">
                     {{ applicant.university || applicant.universityCode }}
                   </p>
                 </td>
-                <td class="py-3 pr-3 text-right tabular-nums">
+                <td class="py-3 pr-2 text-right tabular-nums sm:pr-3">
                   <p class="text-sm font-bold text-gray-900 dark:text-white">
                     {{ sharePercent(applicant.votes, batch.applicants) }}%
                   </p>
@@ -138,14 +138,15 @@
                     {{ applicant.votes.toLocaleString() }} {{ t('taifa.home.votes') }}
                   </p>
                 </td>
-                <td class="py-3 pr-6 text-right sm:pr-10">
+                <td class="py-3 pr-3 text-right sm:pr-10">
                   <button
                     type="button"
-                    class="inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-lg border border-[#1B2A4A]/15 px-3 text-xs font-semibold text-[#1B2A4A] transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95 dark:border-white/15 dark:text-white sm:px-4"
+                    class="inline-flex h-9 items-center gap-1 sm:gap-1.5 whitespace-nowrap rounded-lg border border-[#1B2A4A]/15 px-2 text-xs font-semibold text-[#1B2A4A] transition-all hover:border-[#FEBF01] hover:bg-[#FEBF01] hover:text-gray-950 active:scale-95 dark:border-white/15 dark:text-white sm:px-4"
+                    :aria-label="t('taifa.home.vote')"
                     @click="openVoteModal(applicant)"
                   >
                     <span class="material-icons text-base">how_to_vote</span>
-                    <span>{{ t('taifa.home.vote') }}</span>
+                    <span class="hidden min-[420px]:inline">{{ t('taifa.home.vote') }}</span>
                   </button>
                 </td>
               </tr>
@@ -156,7 +157,7 @@
 
       <!-- Footer -->
       <footer
-        class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900 px-6 sm:px-10 py-4"
+        class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900 px-3 sm:px-10 py-4"
       >
         <p class="text-[11px] text-gray-500 dark:text-gray-400">
           {{ t('taifa.home.voteFooter', { fee: applicationsStore.voteFee.toLocaleString() }) }}
@@ -174,7 +175,9 @@
       class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
       @click.self="closeVoteModal"
     >
-      <div class="w-full max-w-sm bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-6 text-left">
+      <div
+        class="w-full max-w-sm max-h-[92vh] overflow-y-auto bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-5 sm:p-6 text-left"
+      >
         <div class="flex items-start gap-3 mb-5">
           <div class="w-10 h-10 rounded-2xl bg-[#FEBF01] text-gray-950 flex items-center justify-center shrink-0">
             <span class="material-icons">how_to_vote</span>
