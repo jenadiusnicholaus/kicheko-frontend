@@ -1,5 +1,6 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useForm, useToast } from 'vuestic-ui'
 import { useAuthStore } from '../../../stores/auth-store'
 import { useAuth } from '../../../composables/useAuth'
@@ -18,6 +19,7 @@ export const useLogin = () => {
   const { push } = useRouter()
   const store = useAuthStore()
   const { postAuthTarget } = useAuth()
+  const { t } = useI18n()
 
   const submit = async () => {
     if (!validate() || isSubmitting.value) return
@@ -26,11 +28,11 @@ export const useLogin = () => {
     isSubmitting.value = true
     try {
       await store.login({ username: form.username, password: form.password })
-      toast({ message: 'Welcome back to Kicheko!', color: 'success' })
+      toast({ message: t('auth.loginPage.welcomeToast'), color: 'success' })
       push(postAuthTarget.value)
     } catch (e) {
       fieldErrors.value = isApiError(e) ? e.fieldErrors : {}
-      const msg = isApiError(e) ? e.detail : 'Login failed. Please check your credentials.'
+      const msg = isApiError(e) ? e.detail : t('auth.loginPage.failed')
       errorMessage.value = msg
       toast({ message: msg, color: 'danger' })
     } finally {

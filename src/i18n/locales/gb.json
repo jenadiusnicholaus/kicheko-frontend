@@ -15,7 +15,80 @@
     "sign_up": "Sign Up",
     "keep_logged_in": "Keep me logged in",
     "termsOfUse": "Terms of Use.",
-    "reset_password": "Reset password"
+    "reset_password": "Reset password",
+    "layout": {
+      "tagline": "Tanzania's Comedy Video Platform",
+      "backToVideos": "Back to Videos"
+    },
+    "loginPage": {
+      "title": "Log in to Kicheko",
+      "noAccount": "Don't have an account yet?",
+      "signUpLink": "Sign up",
+      "usernameLabel": "Email or phone number",
+      "usernamePlaceholder": "email{'@'}example.com or +255...",
+      "passwordLabel": "Password",
+      "rememberDevice": "Remember this device",
+      "forgotPassword": "Forgot your password?",
+      "submit": "Log in",
+      "welcomeToast": "Welcome back to Kicheko!",
+      "failed": "Login failed. Please check your credentials."
+    },
+    "signupPage": {
+      "title": "Sign up for Kicheko",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in here",
+      "nameLabel": "Your full or stage name",
+      "namePlaceholder": "e.g. Joti Mchekeshaji",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you{'@'}example.com",
+      "passwordLabel": "Password",
+      "passwordHint": "Requires 8+ characters, a number, and a special character.",
+      "confirmLabel": "Confirm password",
+      "confirmRequired": "Please confirm your password",
+      "passwordsMismatch": "Passwords don't match",
+      "acceptTerms": "I agree to the Terms of Service and Privacy Policy",
+      "acceptTermsRequired": "You must accept the terms and conditions",
+      "submit": "Sign up",
+      "welcomeToast": "Welcome to Kicheko! Your account is ready.",
+      "failed": "Sign up failed. Please check your information.",
+      "passwordRequired": "Password field is required",
+      "passwordMinLength": "Password must be at least 8 characters long",
+      "passwordLetter": "Password must contain at least one letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordSpecial": "Password must contain at least one special character"
+    },
+    "passwordReset": {
+      "title": "Forgot your password?",
+      "intro": "Enter your email address and we'll send you a 6-digit code to reset your password.",
+      "emailLabel": "Enter your email",
+      "sendCode": "Send code",
+      "goBack": "Go back",
+      "checkEmail": "Check your email",
+      "codeSent": "If an account exists for {email}, we've sent a 6-digit code. It expires in 10 minutes.",
+      "otpLabel": "6-digit code",
+      "otpInvalid": "Enter the 6-digit code",
+      "verifyCode": "Verify code",
+      "differentEmail": "Use a different email",
+      "newPasswordTitle": "Set a new password",
+      "newPasswordLabel": "New password",
+      "repeatLabel": "Repeat new password",
+      "repeatRequired": "Repeat Password field is required",
+      "passwordsDontMatch": "Passwords don't match",
+      "submit": "Reset password",
+      "doneTitle": "Password updated",
+      "doneText": "Your password has been reset. You can now log in with your new password.",
+      "backToLogin": "Back to login",
+      "genericError": "Something went wrong. Please try again."
+    },
+    "orContinueWith": "Or continue with",
+    "google": {
+      "welcomeToast": "Welcome to Kicheko!",
+      "failed": "Google sign-in failed. Please try again."
+    }
+  },
+  "validators": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address"
   },
   "typography": {
     "primary": "Primary text styles",
@@ -538,7 +611,8 @@
       "hoursAgo": "{n}h ago",
       "daysAgo": "{n}d ago",
       "loginToComment": "Log in to comment",
-      "loginToCommentDesc": "You need to log in to post a comment."
+      "loginToCommentDesc": "You need to log in to post a comment.",
+      "copyLink": "Copy link"
     },
     "admin": {
       "title": "Main Management Studio",

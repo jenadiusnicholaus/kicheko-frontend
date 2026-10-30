@@ -32,6 +32,10 @@ export const useAuthStore = defineStore('auth', {
       this.setSession(await authApi.register(payload))
     },
 
+    async googleLogin(credential: string) {
+      this.setSession(await authApi.googleLogin(credential))
+    },
+
     async fetchMe() {
       try {
         this.setUser(normalizeUser(await authApi.me()))

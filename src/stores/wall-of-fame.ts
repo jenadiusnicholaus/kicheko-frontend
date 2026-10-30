@@ -84,6 +84,16 @@ export const useWallOfFameStore = defineStore('wallOfFame', {
       return this.fetchArticles()
     },
 
+    /** Anonymous-friendly like — updates the count from the server response. */
+    async likeArticle(article: WallOfFameArticle) {
+      try {
+        const { data } = await http.post(`/wall-of-fame/${article.id}/like/`)
+        if (typeof data?.likes === 'number') article.likes = data.likes
+      } catch {
+        /* like endpoint optional — the local count still applies */
+      }
+    },
+
     async createArticle(item: Omit<WallOfFameArticle, 'id'>, imageFile?: File) {
       const fd = new FormData()
       fd.append('title', item.title)

@@ -14,6 +14,8 @@ const { auth } = apiConfig.endpoints
 export const authApi = {
   register: (payload: RegisterPayload) => api.post<AuthSession>(auth.register, payload),
 
+  googleLogin: (credential: string) => api.post<AuthSession>(auth.google, { credential }),
+
   login: (payload: LoginPayload) => api.post<AuthSession>(auth.token, payload),
 
   requestPasswordReset: (email: string) => api.post<{ detail: string }>(auth.passwordReset, { email }),

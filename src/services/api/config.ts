@@ -13,6 +13,7 @@ export const apiConfig = {
   endpoints: {
     auth: {
       register: env.VITE_API_AUTH_REGISTER,
+      google: env.VITE_API_AUTH_GOOGLE,
       token: env.VITE_API_AUTH_TOKEN,
       tokenRefresh: env.VITE_API_AUTH_TOKEN_REFRESH,
       tokenVerify: env.VITE_API_AUTH_TOKEN_VERIFY,

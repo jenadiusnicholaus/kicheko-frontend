@@ -1,4 +1,5 @@
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useForm, useToast } from 'vuestic-ui'
 import { authApi, isApiError } from '../../../services/api'
 
@@ -14,6 +15,7 @@ export const usePasswordReset = () => {
 
   const { validate } = useForm('resetForm')
   const { init: toast } = useToast()
+  const { t } = useI18n()
 
   const run = async (action: () => Promise<unknown>, next: ResetStep) => {
     if (!validate() || isSubmitting.value) return
@@ -24,7 +26,7 @@ export const usePasswordReset = () => {
       step.value = next
     } catch (e) {
       fieldErrors.value = isApiError(e) ? e.fieldErrors : {}
-      toast({ message: isApiError(e) ? e.detail : 'Something went wrong. Please try again.', color: 'danger' })
+      toast({ message: isApiError(e) ? e.detail : t('auth.passwordReset.genericError'), color: 'danger' })
     } finally {
       isSubmitting.value = false
     }

@@ -1,5 +1,6 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useForm, useToast } from 'vuestic-ui'
 import { useAuthStore } from '../../../stores/auth-store'
 import { useAuth } from '../../../composables/useAuth'
@@ -22,6 +23,7 @@ export const useSignup = () => {
   const { push } = useRouter()
   const store = useAuthStore()
   const { postAuthTarget } = useAuth()
+  const { t } = useI18n()
 
   const submit = async () => {
     if (!validate() || isSubmitting.value) return
@@ -30,11 +32,11 @@ export const useSignup = () => {
     isSubmitting.value = true
     try {
       await store.register({ ...form })
-      toast({ message: 'Karibu Kicheko! Your account is ready.', color: 'success' })
+      toast({ message: t('auth.signupPage.welcomeToast'), color: 'success' })
       push(postAuthTarget.value)
     } catch (e) {
       fieldErrors.value = isApiError(e) ? e.fieldErrors : {}
-      const msg = isApiError(e) ? e.detail : 'Sign up failed. Please check your information.'
+      const msg = isApiError(e) ? e.detail : t('auth.signupPage.failed')
       errorMessage.value = msg
       toast({ message: msg, color: 'danger' })
     } finally {
@@ -43,11 +45,11 @@ export const useSignup = () => {
   }
 
   const passwordRules: ((v: string) => boolean | string)[] = [
-    (v) => !!v || 'Password field is required',
-    (v) => (v && v.length >= 8) || 'Password must be at least 8 characters long',
-    (v) => (v && /[A-Za-z]/.test(v)) || 'Password must contain at least one letter',
-    (v) => (v && /\d/.test(v)) || 'Password must contain at least one number',
-    (v) => (v && /[!@#$%^&*(),.?":{}|<>]/.test(v)) || 'Password must contain at least one special character',
+    (v) => !!v || t('auth.signupPage.passwordRequired'),
+    (v) => (v && v.length >= 8) || t('auth.signupPage.passwordMinLength'),
+    (v) => (v && /[A-Za-z]/.test(v)) || t('auth.signupPage.passwordLetter'),
+    (v) => (v && /\d/.test(v)) || t('auth.signupPage.passwordNumber'),
+    (v) => (v && /[!@#$%^&*(),.?":{}|<>]/.test(v)) || t('auth.signupPage.passwordSpecial'),
   ]
 
   return { form, fieldErrors, errorMessage, isSubmitting, submit, passwordRules }

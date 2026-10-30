@@ -15,7 +15,80 @@
     "sign_up": "Jiandikishe",
     "keep_logged_in": "Niendelee kuwa nimeingia",
     "termsOfUse": "Masharti ya Matumizi.",
-    "reset_password": "Weka upya neno la siri"
+    "reset_password": "Weka upya neno la siri",
+    "layout": {
+      "tagline": "Jukwaa la Video za Vichekesho Tanzania",
+      "backToVideos": "Rudi kwenye video (Back to Videos)"
+    },
+    "loginPage": {
+      "title": "Ingia Kicheko",
+      "noAccount": "Huna akaunti bado?",
+      "signUpLink": "Jisajili",
+      "usernameLabel": "Barua pepe au Namba ya simu",
+      "usernamePlaceholder": "email{'@'}example.com au +255...",
+      "passwordLabel": "Nenosiri",
+      "rememberDevice": "Nikumbuke kifaa hiki",
+      "forgotPassword": "Umesahau nenosiri?",
+      "submit": "Ingia",
+      "welcomeToast": "Karibu tena Kicheko!",
+      "failed": "Kuingia kumeshindikana. Tafadhali angalia taarifa zako."
+    },
+    "signupPage": {
+      "title": "Jisajili Kicheko",
+      "haveAccount": "Tayari una akaunti?",
+      "loginLink": "Ingia hapa",
+      "nameLabel": "Jina lako kamili au la Sanaa",
+      "namePlaceholder": "e.g. Joti Mchekeshaji",
+      "emailLabel": "Barua pepe",
+      "emailPlaceholder": "wewe{'@'}example.com",
+      "passwordLabel": "Nenosiri",
+      "passwordHint": "Inatakiwa herufi 8+, namba, na alama maalum.",
+      "confirmLabel": "Thibitisha Nenosiri",
+      "confirmRequired": "Tafadhali thibitisha nenosiri",
+      "passwordsMismatch": "Nenosiri halilingani",
+      "acceptTerms": "Ninakubali Vigezo vya Huduma na Sera ya Faragha",
+      "acceptTermsRequired": "Lazima ukubali vigezo na masharti",
+      "submit": "Jisajili",
+      "welcomeToast": "Karibu Kicheko! Akaunti yako iko tayari.",
+      "failed": "Kujisajili kumeshindikana. Tafadhali angalia taarifa zako.",
+      "passwordRequired": "Tafadhali ingiza nenosiri",
+      "passwordMinLength": "Nenosiri liwe na angalau herufi 8",
+      "passwordLetter": "Nenosiri liwe na angalau herufi moja",
+      "passwordNumber": "Nenosiri liwe na angalau namba moja",
+      "passwordSpecial": "Nenosiri liwe na angalau alama moja maalum"
+    },
+    "passwordReset": {
+      "title": "Umesahau nenosiri?",
+      "intro": "Ingiza barua pepe yako na tutakutumia msimbo wa tarakimu 6 wa kuweka upya nenosiri lako.",
+      "emailLabel": "Ingiza barua pepe yako",
+      "sendCode": "Tuma msimbo",
+      "goBack": "Rudi nyuma",
+      "checkEmail": "Angalia barua pepe yako",
+      "codeSent": "Ikiwa akaunti ya {email} ipo, tumetuma msimbo wa tarakimu 6. Unaisha baada ya dakika 10.",
+      "otpLabel": "Msimbo wa tarakimu 6",
+      "otpInvalid": "Ingiza msimbo wa tarakimu 6",
+      "verifyCode": "Thibitisha msimbo",
+      "differentEmail": "Tumia barua pepe nyingine",
+      "newPasswordTitle": "Weka nenosiri jipya",
+      "newPasswordLabel": "Nenosiri jipya",
+      "repeatLabel": "Rudia nenosiri jipya",
+      "repeatRequired": "Tafadhali rudia nenosiri",
+      "passwordsDontMatch": "Nenosiri halilingani",
+      "submit": "Weka upya nenosiri",
+      "doneTitle": "Nenosiri limesasishwa",
+      "doneText": "Nenosiri lako limewekwa upya. Sasa unaweza kuingia kwa nenosiri jipya.",
+      "backToLogin": "Rudi kuingia",
+      "genericError": "Hitilafu imetokea. Tafadhali jaribu tena."
+    },
+    "orContinueWith": "Au endelea kwa",
+    "google": {
+      "welcomeToast": "Karibu Kicheko!",
+      "failed": "Kuingia kwa Google kimeshindwa. Jaribu tena."
+    }
+  },
+  "validators": {
+    "required": "Sehemu hii inahitajika",
+    "email": "Tafadhali ingiza barua pepe sahihi"
   },
   "typography": {
     "primary": "Mitindo ya maandishi ya msingi",
@@ -430,7 +503,8 @@
       "hoursAgo": "saa {n} zilizopita",
       "daysAgo": "siku {n} zilizopita",
       "loginToComment": "Ingia kutoa maoni",
-      "loginToCommentDesc": "Lazima uingie kwanza ili kutoa maoni."
+      "loginToCommentDesc": "Lazima uingie kwanza ili kutoa maoni.",
+      "copyLink": "Nakili kiungo"
     },
     "admin": {
       "title": "Dashibodi Kuu ya Usimamizi",

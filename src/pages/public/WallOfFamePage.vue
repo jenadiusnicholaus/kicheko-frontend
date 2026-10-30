@@ -1,5 +1,8 @@
 <template>
   <div class="flex-1 flex flex-col min-h-full bg-gray-50 dark:bg-zinc-950">
+    <!-- Closes an open share menu when tapping anywhere -->
+    <div v-if="shareMenuFor" class="fixed inset-0 z-10" @click="shareMenuFor = null"></div>
+
     <!-- Centered logo + search -->
     <div class="flex flex-col items-center gap-4 px-4 pt-6 pb-2">
       <RouterLink to="/wall-of-fame" class="inline-flex items-center justify-center" @click="selectedArticle = null">
@@ -66,7 +69,15 @@
 
         <!-- Hero -->
         <div class="relative rounded-2xl overflow-hidden shadow-lg">
-          <img :src="selectedArticle.image" :alt="selectedArticle.title" class="w-full aspect-[2/1] object-cover" />
+          <img
+            v-if="selectedArticle.image"
+            :src="selectedArticle.image"
+            :alt="selectedArticle.title"
+            class="w-full aspect-[2/1] object-cover"
+          />
+          <div v-else class="w-full aspect-[2/1] bg-[#183153] flex items-center justify-center">
+            <img src="/image/WALL OF FAME WHITE LOGO.png" alt="" class="w-40 object-contain opacity-60" />
+          </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
           <div class="absolute top-4 left-4">
             <span
@@ -117,14 +128,45 @@
               <span class="material-icons text-lg">chat_bubble_outline</span>
               {{ selectedArticle.commentsCount }}
             </span>
-            <button
-              type="button"
-              class="flex items-center gap-1.5 hover:text-gray-900 dark:hover:text-white"
-              @click="shareArticle(selectedArticle)"
-            >
-              <span class="material-icons text-lg">share</span>
-              {{ t('taifa.wall.share') }}
-            </button>
+            <div class="relative">
+              <button
+                type="button"
+                class="flex items-center gap-1.5 hover:text-gray-900 dark:hover:text-white"
+                @click.stop="toggleShareMenu(`detail-${selectedArticle.id}`)"
+              >
+                <span class="material-icons text-lg">share</span>
+                {{ t('taifa.wall.share') }}
+              </button>
+              <div
+                v-if="shareMenuFor === `detail-${selectedArticle.id}`"
+                class="absolute bottom-full right-0 z-20 mb-2 w-44 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900"
+              >
+                <a
+                  v-for="s in shareTargets(selectedArticle)"
+                  :key="s.name"
+                  :href="s.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-zinc-800"
+                  @click="shareMenuFor = null"
+                >
+                  <span class="flex h-6 w-6 items-center justify-center rounded-full text-white" :class="s.color">
+                    <span class="material-icons text-xs">{{ s.icon }}</span>
+                  </span>
+                  {{ s.name }}
+                </a>
+                <button
+                  type="button"
+                  class="flex w-full items-center gap-2.5 px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-zinc-800"
+                  @click.stop="copyLink(selectedArticle)"
+                >
+                  <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 text-white">
+                    <span class="material-icons text-xs">link</span>
+                  </span>
+                  {{ t('taifa.wall.copyLink') }}
+                </button>
+              </div>
+            </div>
             <span class="flex-1"></span>
             <button type="button" class="flex items-center gap-1.5 hover:text-gray-900 dark:hover:text-white">
               <span class="material-icons text-lg">bookmark_border</span>
@@ -320,10 +362,17 @@
             @click="openArticle(article)"
           >
             <img
+              v-if="article.image"
               :src="article.image"
               :alt="article.title"
               class="w-28 sm:w-44 aspect-[4/3] rounded-xl object-cover shrink-0"
             />
+            <div
+              v-else
+              class="w-28 sm:w-44 aspect-[4/3] rounded-xl shrink-0 bg-[#183153] flex items-center justify-center"
+            >
+              <img src="/image/WALL OF FAME WHITE LOGO.png" alt="" class="w-1/2 object-contain opacity-60" />
+            </div>
             <div class="flex-1 min-w-0 py-1">
               <span
                 class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wide text-white mb-1.5"
@@ -353,9 +402,44 @@
                   <span class="material-icons text-sm">chat_bubble_outline</span>
                   {{ article.commentsCount }}
                 </span>
-                <span class="flex items-center gap-1">
-                  <span class="material-icons text-sm">share</span>
-                  {{ t('taifa.wall.share') }}
+                <span class="relative">
+                  <button
+                    type="button"
+                    class="flex items-center gap-1 transition-colors hover:text-gray-700 dark:hover:text-gray-200"
+                    @click.stop="toggleShareMenu(`feed-${article.id}`)"
+                  >
+                    <span class="material-icons text-sm">share</span>
+                    {{ t('taifa.wall.share') }}
+                  </button>
+                  <span
+                    v-if="shareMenuFor === `feed-${article.id}`"
+                    class="absolute bottom-full right-0 z-20 mb-2 w-44 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900"
+                  >
+                    <a
+                      v-for="s in shareTargets(article)"
+                      :key="s.name"
+                      :href="s.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-zinc-800"
+                      @click="shareMenuFor = null"
+                    >
+                      <span class="flex h-6 w-6 items-center justify-center rounded-full text-white" :class="s.color">
+                        <span class="material-icons text-xs">{{ s.icon }}</span>
+                      </span>
+                      {{ s.name }}
+                    </a>
+                    <button
+                      type="button"
+                      class="flex w-full items-center gap-2.5 px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-zinc-800"
+                      @click.stop="copyLink(article)"
+                    >
+                      <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 text-white">
+                        <span class="material-icons text-xs">link</span>
+                      </span>
+                      {{ t('taifa.wall.copyLink') }}
+                    </button>
+                  </span>
                 </span>
               </div>
             </div>
@@ -384,7 +468,15 @@
                 >
                   {{ i + 1 }}
                 </span>
-                <img :src="article.image" :alt="article.title" class="w-12 h-12 rounded-lg object-cover shrink-0" />
+                <img
+                  v-if="article.image"
+                  :src="article.image"
+                  :alt="article.title"
+                  class="w-12 h-12 rounded-lg object-cover shrink-0"
+                />
+                <div v-else class="w-12 h-12 rounded-lg shrink-0 bg-[#183153] flex items-center justify-center">
+                  <img src="/image/WALL OF FAME WHITE LOGO.png" alt="" class="w-6 object-contain opacity-60" />
+                </div>
                 <div class="min-w-0">
                   <p
                     class="text-xs font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug group-hover:text-amber-600"
@@ -431,9 +523,12 @@ const commentText = ref('')
 const commentError = ref('')
 const isPostingComment = ref(false)
 
-onMounted(() => {
-  fameStore.fetchArticles()
+onMounted(async () => {
+  await fameStore.fetchArticles()
   commentName.value = authStore.user?.display_name || authStore.user?.username || ''
+  const articleId = route.query.article as string
+  const linked = articleId ? fameStore.articles.find((a) => a.id === articleId) : null
+  if (linked) openArticle(linked)
 })
 
 const comments = computed<WallComment[]>(() =>
@@ -533,15 +628,45 @@ const toggleLike = (article: WallOfFameArticle) => {
   } else {
     likedIds.value.add(article.id)
     article.likes += 1
+    fameStore.likeArticle(article)
   }
 }
 
-const shareArticle = (article: WallOfFameArticle) => {
-  const url = window.location.href
-  if (navigator.share) {
-    navigator.share({ title: article.title, text: article.excerpt, url }).catch(() => {})
-  } else {
-    navigator.clipboard?.writeText(`${article.title} — ${url}`).catch(() => {})
+const shareMenuFor = ref<string | null>(null)
+
+const shareUrl = (article: WallOfFameArticle) => `${window.location.origin}/wall-of-fame?article=${article.id}`
+
+const shareTargets = (article: WallOfFameArticle) => {
+  const url = encodeURIComponent(shareUrl(article))
+  const text = encodeURIComponent(`${article.title} — ${t('taifa.wall.title')}`)
+  return [
+    { name: 'WhatsApp', icon: 'phone', color: 'bg-[#25D366]', url: `https://wa.me/?text=${text}%20${url}` },
+    {
+      name: 'X',
+      icon: 'alternate_email',
+      color: 'bg-black dark:bg-zinc-600',
+      url: `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
+    },
+    {
+      name: 'Facebook',
+      icon: 'facebook',
+      color: 'bg-[#1877F2]',
+      url: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    },
+    { name: 'Telegram', icon: 'send', color: 'bg-[#229ED9]', url: `https://t.me/share/url?url=${url}&text=${text}` },
+  ]
+}
+
+const toggleShareMenu = (key: string) => {
+  shareMenuFor.value = shareMenuFor.value === key ? null : key
+}
+
+const copyLink = async (article: WallOfFameArticle) => {
+  try {
+    await navigator.clipboard?.writeText(shareUrl(article))
+  } catch {
+    /* clipboard unavailable — link still selectable in address bar */
   }
+  shareMenuFor.value = null
 }
 </script>
