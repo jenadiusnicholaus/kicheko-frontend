@@ -294,7 +294,7 @@
                       <button
                         type="button"
                         class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
-                        @click="deleteComment(c)"
+                        @click="askDeleteComment(c)"
                       >
                         <span class="material-icons text-sm">delete</span>
                         {{ t('taifa.wall.deleteComment') }}
@@ -332,6 +332,31 @@
                 <p v-else class="text-sm text-gray-700 dark:text-gray-300 mt-0.5 leading-relaxed break-words">
                   {{ c.text }}
                 </p>
+                <div
+                  v-if="confirmingDeleteId === c.id"
+                  class="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 dark:border-red-900 dark:bg-red-950/40"
+                >
+                  <span class="text-xs font-bold text-red-700 dark:text-red-300">
+                    {{ t('taifa.wall.deleteCommentConfirm') }}
+                  </span>
+                  <span class="flex-1"></span>
+                  <button
+                    type="button"
+                    :disabled="isDeletingComment"
+                    class="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-[11px] font-black text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+                    @click="deleteComment(c)"
+                  >
+                    <span v-if="isDeletingComment" class="material-icons text-xs animate-spin">sync</span>
+                    {{ t('taifa.wall.deleteComment') }}
+                  </button>
+                  <button
+                    type="button"
+                    class="rounded-lg border border-gray-200 px-3 py-1.5 text-[11px] font-bold text-gray-600 transition-colors hover:bg-gray-50 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-800"
+                    @click="confirmingDeleteId = null"
+                  >
+                    {{ t('taifa.wall.cancelEdit') }}
+                  </button>
+                </div>
                 <button
                   type="button"
                   class="mt-1 flex items-center gap-1 text-[11px] font-bold transition-colors"
@@ -565,13 +590,12 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { useModal, useToast } from 'vuestic-ui'
+import { useToast } from 'vuestic-ui'
 import { useWallOfFameStore, WALL_CATEGORIES, type WallOfFameArticle } from '../../stores/wall-of-fame'
 import { useWallCommentsStore, type WallComment } from '../../stores/wall-comments'
 import { useAuthStore } from '../../stores/auth-store'
 
 const { t } = useI18n()
-const { confirm } = useModal()
 const { init: notify } = useToast()
 const route = useRoute()
 const fameStore = useWallOfFameStore()
@@ -681,6 +705,8 @@ const editingCommentId = ref<string | number | null>(null)
 const editText = ref('')
 const editError = ref('')
 const isSavingEdit = ref(false)
+const confirmingDeleteId = ref<string | number | null>(null)
+const isDeletingComment = ref(false)
 
 const canEdit = (c: WallComment) =>
   authStore.isAuthenticated && c.userId !== null && c.userId === String(authStore.user?.id)
@@ -692,11 +718,13 @@ const closeMenus = () => {
 }
 
 const toggleCommentMenu = (id: string | number) => {
+  if (commentMenuFor.value !== id) confirmingDeleteId.value = null
   commentMenuFor.value = commentMenuFor.value === id ? null : id
 }
 
 const startEditComment = (c: WallComment) => {
   commentMenuFor.value = null
+  confirmingDeleteId.value = null
   editingCommentId.value = c.id
   editText.value = c.text
   editError.value = ''
@@ -724,18 +752,16 @@ const saveEditComment = async (c: WallComment) => {
   }
 }
 
-const deleteComment = async (c: WallComment) => {
+const askDeleteComment = (c: WallComment) => {
   commentMenuFor.value = null
+  editingCommentId.value = null
+  confirmingDeleteId.value = c.id
+}
+
+const deleteComment = async (c: WallComment) => {
   const article = selectedArticle.value
-  if (!article) return
-  const agreed = await confirm({
-    message: t('taifa.wall.deleteCommentConfirm'),
-    okText: t('taifa.wall.deleteComment'),
-    cancelText: t('taifa.wall.cancelEdit'),
-    size: 'small',
-    maxWidth: '380px',
-  })
-  if (!agreed) return
+  if (!article || isDeletingComment.value) return
+  isDeletingComment.value = true
   try {
     await commentsStore.deleteComment(article.id, c.id)
     article.commentsCount = Math.max(0, article.commentsCount - 1)
@@ -746,6 +772,9 @@ const deleteComment = async (c: WallComment) => {
       message: e?.response?.data?.detail || t('taifa.wall.commentDeleteFailed'),
       color: 'danger',
     })
+  } finally {
+    isDeletingComment.value = false
+    confirmingDeleteId.value = null
   }
 }
 
