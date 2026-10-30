@@ -41,15 +41,51 @@
             <span class="material-icons text-base">dashboard</span>
             <span class="hidden sm:inline">{{ t('taifa.layout.adminStudio') }}</span>
           </RouterLink>
-          <button
-            type="button"
-            class="px-2.5 sm:px-3 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1"
-            :title="t('taifa.layout.logout')"
-            @click="authStore.logout()"
-          >
-            <span class="material-icons text-base sm:hidden">logout</span>
-            <span class="hidden sm:inline">{{ t('taifa.layout.logout') }}</span>
-          </button>
+          <div class="relative">
+            <button
+              type="button"
+              class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-amber-400 text-gray-950 font-black text-sm flex items-center justify-center overflow-hidden ring-2 ring-white/30 hover:ring-white/60 transition-all cursor-pointer"
+              :title="userName"
+              :aria-label="userName"
+              aria-haspopup="menu"
+              :aria-expanded="userMenuOpen"
+              @click="userMenuOpen = !userMenuOpen"
+            >
+              <img
+                v-if="avatarUrl && !avatarFailed"
+                :src="avatarUrl"
+                :alt="userName"
+                referrerpolicy="no-referrer"
+                class="w-full h-full object-cover"
+                @error="avatarFailed = true"
+              />
+              <span v-else-if="userInitial">{{ userInitial }}</span>
+              <span v-else class="material-icons text-xl">person</span>
+            </button>
+
+            <div v-if="userMenuOpen" class="fixed inset-0 z-40" @click="userMenuOpen = false"></div>
+            <div
+              v-if="userMenuOpen"
+              role="menu"
+              class="absolute right-0 mt-2 w-60 max-w-[85vw] z-50 rounded-2xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
+            >
+              <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                <p class="text-sm font-bold text-slate-900 dark:text-white truncate">{{ userName }}</p>
+                <p v-if="authStore.user?.email" class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                  {{ authStore.user.email }}
+                </p>
+              </div>
+              <button
+                type="button"
+                role="menuitem"
+                class="w-full px-4 py-2.5 flex items-center gap-2 text-sm font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer"
+                @click="logout"
+              >
+                <span class="material-icons text-base">logout</span>
+                {{ t('taifa.layout.logout') }}
+              </button>
+            </div>
+          </div>
         </template>
         <template v-else>
           <RouterLink
@@ -149,13 +185,32 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth-store'
+import { resolveMediaUrl } from '../services/api/config'
 
 const route = useRoute()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
+
+const userMenuOpen = ref(false)
+const userName = computed(() => authStore.user?.display_name || authStore.user?.username || '')
+const userInitial = computed(() => userName.value.trim().charAt(0).toUpperCase())
+const avatarUrl = computed(() => resolveMediaUrl(authStore.user?.avatar))
+const avatarFailed = ref(false)
+watch(avatarUrl, () => (avatarFailed.value = false))
+
+watch(
+  () => route.fullPath,
+  () => (userMenuOpen.value = false),
+)
+
+const logout = () => {
+  userMenuOpen.value = false
+  authStore.logout()
+}
 
 const toggleLanguage = () => {
   locale.value = locale.value === 'sw' ? 'gb' : 'sw'

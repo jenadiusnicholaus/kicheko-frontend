@@ -1,7 +1,7 @@
 <template>
   <div class="flex-1 flex flex-col min-h-full bg-gray-50 dark:bg-zinc-950">
     <!-- Closes an open share menu when tapping anywhere -->
-    <div v-if="shareMenuFor" class="fixed inset-0 z-10" @click="shareMenuFor = null"></div>
+    <div v-if="shareMenuFor || commentMenuFor !== null" class="fixed inset-0 z-10" @click="closeMenus"></div>
 
     <!-- Centered logo + search -->
     <div class="flex flex-col items-center gap-4 px-4 pt-6 pb-2">
@@ -265,9 +265,73 @@
               <div class="flex-1 min-w-0">
                 <div class="flex items-baseline gap-2">
                   <span class="text-xs font-black text-gray-900 dark:text-white">{{ c.author }}</span>
-                  <span class="text-[10px] text-gray-400">{{ relativeTime(c.createdAt) }}</span>
+                  <span class="text-[10px] text-gray-400">
+                    {{ relativeTime(c.createdAt) }}
+                    <span v-if="c.editedAt" class="italic">{{ t('taifa.wall.edited') }}</span>
+                  </span>
+                  <span v-if="canDelete(c)" class="relative ml-auto">
+                    <button
+                      type="button"
+                      class="flex items-center p-0.5 -m-0.5 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                      :aria-label="t('taifa.wall.editComment')"
+                      @click="toggleCommentMenu(c.id)"
+                    >
+                      <span class="material-icons text-base">more_vert</span>
+                    </button>
+                    <span
+                      v-if="commentMenuFor === c.id"
+                      class="absolute top-full right-0 z-20 mt-1 w-28 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900"
+                    >
+                      <button
+                        v-if="canEdit(c)"
+                        type="button"
+                        class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-zinc-800"
+                        @click="startEditComment(c)"
+                      >
+                        <span class="material-icons text-sm">edit</span>
+                        {{ t('taifa.wall.editComment') }}
+                      </button>
+                      <button
+                        type="button"
+                        class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
+                        @click="deleteComment(c)"
+                      >
+                        <span class="material-icons text-sm">delete</span>
+                        {{ t('taifa.wall.deleteComment') }}
+                      </button>
+                    </span>
+                  </span>
                 </div>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mt-0.5 leading-relaxed break-words">{{ c.text }}</p>
+                <template v-if="editingCommentId === c.id">
+                  <textarea
+                    v-model="editText"
+                    rows="3"
+                    maxlength="500"
+                    class="mt-1 w-full px-3 py-2 rounded-xl bg-gray-100 dark:bg-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]/50 resize-none"
+                  ></textarea>
+                  <p v-if="editError" class="mt-1 text-xs font-semibold text-red-500">{{ editError }}</p>
+                  <div class="mt-1.5 flex items-center gap-2">
+                    <button
+                      type="button"
+                      :disabled="isSavingEdit || !editText.trim() || editText.trim() === c.text"
+                      class="px-3 py-1.5 rounded-lg bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 text-[11px] font-black transition-colors disabled:opacity-50"
+                      @click="saveEditComment(c)"
+                    >
+                      <span v-if="isSavingEdit" class="material-icons text-xs animate-spin align-middle">sync</span>
+                      {{ t('taifa.wall.saveComment') }}
+                    </button>
+                    <button
+                      type="button"
+                      class="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-zinc-700 text-[11px] font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                      @click="cancelEditComment"
+                    >
+                      {{ t('taifa.wall.cancelEdit') }}
+                    </button>
+                  </div>
+                </template>
+                <p v-else class="text-sm text-gray-700 dark:text-gray-300 mt-0.5 leading-relaxed break-words">
+                  {{ c.text }}
+                </p>
                 <button
                   type="button"
                   class="mt-1 flex items-center gap-1 text-[11px] font-bold transition-colors"
@@ -501,11 +565,14 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { useModal, useToast } from 'vuestic-ui'
 import { useWallOfFameStore, WALL_CATEGORIES, type WallOfFameArticle } from '../../stores/wall-of-fame'
 import { useWallCommentsStore, type WallComment } from '../../stores/wall-comments'
 import { useAuthStore } from '../../stores/auth-store'
 
 const { t } = useI18n()
+const { confirm } = useModal()
+const { init: notify } = useToast()
 const route = useRoute()
 const fameStore = useWallOfFameStore()
 const commentsStore = useWallCommentsStore()
@@ -607,6 +674,79 @@ const likeComment = (c: WallComment) => {
   if (likedCommentIds.value.has(c.id)) return
   likedCommentIds.value.add(c.id)
   commentsStore.likeComment(selectedArticle.value!.id, c.id)
+}
+
+const commentMenuFor = ref<string | number | null>(null)
+const editingCommentId = ref<string | number | null>(null)
+const editText = ref('')
+const editError = ref('')
+const isSavingEdit = ref(false)
+
+const canEdit = (c: WallComment) =>
+  authStore.isAuthenticated && c.userId !== null && c.userId === String(authStore.user?.id)
+const canDelete = (c: WallComment) => canEdit(c) || authStore.isAdmin
+
+const closeMenus = () => {
+  shareMenuFor.value = null
+  commentMenuFor.value = null
+}
+
+const toggleCommentMenu = (id: string | number) => {
+  commentMenuFor.value = commentMenuFor.value === id ? null : id
+}
+
+const startEditComment = (c: WallComment) => {
+  commentMenuFor.value = null
+  editingCommentId.value = c.id
+  editText.value = c.text
+  editError.value = ''
+}
+
+const cancelEditComment = () => {
+  editingCommentId.value = null
+  editText.value = ''
+  editError.value = ''
+}
+
+const saveEditComment = async (c: WallComment) => {
+  const article = selectedArticle.value
+  const text = editText.value.trim()
+  if (!article || !text || text === c.text || isSavingEdit.value) return
+  isSavingEdit.value = true
+  editError.value = ''
+  try {
+    await commentsStore.updateComment(article.id, c.id, text)
+    cancelEditComment()
+  } catch (e: any) {
+    editError.value = e?.response?.data?.text?.[0] || e?.response?.data?.detail || t('taifa.wall.commentUpdateFailed')
+  } finally {
+    isSavingEdit.value = false
+  }
+}
+
+const deleteComment = async (c: WallComment) => {
+  commentMenuFor.value = null
+  const article = selectedArticle.value
+  if (!article) return
+  const agreed = await confirm({
+    message: t('taifa.wall.deleteCommentConfirm'),
+    okText: t('taifa.wall.deleteComment'),
+    cancelText: t('taifa.wall.cancelEdit'),
+    size: 'small',
+    maxWidth: '380px',
+  })
+  if (!agreed) return
+  try {
+    await commentsStore.deleteComment(article.id, c.id)
+    article.commentsCount = Math.max(0, article.commentsCount - 1)
+    const inFeed = fameStore.articles.find((a) => a.id === article.id)
+    if (inFeed && inFeed !== article) inFeed.commentsCount = article.commentsCount
+  } catch (e: any) {
+    notify({
+      message: e?.response?.data?.detail || t('taifa.wall.commentDeleteFailed'),
+      color: 'danger',
+    })
+  }
 }
 
 const relativeTime = (iso: string) => {

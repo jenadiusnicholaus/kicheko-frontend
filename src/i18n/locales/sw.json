@@ -504,7 +504,15 @@
       "daysAgo": "siku {n} zilizopita",
       "loginToComment": "Ingia kutoa maoni",
       "loginToCommentDesc": "Lazima uingie kwanza ili kutoa maoni.",
-      "copyLink": "Nakili kiungo"
+      "copyLink": "Nakili kiungo",
+      "editComment": "Hariri",
+      "deleteComment": "Futa",
+      "saveComment": "Hifadhi",
+      "cancelEdit": "Ghairi",
+      "edited": "(imehaririwa)",
+      "deleteCommentConfirm": "Futa maoni haya?",
+      "commentUpdateFailed": "Imeshindikana kuhariri maoni.",
+      "commentDeleteFailed": "Imeshindikana kufuta maoni."
     },
     "admin": {
       "title": "Dashibodi Kuu ya Usimamizi",

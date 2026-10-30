@@ -4,10 +4,12 @@ import { resolveMediaUrl } from '../services/api/config'
 
 export interface WallComment {
   id: string | number
+  userId: string | null
   author: string
   avatar: string
   text: string
   createdAt: string
+  editedAt: string
   likes: number
 }
 
@@ -15,10 +17,12 @@ export interface WallComment {
  * /wall-of-fame/{id}/comments/ resource. */
 const normalizeComment = (raw: any): WallComment => ({
   id: raw.id,
+  userId: raw.user_id != null ? String(raw.user_id) : null,
   author: raw.author_name || raw.author || raw.name || raw.user?.display_name || raw.user?.username || 'Guest',
   avatar: resolveMediaUrl(raw.avatar || raw.user?.avatar),
   text: raw.text || raw.body || raw.comment || '',
   createdAt: raw.created_at || raw.created || '',
+  editedAt: raw.edited_at || '',
   likes: raw.likes ?? raw.likes_count ?? 0,
 })
 
@@ -52,8 +56,25 @@ export const useWallCommentsStore = defineStore('wallComments', {
         text,
       })
       const comment = normalizeComment(data)
-      this.byArticle = { ...this.byArticle, [articleId]: [...(this.byArticle[articleId] || []), comment] }
+      this.byArticle = { ...this.byArticle, [articleId]: [comment, ...(this.byArticle[articleId] || [])] }
       return comment
+    },
+
+    async updateComment(articleId: string, commentId: string | number, text: string) {
+      const { data } = await http.patch(`/wall-of-fame/${articleId}/comments/${commentId}/`, { text })
+      const comment = normalizeComment(data)
+      const list = this.byArticle[articleId] || []
+      this.byArticle = {
+        ...this.byArticle,
+        [articleId]: list.map((c) => (c.id === commentId ? comment : c)),
+      }
+      return comment
+    },
+
+    async deleteComment(articleId: string, commentId: string | number) {
+      await http.delete(`/wall-of-fame/${articleId}/comments/${commentId}/`)
+      const list = this.byArticle[articleId] || []
+      this.byArticle = { ...this.byArticle, [articleId]: list.filter((c) => c.id !== commentId) }
     },
 
     async likeComment(articleId: string, commentId: string | number) {

@@ -612,7 +612,15 @@
       "daysAgo": "{n}d ago",
       "loginToComment": "Log in to comment",
       "loginToCommentDesc": "You need to log in to post a comment.",
-      "copyLink": "Copy link"
+      "copyLink": "Copy link",
+      "editComment": "Edit",
+      "deleteComment": "Delete",
+      "saveComment": "Save",
+      "cancelEdit": "Cancel",
+      "edited": "(edited)",
+      "deleteCommentConfirm": "Delete this comment?",
+      "commentUpdateFailed": "Couldn't update the comment.",
+      "commentDeleteFailed": "Couldn't delete the comment."
     },
     "admin": {
       "title": "Main Management Studio",
