@@ -767,7 +767,8 @@
         "activeLabel": "Inatumika (inaonekana kwa waombaji)",
         "statusActive": "Inatumika",
         "statusInactive": "Haitumiki",
-        "deleteConfirm": "Futa aina hii? Mapambano na maombi yatabaki lakini yatapoteza uhusiano."
+        "deleteConfirm": "Futa aina hii? Mapambano na maombi yatabaki lakini yatapoteza uhusiano.",
+        "cannotEdit": "Haiwezi kuhaririwa — haina ID"
       }
     },
     "voteStats": {

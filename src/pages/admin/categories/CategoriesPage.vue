@@ -98,6 +98,7 @@
 
         <div class="mt-5 pt-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between gap-2">
           <button
+            v-if="c.id"
             type="button"
             class="text-xs font-bold text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 flex items-center gap-1 cursor-pointer"
             @click="openEditModal(c)"
@@ -105,8 +106,12 @@
             <span class="material-icons text-sm">edit</span>
             <span>{{ t('taifa.admin.editBtn') }}</span>
           </button>
+          <span v-else class="text-[11px] font-semibold text-gray-400 italic">
+            {{ t('taifa.admin.categories.cannotEdit') }}
+          </span>
 
           <button
+            v-if="c.id"
             type="button"
             class="text-xs font-bold text-red-500 hover:text-red-700 flex items-center gap-1 cursor-pointer"
             @click="deleteType(c.id)"

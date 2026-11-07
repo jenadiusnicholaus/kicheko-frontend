@@ -875,7 +875,8 @@
         "activeLabel": "Active (visible to applicants)",
         "statusActive": "Active",
         "statusInactive": "Inactive",
-        "deleteConfirm": "Delete this category? Battles and applications keep their record but lose the link."
+        "deleteConfirm": "Delete this category? Battles and applications keep their record but lose the link.",
+        "cannotEdit": "Cannot edit — no ID"
       }
     },
     "voteStats": {
