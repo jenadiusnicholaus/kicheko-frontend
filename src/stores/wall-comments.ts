@@ -34,17 +34,19 @@ export const useWallCommentsStore = defineStore('wallComments', {
   }),
 
   actions: {
-    async fetchComments(articleId: string) {
-      this.isLoading = true
-      this.error = null
+    async fetchComments(articleId: string, opts?: { silent?: boolean }) {
+      if (!opts?.silent) {
+        this.isLoading = true
+        this.error = null
+      }
       try {
         const { data } = await http.get(`/wall-of-fame/${articleId}/comments/`)
         const raw = Array.isArray(data) ? data : data?.results || []
         this.byArticle = { ...this.byArticle, [articleId]: raw.map(normalizeComment) }
       } catch (e: any) {
-        this.error = e?.message || 'Failed to load comments'
+        if (!opts?.silent) this.error = e?.message || 'Failed to load comments'
       } finally {
-        this.isLoading = false
+        if (!opts?.silent) this.isLoading = false
       }
     },
 

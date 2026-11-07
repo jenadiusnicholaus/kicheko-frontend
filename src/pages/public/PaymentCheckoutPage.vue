@@ -21,9 +21,11 @@
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PayItCheckout from '../../components/PayItCheckout.vue'
+import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 
 const route = useRoute()
 const router = useRouter()
+const applicationsStore = useComedianApplicationsStore()
 
 const applicationId = computed(() => {
   const fromQuery = String(route.query.app || '')
@@ -37,9 +39,10 @@ const applicationId = computed(() => {
 const applicantName = computed(() => String(route.query.name || ''))
 const applicantPhone = computed(() => String(route.query.phone || ''))
 const applicantUniversity = computed(() => String(route.query.uni || ''))
-const amount = computed(() => String(route.query.amount || '10,000'))
+const amount = computed(() => (route.query.amount ? String(route.query.amount) : ''))
 
 onMounted(() => {
+  applicationsStore.fetchConfig()
   if (!applicationId.value) router.replace({ name: 'register-comedian' })
 })
 </script>

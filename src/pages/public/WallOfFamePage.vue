@@ -116,11 +116,11 @@
             <button
               type="button"
               class="flex items-center gap-1.5 transition-colors"
-              :class="likedIds.has(selectedArticle.id) ? 'text-red-500' : 'hover:text-red-500'"
-              @click="toggleLike(selectedArticle)"
+              :class="fameStore.isLiked(selectedArticle.id) ? 'text-red-500 cursor-default' : 'hover:text-red-500'"
+              @click="fameStore.likeArticle(selectedArticle)"
             >
               <span class="material-icons text-lg">{{
-                likedIds.has(selectedArticle.id) ? 'favorite' : 'favorite_border'
+                fameStore.isLiked(selectedArticle.id) ? 'favorite' : 'favorite_border'
               }}</span>
               {{ selectedArticle.likes }}
             </button>
@@ -587,7 +587,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useToast } from 'vuestic-ui'
@@ -607,7 +607,6 @@ const isLoggedIn = computed(() => Boolean(authStore.user))
 const search = ref('')
 const activeCategory = ref<string | null>(null)
 const selectedArticle = ref<WallOfFameArticle | null>(null)
-const likedIds = ref<Set<string>>(new Set())
 const likedCommentIds = ref<Set<string | number>>(new Set())
 const commentName = ref('')
 const commentText = ref('')
@@ -620,11 +619,40 @@ onMounted(async () => {
   const articleId = route.query.article as string
   const linked = articleId ? fameStore.articles.find((a) => a.id === articleId) : null
   if (linked) openArticle(linked)
+
+  refreshTimer = setInterval(() => {
+    if (document.visibilityState === 'visible') refreshLive()
+  }, 20_000)
+  document.addEventListener('visibilitychange', onVisible)
+  window.addEventListener('focus', refreshLive)
 })
+
+onBeforeUnmount(() => {
+  if (refreshTimer) clearInterval(refreshTimer)
+  document.removeEventListener('visibilitychange', onVisible)
+  window.removeEventListener('focus', refreshLive)
+})
+
+let refreshTimer: ReturnType<typeof setInterval> | null = null
+
+const refreshLive = () => {
+  fameStore.fetchArticles({ silent: true })
+  if (selectedArticle.value) commentsStore.fetchComments(selectedArticle.value.id, { silent: true })
+}
+
+const onVisible = () => {
+  if (document.visibilityState === 'visible') refreshLive()
+}
 
 const comments = computed<WallComment[]>(() =>
   selectedArticle.value ? commentsStore.byArticle[selectedArticle.value.id] || [] : [],
 )
+
+watch(comments, (list) => {
+  if (editingCommentId.value !== null && !list.some((c) => c.id === editingCommentId.value)) cancelEditComment()
+  if (confirmingDeleteId.value !== null && !list.some((c) => c.id === confirmingDeleteId.value))
+    confirmingDeleteId.value = null
+})
 
 const filteredArticles = computed(() => {
   const q = search.value.trim().toLowerCase()
@@ -674,6 +702,7 @@ const formatDate = (iso: string) => {
 const openArticle = (article: WallOfFameArticle) => {
   selectedArticle.value = article
   commentsStore.fetchComments(article.id)
+  fameStore.fetchArticles({ silent: true })
   window.scrollTo({ top: 0 })
 }
 
@@ -788,17 +817,6 @@ const relativeTime = (iso: string) => {
   const hrs = Math.floor(mins / 60)
   if (hrs < 24) return t('taifa.wall.hoursAgo', { n: hrs })
   return t('taifa.wall.daysAgo', { n: Math.floor(hrs / 24) })
-}
-
-const toggleLike = (article: WallOfFameArticle) => {
-  if (likedIds.value.has(article.id)) {
-    likedIds.value.delete(article.id)
-    article.likes -= 1
-  } else {
-    likedIds.value.add(article.id)
-    article.likes += 1
-    fameStore.likeArticle(article)
-  }
 }
 
 const shareMenuFor = ref<string | null>(null)

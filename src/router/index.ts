@@ -135,6 +135,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../pages/admin/universities/ManageUniversitiesPage.vue'),
       },
       {
+        name: 'admin-categories',
+        path: 'categories',
+        component: () => import('../pages/admin/categories/CategoriesPage.vue'),
+      },
+      {
         name: 'admin-videos',
         path: 'videos',
         redirect: { name: 'admin-applications' },

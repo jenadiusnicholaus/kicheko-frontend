@@ -26,7 +26,10 @@
           <span>{{ t('taifa.home.yes') }}</span>
           <span class="material-icons text-2xl sm:text-3xl">arrow_forward</span>
         </RouterLink>
-        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-3 font-medium">
+        <p
+          v-if="applicationsStore.configLoaded"
+          class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-3 font-medium"
+        >
           {{ t('taifa.home.feeNote', { fee: applicationsStore.applicationFee.toLocaleString() }) }}
         </p>
       </div>
@@ -499,6 +502,7 @@ const submitVote = async () => {
 
 onMounted(async () => {
   try {
+    applicationsStore.fetchConfig()
     await applicationsStore.fetchVoteList()
     resumePendingVote()
   } finally {

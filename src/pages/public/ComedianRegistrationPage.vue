@@ -44,7 +44,9 @@
           class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 text-[11px] font-bold text-amber-800 dark:text-amber-300"
         >
           <span class="material-icons text-sm">payments</span>
-          {{ t('taifa.register.feeNotice', { fee: applicationsStore.applicationFee.toLocaleString() }) }}
+          <template v-if="applicationsStore.configLoaded">{{
+            t('taifa.register.feeNotice', { fee: applicationsStore.applicationFee.toLocaleString() })
+          }}</template>
         </p>
       </div>
 
@@ -127,6 +129,31 @@
                 <option value="" disabled>{{ t('taifa.register.selectUniversity') }}</option>
                 <option v-for="uni in uniStore.universities" :key="uni.id" :value="uni.name">
                   {{ uni.code }} - {{ uni.name }}
+                </option>
+              </select>
+              <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">
+                <span class="material-icons text-lg">expand_more</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Entertainment Category -->
+          <div>
+            <label class="block text-xs font-bold text-gray-800 dark:text-gray-200 mb-1.5">
+              {{ t('taifa.register.category') }}
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <span class="material-icons text-lg">theater_comedy</span>
+              </span>
+              <select
+                v-model="form.category"
+                :required="entTypesStore.activeTypes.length > 0"
+                class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50/50 dark:bg-zinc-800/60 text-sm text-gray-900 dark:text-white focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#FEBF01] focus:border-[#FEBF01] transition-all appearance-none cursor-pointer"
+              >
+                <option value="" disabled>{{ t('taifa.register.selectCategory') }}</option>
+                <option v-for="type in entTypesStore.activeTypes" :key="type.id" :value="type.id">
+                  {{ type.name }}
                 </option>
               </select>
               <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-400">
@@ -243,18 +270,22 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 import { useUniversitiesStore } from '../../stores/universities'
+import { useEntertainmentTypesStore } from '../../stores/entertainment-types'
 import { findPendingPayment, type PendingPayment } from '../../lib/pending-payments'
 
 const router = useRouter()
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
 const uniStore = useUniversitiesStore()
+const entTypesStore = useEntertainmentTypesStore()
 
 /** An application payment that was initiated earlier but never confirmed. */
 const pendingPayment = ref<PendingPayment | null>(null)
 
 onMounted(async () => {
   uniStore.fetchUniversities()
+  entTypesStore.fetchTypes()
+  applicationsStore.fetchConfig()
   const pending = findPendingPayment('application_fee')
   if (!pending) return
   // If the webhook already confirmed it, fetchPaymentStatus clears the
@@ -282,6 +313,7 @@ const form = reactive({
   lastName: '',
   email: '',
   university: '',
+  category: '',
   phone: '',
 })
 
@@ -329,6 +361,7 @@ const handleSubmit = async () => {
       username: email,
       email,
       university: form.university,
+      entertainmentType: form.category,
       phone: form.phone,
     })
     // The backend may return an existing application instead of creating a

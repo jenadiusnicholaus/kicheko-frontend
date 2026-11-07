@@ -75,7 +75,7 @@
         </div>
       </RouterLink>
 
-      <!-- Fee Revenue (10,000 TSh) -->
+      <!-- Fee Revenue -->
       <div class="p-5 rounded-2xl bg-white dark:bg-[#18181b] border border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="flex items-center justify-between text-gray-400 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider">{{ t('taifa.dashboard.feeCard') }}</span>

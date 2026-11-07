@@ -54,6 +54,13 @@ export default {
       },
     },
     {
+      name: 'admin-categories',
+      displayName: 'taifa.admin.categoriesNav',
+      meta: {
+        icon: 'category',
+      },
+    },
+    {
       name: 'admin-nani-ni-nani',
       displayName: 'taifa.layout.naniNiNani',
       meta: {

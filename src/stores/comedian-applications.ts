@@ -11,6 +11,8 @@ export interface ComedianApplication {
   email?: string
   displayName?: string
   university: string
+  entertainmentType: string
+  entertainmentTypeId: string
   phone: string
   bio?: string
   status: 'pending' | 'pending_payment' | 'paid_pending_review' | 'approved' | 'rejected'
@@ -38,6 +40,7 @@ export interface VoteListApplicant {
   university: string
   universityCode: string
   universityBadge: string
+  entertainmentType: string
   auditionLevel: number
   votes: number
   batchId: number | null
@@ -61,6 +64,8 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
     email: raw.email || '',
     displayName: raw.display_name || '',
     university: raw.university || '',
+    entertainmentType: raw.entertainment_type || '',
+    entertainmentTypeId: raw.entertainment_type_id || '',
     phone: raw.phone || raw.phone_number || '',
     status: raw.status || 'pending',
     feeAmount: raw.fee_amount ?? 0,
@@ -83,6 +88,8 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
 
 const VOTER_KEY_STORAGE = 'kicheko_voter_key'
 
+let configFetchPromise: Promise<unknown> | null = null
+
 function getVoterKey(): string {
   let key = localStorage.getItem(VOTER_KEY_STORAGE)
   if (!key) {
@@ -98,6 +105,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     applicationsOpen: true,
     voteFee: 1000,
     applicationFee: 10000,
+    configLoaded: false,
     voteList: [] as VoteListApplicant[],
     voteBatches: [] as VoteBatch[],
     isLoading: false,
@@ -137,6 +145,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       username: string
       email?: string
       university: string
+      entertainmentType?: string
       phone: string
       bio?: string
     }): Promise<ComedianApplication> {
@@ -148,6 +157,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
         ...(payload.username.trim() ? { username: payload.username.trim().replace(/^@/, '') } : {}),
         ...(payload.email?.trim() ? { email: payload.email.trim() } : {}),
         university: payload.university,
+        ...(payload.entertainmentType ? { entertainment_type: payload.entertainmentType } : {}),
         phone: payload.phone.trim(),
         phone_number: payload.phone.trim(),
         bio: payload.bio || '',
@@ -202,14 +212,23 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
 
     /** Public config — is the application window open? */
     async fetchConfig(): Promise<boolean> {
-      try {
-        const { data } = await http.get('/application-config/')
-        this.applicationsOpen = !!data?.applications_open
-        this.voteFee = data?.vote_fee ?? this.voteFee
-        this.applicationFee = data?.application_fee ?? this.applicationFee
-      } catch {
-        // Default to open if the config endpoint is unreachable.
+      if (!configFetchPromise) {
+        configFetchPromise = http
+          .get('/application-config/')
+          .then(({ data }) => {
+            this.applicationsOpen = !!data?.applications_open
+            this.voteFee = data?.vote_fee ?? this.voteFee
+            this.applicationFee = data?.application_fee ?? this.applicationFee
+            this.configLoaded = true
+          })
+          .catch(() => {
+            // Default to open if the config endpoint is unreachable.
+          })
+          .finally(() => {
+            configFetchPromise = null
+          })
       }
+      await configFetchPromise
       return this.applicationsOpen
     },
 
@@ -267,6 +286,7 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
         university: a.university || '',
         universityCode: a.university_code || '',
         universityBadge: a.university_badge || '',
+        entertainmentType: a.entertainment_type || '',
         auditionLevel: a.audition_level ?? 2,
         votes: a.votes ?? 0,
         batchId: a.batch_id ?? null,

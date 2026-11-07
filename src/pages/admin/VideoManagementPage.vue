@@ -199,11 +199,7 @@
                 required
                 class="w-full px-3 py-2 text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:border-red-500"
               >
-                <option value="Stand-up Comedy">Stand-up Comedy</option>
-                <option value="Skits">Skits</option>
-                <option value="Short Comedy">Short Comedy</option>
-                <option value="Parody">Parody</option>
-                <option value="Vichekesho vya Mitaani">Vichekesho vya Mitaani</option>
+                <option v-for="c in typesStore.activeTypes" :key="c.id" :value="c.name">{{ c.name }}</option>
               </select>
             </div>
           </div>
@@ -314,9 +310,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast, defineVaDataTableColumns } from 'vuestic-ui'
 import { videoApi, type Video, type Comedian, type VideoUploadPayload } from '../../services/api/video.api'
+import { useEntertainmentTypesStore } from '../../stores/entertainment-types'
 
 const { t } = useI18n()
 const { init: toast } = useToast()
+const typesStore = useEntertainmentTypesStore()
 
 const videoColumns = computed(() =>
   defineVaDataTableColumns([
@@ -334,11 +332,13 @@ const comedians = ref<Comedian[]>([])
 const showModal = ref(false)
 const isSubmitting = ref(false)
 
+const defaultCategory = () => typesStore.activeTypes[0]?.name || ''
+
 const form = ref<VideoUploadPayload>({
   title: '',
   description: '',
   comedian_id: '',
-  category: 'Stand-up Comedy',
+  category: defaultCategory(),
   access_type: 'free',
   price_amount: 2500,
   video_url: '',
@@ -351,7 +351,11 @@ const loadVideos = async () => {
     videoApi.getVideos(),
     videoApi.getShorts(),
     videoApi.getComedians(),
+    typesStore.fetchTypes(),
   ])
+  if (!form.value.category) {
+    form.value.category = defaultCategory()
+  }
   videos.value = [...all, ...shorts]
   comedians.value = comList
   if (comList.length > 0 && !form.value.comedian_id) {
@@ -374,7 +378,7 @@ const openUploadModal = () => {
     title: '',
     description: '',
     comedian_id: comedians.value[0]?.id || '',
-    category: 'Stand-up Comedy',
+    category: defaultCategory(),
     access_type: 'free',
     price_amount: 2500,
     video_url: '',

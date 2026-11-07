@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { PAYIT_STANDALONE_URL, type PayItResult } from '../lib/payit'
@@ -28,7 +28,7 @@ const props = withDefaults(
     applicantName: '',
     applicantPhone: '',
     applicantUniversity: '',
-    amount: '10,000',
+    amount: '',
     currency: 'TZS',
     checkoutUrl: PAYIT_STANDALONE_URL,
   },
@@ -42,6 +42,10 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const router = useRouter()
 const applicationsStore = useComedianApplicationsStore()
+
+const displayAmount = computed(
+  () => props.amount || (applicationsStore.configLoaded ? applicationsStore.applicationFee.toLocaleString() : ''),
+)
 
 const isCheckingStatus = ref(false)
 const isInitiating = ref(false)
@@ -218,7 +222,7 @@ onBeforeUnmount(() => {
               {{ t('taifa.register.confirmTitle') }}
             </h3>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {{ t('taifa.register.confirmFeeDesc') }}
+              {{ t('taifa.register.confirmFeeDesc', { fee: displayAmount || '…' }) }}
             </p>
           </div>
           <button
@@ -265,7 +269,9 @@ onBeforeUnmount(() => {
               <dt class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 {{ t('taifa.register.feeBoxTitle') }}
               </dt>
-              <dd class="text-lg font-black text-gray-900 dark:text-white tabular-nums">{{ currency }} {{ amount }}</dd>
+              <dd class="text-lg font-black text-gray-900 dark:text-white tabular-nums">
+                {{ currency }} {{ displayAmount || '…' }}
+              </dd>
             </div>
           </dl>
 
@@ -301,7 +307,9 @@ onBeforeUnmount(() => {
             >
               <span v-if="isInitiating" class="material-icons animate-spin text-lg">sync</span>
               <span v-else class="material-icons text-lg">send_to_mobile</span>
-              <span>{{ isInitiating ? t('taifa.payment.initiating') : t('taifa.register.payViaPayit') }}</span>
+              <span>{{
+                isInitiating ? t('taifa.payment.initiating') : t('taifa.register.payViaPayit', { fee: displayAmount })
+              }}</span>
             </button>
 
             <p v-if="initiateError" class="text-xs font-semibold text-red-600 dark:text-red-400 text-center">

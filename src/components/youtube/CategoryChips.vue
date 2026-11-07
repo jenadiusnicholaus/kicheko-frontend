@@ -41,7 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useEntertainmentTypesStore } from '../../stores/entertainment-types'
 
 defineProps<{
   selectedCategory: string
@@ -51,7 +52,11 @@ const emit = defineEmits<{
   (e: 'select', category: string): void
 }>()
 
-const categories = ['All', 'Stand-up Comedy', 'Skits', 'Short Comedy', 'Trending', 'Free', 'Premium']
+const typesStore = useEntertainmentTypesStore()
+
+// 'All' + the functional filters are UI state, not entertainment types —
+// the real categories come from the API so admin can manage them.
+const categories = computed(() => ['All', ...typesStore.activeTypes.map((t) => t.name), 'Trending', 'Free', 'Premium'])
 
 const scrollContainer = ref<HTMLElement | null>(null)
 const canScrollLeft = ref(false)
@@ -75,6 +80,7 @@ const scroll = (direction: 'left' | 'right') => {
 }
 
 onMounted(() => {
+  typesStore.fetchTypes()
   updateScrollButtons()
 })
 </script>

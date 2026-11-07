@@ -50,9 +50,21 @@ function normalizeBackendArticle(raw: any): WallOfFameArticle {
 /** @deprecated alias kept for the inductee-shaped callers */
 export type WallOfFameInductee = WallOfFameArticle
 
+const LIKED_KEY = 'kicheko_wall_liked'
+
+const loadLikedIds = (): string[] => {
+  try {
+    const raw = JSON.parse(localStorage.getItem(LIKED_KEY) || '[]')
+    return Array.isArray(raw) ? raw : []
+  } catch {
+    return []
+  }
+}
+
 export const useWallOfFameStore = defineStore('wallOfFame', {
   state: () => ({
     articles: [] as WallOfFameArticle[],
+    likedIds: loadLikedIds(),
     isLoading: false,
     error: null as string | null,
   }),
@@ -64,18 +76,38 @@ export const useWallOfFameStore = defineStore('wallOfFame', {
   },
 
   actions: {
-    async fetchArticles() {
-      this.isLoading = true
-      this.error = null
+    async fetchArticles(opts?: { silent?: boolean }) {
+      if (!opts?.silent) {
+        this.isLoading = true
+        this.error = null
+      }
       try {
         const { data } = await http.get('/wall-of-fame/')
         const raw = Array.isArray(data) ? data : data?.results || []
-        this.articles = raw.map(normalizeBackendArticle)
+        const fresh = raw.map(normalizeBackendArticle)
+        if (opts?.silent) {
+          const freshIds = new Set(fresh.map((a: WallOfFameArticle) => a.id))
+          const kept = this.articles.filter((a) => freshIds.has(a.id))
+          for (const article of kept) {
+            const updated = fresh.find((f: WallOfFameArticle) => f.id === article.id)
+            if (updated) {
+              article.likes = updated.likes
+              article.commentsCount = updated.commentsCount
+            }
+          }
+          const keptIds = new Set(kept.map((a) => a.id))
+          const added = fresh.filter((a: WallOfFameArticle) => !keptIds.has(a.id))
+          this.articles = [...added, ...kept]
+        } else {
+          this.articles = fresh
+        }
       } catch (e: any) {
-        this.error = e?.message || 'Failed to load articles'
-        console.warn('Failed to fetch wall of fame from backend', e)
+        if (!opts?.silent) {
+          this.error = e?.message || 'Failed to load articles'
+          console.warn('Failed to fetch wall of fame from backend', e)
+        }
       } finally {
-        this.isLoading = false
+        if (!opts?.silent) this.isLoading = false
       }
     },
 
@@ -84,13 +116,33 @@ export const useWallOfFameStore = defineStore('wallOfFame', {
       return this.fetchArticles()
     },
 
-    /** Anonymous-friendly like — updates the count from the server response. */
+    isLiked(id: string): boolean {
+      return this.likedIds.includes(String(id))
+    },
+
+    /** One like per visitor — persisted in localStorage. Count confirmed by
+     * the server response; rolls back on failure. */
     async likeArticle(article: WallOfFameArticle) {
+      const id = String(article.id)
+      if (this.likedIds.includes(id)) return
+      this.likedIds.push(id)
+      this.persistLikedIds()
+      article.likes += 1
       try {
         const { data } = await http.post(`/wall-of-fame/${article.id}/like/`)
         if (typeof data?.likes === 'number') article.likes = data.likes
       } catch {
-        /* like endpoint optional — the local count still applies */
+        this.likedIds = this.likedIds.filter((x) => x !== id)
+        this.persistLikedIds()
+        article.likes -= 1
+      }
+    },
+
+    persistLikedIds() {
+      try {
+        localStorage.setItem(LIKED_KEY, JSON.stringify(this.likedIds))
+      } catch {
+        /* storage unavailable — likes stay session-only */
       }
     },
 

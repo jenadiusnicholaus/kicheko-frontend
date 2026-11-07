@@ -372,6 +372,18 @@
             </div>
           </template>
 
+          <!-- Entertainment Category -->
+          <template #cell(category)="{ rowData: app }">
+            <span
+              v-if="app.entertainmentType"
+              class="px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 dark:bg-violet-950/60 dark:text-violet-400 font-bold text-[11px] inline-flex items-center gap-1"
+            >
+              <span class="material-icons text-xs">theater_comedy</span>
+              {{ app.entertainmentType }}
+            </span>
+            <span v-else class="text-[11px] text-gray-400">—</span>
+          </template>
+
           <!-- Phone & Date -->
           <template #cell(phone)="{ rowData: app }">
             <div class="font-mono text-gray-800 dark:text-gray-200 text-xs">
@@ -571,6 +583,12 @@ const appColumns = computed(() =>
       key: 'university',
       thClass: 'hidden sm:table-cell',
       tdClass: 'hidden sm:table-cell',
+    },
+    {
+      label: t('taifa.admin.categoryTh'),
+      key: 'category',
+      thClass: 'hidden md:table-cell',
+      tdClass: 'hidden md:table-cell',
     },
     { label: t('taifa.admin.phoneTh'), key: 'phone', thClass: 'hidden sm:table-cell', tdClass: 'hidden sm:table-cell' },
     { label: t('taifa.admin.feeTh'), key: 'fee' },
@@ -822,6 +840,7 @@ const filteredApplications = computed(() => {
         app.lastName.toLowerCase().includes(q) ||
         app.username.toLowerCase().includes(q) ||
         app.university.toLowerCase().includes(q) ||
+        app.entertainmentType.toLowerCase().includes(q) ||
         app.phone.includes(q)
       if (!match) return false
     }
