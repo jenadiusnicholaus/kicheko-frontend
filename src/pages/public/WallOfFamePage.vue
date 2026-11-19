@@ -594,6 +594,7 @@ import { useToast } from 'vuestic-ui'
 import { useWallOfFameStore, WALL_CATEGORIES, type WallOfFameArticle } from '../../stores/wall-of-fame'
 import { useWallCommentsStore, type WallComment } from '../../stores/wall-comments'
 import { useAuthStore } from '../../stores/auth-store'
+import { apiConfig } from '../../services/api/config'
 
 const { t } = useI18n()
 const { init: notify } = useToast()
@@ -821,8 +822,7 @@ const relativeTime = (iso: string) => {
 
 const shareMenuFor = ref<string | null>(null)
 
-const shareUrl = (article: WallOfFameArticle) =>
-  `${window.location.origin}${import.meta.env.VITE_API_BASE_URL}/wall-of-fame/${article.id}/share/`
+const shareUrl = (article: WallOfFameArticle) => `${apiConfig.baseUrl}/wall-of-fame/${article.id}/share/`
 
 const shareTargets = (article: WallOfFameArticle) => {
   const url = encodeURIComponent(shareUrl(article))
