@@ -8,13 +8,13 @@
       <!-- Light mode emblem -->
       <img
         src="/image/kicheko-icon.png"
-        alt="Kicheko"
+        alt="Taifa House"
         class="w-full h-full object-contain block dark:hidden drop-shadow-sm"
       />
       <!-- Dark mode emblem -->
       <img
         src="/image/kicheko-icon-dark.png"
-        alt="Kicheko"
+        alt="Taifa House"
         class="w-full h-full object-contain hidden dark:block drop-shadow-sm"
       />
     </div>
@@ -26,7 +26,7 @@
           class="font-black tracking-tight text-gray-900 dark:text-white uppercase font-sans"
           :class="textSizeClass"
         >
-          Kicheko
+          Taifa House
         </span>
         <span
           class="hidden sm:inline text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-400 text-gray-950 shadow-sm"

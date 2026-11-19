@@ -190,7 +190,7 @@
           $t('kicheko.sidebar.footer.privacy')
         }}</RouterLink>
       </div>
-      <p class="text-gray-400 dark:text-gray-500">© 2026 Kicheko Entertainment</p>
+      <p class="text-gray-400 dark:text-gray-500">© 2026 Taifa House Entertainment</p>
     </div>
   </aside>
 </template>

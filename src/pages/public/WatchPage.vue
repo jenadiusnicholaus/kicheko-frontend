@@ -130,7 +130,7 @@
             <span>{{ new Date(video.published_at).toLocaleDateString('sw-TZ', { dateStyle: 'long' }) }}</span>
             <span>•</span>
             <span class="text-amber-600 dark:text-amber-400 font-semibold"
-              >#Kicheko #ComedyTZ #{{ video.category.replace(/\s+/g, '') }}</span
+              >#TaifaHouse #ComedyTZ #{{ video.category.replace(/\s+/g, '') }}</span
             >
           </div>
 

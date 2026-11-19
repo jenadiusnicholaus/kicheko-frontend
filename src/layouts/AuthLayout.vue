@@ -12,11 +12,11 @@
     </button>
 
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center px-4">
-      <!-- Kicheko Branding -->
+      <!-- Taifa House Branding -->
       <RouterLink
         to="/"
         class="inline-flex items-center justify-center mb-4 transition-transform hover:scale-105"
-        aria-label="Kicheko Home"
+        aria-label="Taifa House Home"
       >
         <KichekoLogo size="lg" :with-tagline="true" />
       </RouterLink>

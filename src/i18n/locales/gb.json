@@ -21,7 +21,7 @@
       "backToVideos": "Back to Videos"
     },
     "loginPage": {
-      "title": "Log in to Kicheko",
+      "title": "Log in to Taifa House",
       "noAccount": "Don't have an account yet?",
       "signUpLink": "Sign up",
       "usernameLabel": "Email or phone number",
@@ -30,11 +30,11 @@
       "rememberDevice": "Remember this device",
       "forgotPassword": "Forgot your password?",
       "submit": "Log in",
-      "welcomeToast": "Welcome back to Kicheko!",
+      "welcomeToast": "Welcome back to Taifa House!",
       "failed": "Login failed. Please check your credentials."
     },
     "signupPage": {
-      "title": "Sign up for Kicheko",
+      "title": "Sign up for Taifa House",
       "haveAccount": "Already have an account?",
       "loginLink": "Log in here",
       "nameLabel": "Your full or stage name",
@@ -49,7 +49,7 @@
       "acceptTerms": "I agree to the Terms of Service and Privacy Policy",
       "acceptTermsRequired": "You must accept the terms and conditions",
       "submit": "Sign up",
-      "welcomeToast": "Welcome to Kicheko! Your account is ready.",
+      "welcomeToast": "Welcome to Taifa House! Your account is ready.",
       "failed": "Sign up failed. Please check your information.",
       "passwordRequired": "Password field is required",
       "passwordMinLength": "Password must be at least 8 characters long",
@@ -82,7 +82,7 @@
     },
     "orContinueWith": "Or continue with",
     "google": {
-      "welcomeToast": "Welcome to Kicheko!",
+      "welcomeToast": "Welcome to Taifa House!",
       "failed": "Google sign-in failed. Please try again."
     }
   },
@@ -332,7 +332,7 @@
     "sidebar": {
       "creatorPromo": {
         "question": "Are you a Comedian?",
-        "pitch": "Join Kicheko, upload your comedy and earn from your work.",
+        "pitch": "Join Taifa House, upload your comedy and earn from your work.",
         "cta": "Start Today"
       },
       "footer": {
@@ -345,7 +345,7 @@
       "title": "System Settings",
       "theme": {
         "label": "Theme",
-        "description": "Choose your preferred dark or light appearance on the Kicheko platform."
+        "description": "Choose your preferred dark or light appearance on the Taifa House platform."
       },
       "preferences": {
         "label": "Language & Preferences",
@@ -369,7 +369,7 @@
       "premiumVideos": "Premium Videos",
       "trending": "Most Watched in Tanzania",
       "comedy": "Comedy: {cat}",
-      "shortsShelf": "Kicheko Shorts",
+      "shortsShelf": "Taifa House Shorts",
       "seeAll": "See all",
       "moreVideos": "More Videos"
     },
@@ -381,7 +381,7 @@
     "admin": {
       "nav": {
         "public": "Public Platform",
-        "studio": "Kicheko Studio",
+        "studio": "Taifa House Studio",
         "videos": "Upload & Manage Videos",
         "users": "Artists & Users",
         "payments": "Payments & Sales",
@@ -415,12 +415,20 @@
       "step2Desc": "Watch campus comedy battles and vote for TSh 1,000 for your favorite.",
       "step3Title": "3. Wall of Fame",
       "step3Desc": "Meet legendary university comedy champions across Tanzania.",
-      "voteTitle": "Kicheko Pro: Current Vote Standing",
+      "voteTitle": "Talent Search: Current Vote Standing",
       "votes": "votes",
       "vote": "Vote",
       "voteEmpty": "No contestants on the vote list yet.",
       "voteFor": "Vote for {name}",
       "feePerVote": "TSh {fee} per vote",
+      "packagesFrom": "From {votes} votes / TSh {price}",
+      "packagesUnavailable": "No vote bundles available yet.",
+      "quantity": "Bundles",
+      "chooseBundle": "Choose a bundle",
+      "continueBtn": "Continue",
+      "paymentStep": "Payment",
+      "changeBundle": "Change",
+      "bundleSummary": "{qty} × {name} · {votes} votes · TSh {price}",
       "payerPhone": "Mobile money number",
       "totalToPay": "Total to pay",
       "payAndVote": "Pay TSh {amount} & vote",
@@ -438,11 +446,12 @@
       "colUniversity": "University",
       "colShare": "Share",
       "colVotes": "Votes",
-      "voteFooter": "Share of all paid votes · TSh {fee} per vote via Pay-IT"
+      "voteFooter": "Share of all paid votes · from {votes} votes / TSh {price} via Pay-IT",
+      "voteFooterNoPackages": "Share of all paid votes · via Pay-IT"
     },
     "register": {
       "createAccount": "Apply Now",
-      "fillDetails": "Fill in your details to get started on your Kicheko Pro journey.",
+      "fillDetails": "Fill in your details to get started on your Talent Search journey.",
       "firstName": "First Name",
       "firstNamePlaceholder": "Enter your first name",
       "lastName": "Last Name",
@@ -458,7 +467,7 @@
       "phone": "Phone Number",
       "phoneNote": "We'll use this number to contact you about your application.",
       "alreadyRegisteredTitle": "You're Already Registered",
-      "alreadyRegisteredDesc": "This phone number or email address already has a paid Kicheko Pro application — no need to apply again.",
+      "alreadyRegisteredDesc": "This phone number or email address already has a paid Talent Search application — no need to apply again.",
       "back": "Back",
       "submit": "Submit",
       "confirmTitle": "Confirm Application & Pay Fee",
@@ -482,7 +491,7 @@
       "payerPhone": "Phone number",
       "payerName": "Full name",
       "purpose": "Purpose (optional)",
-      "purposeDefault": "Kicheko Application fees",
+      "purposeDefault": "Taifa House Application fees",
       "payNow": "Pay {amount}",
       "changeDetails": "Change phone / details",
       "promptSentTitle": "Payment prompt sent to your phone!",
@@ -510,7 +519,14 @@
       "votes": "Votes",
       "vote": "Vote",
       "completeVote": "Complete Your Vote",
-      "payVoteDesc": "TSh {fee} per vote for {name} — paid securely via Pay-IT mobile money.",
+      "payVoteDesc": "Vote for {name} — from {votes} votes / TSh {price}, paid securely via Pay-IT mobile money.",
+      "payVoteDescNoPackages": "Vote for {name} — paid securely via Pay-IT mobile money.",
+      "packagesUnavailable": "No vote bundles available yet.",
+      "chooseBundle": "Choose a bundle",
+      "continueBtn": "Continue",
+      "paymentStep": "Payment",
+      "changeBundle": "Change",
+      "bundleSummary": "{qty} × {name} · {votes} votes · TSh {price}",
       "amount": "Amount",
       "payVoteBtn": "Pay TSh {fee}",
       "verifyingVote": "Casting Vote...",
@@ -532,7 +548,7 @@
       "voteFailed": "Payment failed — no votes were added.",
       "votePending": "Payment is still being confirmed. Your votes will appear once it completes.",
       "voteShare": "Vote share",
-      "feeNote": "TSh {fee} per vote — charged via mobile money",
+      "feeNote": "From {votes} votes / TSh {price} — charged via mobile money",
       "emptyTitle": "No battles yet",
       "emptyDesc": "New matchups are on the way — check back soon to vote."
     },
@@ -648,7 +664,7 @@
         "filterNone": "No batch",
         "filterLabel": "Filter by batch",
         "openSuffix": "● Open",
-        "openVotingNowConfirm": "Open voting for “{title}” now? It will appear on Kicheko Pro.",
+        "openVotingNowConfirm": "Open voting for “{title}” now? It will appear on Talent Search.",
         "noBatchVoteList": "No batch – not on vote list",
         "levelChangeConfirm": "Changing the level will remove this applicant from “{title}”. Continue?",
         "empty": "No voting batches yet. Create the first batch above.",
@@ -676,6 +692,7 @@
       },
       "universitiesNav": "Universities",
       "categoriesNav": "Categories",
+      "votePackagesNav": "Vote Packages",
       "totalApps": "Total Applications",
       "pendingApproval": "Pending Approval",
       "confirmedApps": "Confirmed / Approved",
@@ -722,7 +739,7 @@
       "universities": {
         "title": "University Management",
         "count": "{count} Universities",
-        "subtitle": "Manage the list of universities participating in competitions and shown on the Kicheko Pro registration form.",
+        "subtitle": "Manage the list of universities participating in competitions and shown on the Talent Search registration form.",
         "addBtn": "Add New University",
         "statusActive": "Active",
         "statusInactive": "Disabled",
@@ -805,7 +822,7 @@
         "colContestantB": "Contestant B"
       },
       "videos": {
-        "title": "Kicheko Video Management & Upload",
+        "title": "Taifa House Video Management & Upload",
         "subtitle": "Upload new comedy videos, create short Shorts previews, set pricing and manage content.",
         "uploadBtn": "Upload New Video",
         "statTotal": "Total Videos",
@@ -822,7 +839,7 @@
         "durationLabel": "Duration: {duration}",
         "paidBadge": "Paid: Tsh {price}",
         "viewLink": "View",
-        "modalTitle": "Upload New Kicheko Video",
+        "modalTitle": "Upload New Taifa House Video",
         "titleLabel": "Video Title *",
         "titlePlaceholder": "e.g. Cheka Tu Live: Dar es Salaam Comedy...",
         "descLabel": "Video Description",
@@ -847,7 +864,7 @@
       "levelLabel": "Level {n}",
       "onVoteList": "Visible on the public vote list",
       "notOnVoteList": "Not on the vote list yet",
-      "flowHint": "Flow: applicant pays (or you mark-paid) → Approve → close applications → select approved applicants and “Add to batch” (competition title + level 2–4) → open voting for that batch on the Voting Batches page so it appears on Kicheko Pro.",
+      "flowHint": "Flow: applicant pays (or you mark-paid) → Approve → close applications → select approved applicants and “Add to batch” (competition title + level 2–4) → open voting for that batch on the Voting Batches page so it appears on Talent Search.",
       "bulkSelected": "{n} selected",
       "bulkHint": "Approved applicants only — others are skipped.",
       "bulkApply": "Set level",
@@ -877,13 +894,34 @@
         "statusInactive": "Inactive",
         "deleteConfirm": "Delete this category? Battles and applications keep their record but lose the link.",
         "cannotEdit": "Cannot edit — no ID"
+      },
+      "votePackages": {
+        "title": "Vote Packages",
+        "subtitle": "Vote bundles sold for Talent Search and Nani ni Nani — price and votes per bundle.",
+        "count": "{count} packages",
+        "addBtn": "Add Package",
+        "empty": "No vote packages yet — create one so fans can buy votes.",
+        "addTitle": "New Vote Package",
+        "editTitle": "Edit Vote Package",
+        "nameLabel": "Name",
+        "namePlaceholder": "e.g. Dozen Votes",
+        "votesLabel": "Votes",
+        "priceLabel": "Price (TSh)",
+        "appliesToLabel": "Applies to",
+        "appliesAll": "All",
+        "appliesComedian": "Comedian votes",
+        "appliesNani": "Nani ni Nani",
+        "sortLabel": "Sort order",
+        "statusLabel": "Status",
+        "activeLabel": "Active (visible to voters)",
+        "deleteConfirm": "Delete this vote package? Past purchases keep their record."
       }
     },
     "voteStats": {
       "nav": "Vote Stats",
       "title": "Vote Stats",
-      "subtitle": "Every vote purchase — Kicheko Pro and Nani ni Nani",
-      "tabKicheko": "Kicheko Pro",
+      "subtitle": "Every vote purchase — Talent Search and Nani ni Nani",
+      "tabKicheko": "Talent Search",
       "tabNani": "Nani ni Nani",
       "purchases": "Purchases",
       "purchasesDesc": "All payment attempts",
@@ -951,7 +989,7 @@
         "unfollowedToast": "You unfollowed {name}."
       },
       "comedians": {
-        "title": "Kicheko Comedians of Tanzania",
+        "title": "Taifa House Comedians of Tanzania",
         "subtitle": "Discover popular and up-and-coming comedians, watch their work and follow them.",
         "verified": "Verified",
         "viewWork": "View Work"
@@ -986,7 +1024,7 @@
         "paid": "Paid",
         "showMore": "Show more",
         "showLess": "Show less",
-        "paymentTitle": "Kicheko Video Payment",
+        "paymentTitle": "Taifa House Video Payment",
         "buyAccess": "Buy access to watch:",
         "amountDue": "Amount to Pay:",
         "phoneLabel": "Payment Phone Number:",
@@ -998,7 +1036,7 @@
         "linkCopied": "Video link copied to clipboard!"
       },
       "library": {
-        "title": "My Kicheko Library",
+        "title": "My Taifa House Library",
         "subtitle": "Here you'll find the videos you purchased and the ones you liked.",
         "purchasedTab": "Purchased Videos ({count})",
         "likedTab": "Liked ({count})",
@@ -1006,15 +1044,15 @@
         "noPurchasedDesc": "When you buy premium videos from your favorite artists, they'll appear here for unlimited viewing.",
         "browseCta": "Watch Videos Now",
         "noLiked": "You have no liked videos yet",
-        "noLikedDesc": "Click the 'Like' button on any Kicheko video to save it here."
+        "noLikedDesc": "Click the 'Like' button on any Taifa House video to save it here."
       },
       "fame": {
         "loading": "Loading Wall of Fame...",
         "emptyTitle": "No Champions Yet",
-        "emptyDesc": "Kicheko Pro champions will be listed here soon."
+        "emptyDesc": "Talent Search champions will be listed here soon."
       },
       "pro": {
-        "logoAlt": "Kicheko Pro - Get Ready to Laugh"
+        "logoAlt": "Talent Search - Get Ready to Laugh"
       },
       "register": {
         "paymentAlt": "Payment"
@@ -1155,7 +1193,7 @@
       },
       "activity": {
         "title": "Platform Activity (Live)",
-        "subtitle": "Recent events and transactions on Kicheko",
+        "subtitle": "Recent events and transactions on Taifa House",
         "live": "Live",
         "cdnStatus": "Video Server Health (Streaming CDN):",
         "cdnHealthy": "100% Stable (Normal)",
@@ -1172,7 +1210,7 @@
         "act4Desc": "User +255 713 *** completed Tsh 1,500 for video \"Harusi ya Shoki\".",
         "act4Time": "2 hours ago",
         "act5Title": "New Comedian Joined",
-        "act5Desc": "Mau Fundi has been officially verified and their account activated on Kicheko.",
+        "act5Desc": "Mau Fundi has been officially verified and their account activated on Taifa House.",
         "act5Time": "4 hours ago"
       },
       "revenue": {
@@ -1208,7 +1246,7 @@
       },
       "analytics": {
         "title": "Viewing & Engagement Trends",
-        "subtitle": "Real statistics of viewers and engagement on Kicheko videos",
+        "subtitle": "Real statistics of viewers and engagement on Taifa House videos",
         "viewsTab": "Views",
         "revenueTab": "Revenue (TZS)",
         "likesTab": "Likes",
@@ -1267,7 +1305,7 @@
         "searchPlaceholder": "Search comedy videos, artists, skits...",
         "searchPlaceholderMobile": "Search comedy videos...",
         "uploadVideo": "Upload Video",
-        "defaultUser": "Kicheko User",
+        "defaultUser": "Taifa House User",
         "avatarAlt": "Avatar",
         "loggedOut": "You have been logged out safely."
       }

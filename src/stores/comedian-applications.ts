@@ -301,18 +301,21 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
       }))
     },
 
-    /** Buy votes: pushes a Pay-IT mobile-money prompt for votesCount x voteFee.
+    /** Buy votes: pushes a Pay-IT mobile-money prompt for quantity x package.
      * Votes are only added once the webhook confirms the payment. */
     async buyVotes(
       id: string,
-      votesCount: number,
+      packageId: string,
+      quantity: number,
+      amount: number,
       mobileNumber: string,
     ): Promise<{ vote_id: number; payment_id: string; amount: number; votes_count: number }> {
       const { data } = await http.post('/payments/initiate/', {
         purpose: 'comedian_vote',
         reference_id: id,
-        votes_count: votesCount,
-        amount: votesCount * this.voteFee,
+        package_id: packageId,
+        quantity,
+        amount,
         mobile_number: mobileNumber,
         voter_key: getVoterKey(),
       })

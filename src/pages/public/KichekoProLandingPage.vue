@@ -3,7 +3,7 @@
     <!-- Brand Logo with Sunburst Effect -->
     <div class="mb-6 sm:mb-8 animate-fade-in">
       <img
-        src="/image/KICHEKO PRO LOGO.png"
+        src="/image/WALL OF FAME LOGO.png"
         :alt="t('taifa.pages.pro.logoAlt')"
         class="max-w-full mx-auto object-contain drop-shadow-sm hover:scale-102 transition-transform duration-300"
         :class="applicationsStore.applicationsOpen ? 'w-48 sm:w-64' : 'w-40 sm:w-48'"
@@ -67,7 +67,14 @@
             class="inline-flex items-center gap-1 rounded-md border border-[#FEBF01]/30 bg-[#FEBF01]/10 px-2.5 py-1 text-[#FEBF01]"
           >
             <span class="material-icons text-xs">payments</span>
-            {{ t('taifa.home.feePerVote', { fee: applicationsStore.voteFee.toLocaleString() }) }}
+            <template v-if="cheapestPackage">
+              {{
+                t('taifa.home.packagesFrom', {
+                  votes: cheapestPackage.votes.toLocaleString(),
+                  price: cheapestPackage.price.toLocaleString(),
+                })
+              }}
+            </template>
           </span>
           <span
             v-if="applicationsStore.voteList.length"
@@ -163,7 +170,14 @@
         class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-gray-100 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900 px-3 sm:px-10 py-4"
       >
         <p class="text-[11px] text-gray-500 dark:text-gray-400">
-          {{ t('taifa.home.voteFooter', { fee: applicationsStore.voteFee.toLocaleString() }) }}
+          {{
+            cheapestPackage
+              ? t('taifa.home.voteFooter', {
+                  votes: cheapestPackage.votes.toLocaleString(),
+                  price: cheapestPackage.price.toLocaleString(),
+                })
+              : t('taifa.home.voteFooterNoPackages')
+          }}
         </p>
         <div class="flex items-center gap-2">
           <img src="/taifa/taifa_logo.png" alt="Taifa House" class="h-6 w-6 rounded-full object-cover" />
@@ -189,8 +203,13 @@
             <h2 class="text-base font-black text-gray-900 dark:text-white truncate">
               {{ t('taifa.home.voteFor', { name: voteModal.applicant.name }) }}
             </h2>
-            <p class="text-xs text-gray-500">
-              {{ t('taifa.home.feePerVote', { fee: applicationsStore.voteFee.toLocaleString() }) }}
+            <p v-if="cheapestPackage" class="text-xs text-gray-500">
+              {{
+                t('taifa.home.packagesFrom', {
+                  votes: cheapestPackage.votes.toLocaleString(),
+                  price: cheapestPackage.price.toLocaleString(),
+                })
+              }}
             </p>
           </div>
           <button
@@ -203,25 +222,112 @@
           </button>
         </div>
 
-        <!-- Step: payer phone + vote count -->
-        <template v-if="voteModal.step === 'form'">
+        <!-- Step 1: choose a bundle -->
+        <template v-if="voteModal.step === 'form' && voteModal.formStep === 'bundle'">
           <label class="block text-[11px] font-bold uppercase tracking-wide text-gray-500 mb-2">
-            {{ t('taifa.home.votes') }}
+            {{ t('taifa.home.chooseBundle') }}
           </label>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <button
-              v-for="n in VOTE_COUNT_CHOICES"
-              :key="n"
-              type="button"
-              class="px-3.5 py-2 rounded-xl text-sm font-bold border transition-all"
-              :class="
-                voteModal.votesCount === n
-                  ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
-                  : 'border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:border-[#FEBF01]'
-              "
-              @click="voteModal.votesCount = n"
+          <div v-if="packagesStore.isLoading" class="flex items-center justify-center py-8 text-gray-400">
+            <span class="material-icons animate-spin text-2xl">sync</span>
+          </div>
+          <template v-else>
+            <div v-if="votePackages.length" class="flex flex-col gap-2 mb-3">
+              <button
+                v-for="pkg in votePackages"
+                :key="pkg.id"
+                type="button"
+                class="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl text-left border transition-all"
+                :class="
+                  voteModal.packageId === pkg.id
+                    ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
+                    : 'border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:border-[#FEBF01]'
+                "
+                @click="voteModal.packageId = pkg.id"
+              >
+                <span class="text-sm font-bold">{{ pkg.name }}</span>
+                <span class="text-xs font-bold tabular-nums whitespace-nowrap">
+                  {{ pkg.votes.toLocaleString() }} {{ t('taifa.home.votes') }} · TSh
+                  {{ pkg.price.toLocaleString() }}
+                </span>
+              </button>
+            </div>
+            <p v-else class="text-xs font-bold text-amber-600 dark:text-amber-400 mb-4">
+              {{ t('taifa.home.packagesUnavailable') }}
+            </p>
+
+            <div v-if="votePackages.length" class="flex items-center gap-3 mb-4">
+              <span class="text-[11px] font-bold uppercase tracking-wide text-gray-500">
+                {{ t('taifa.home.quantity') }}
+              </span>
+              <div class="ml-auto flex items-center gap-2">
+                <button
+                  type="button"
+                  class="w-8 h-8 rounded-lg border border-gray-200 dark:border-zinc-700 text-sm font-black text-gray-700 dark:text-gray-200 disabled:opacity-40 hover:border-[#FEBF01] transition-all"
+                  :disabled="voteModal.quantity <= 1"
+                  @click="voteModal.quantity = Math.max(1, voteModal.quantity - 1)"
+                >
+                  −
+                </button>
+                <span class="w-10 text-center text-sm font-black tabular-nums text-gray-900 dark:text-white">
+                  {{ voteModal.quantity }}
+                </span>
+                <button
+                  type="button"
+                  class="w-8 h-8 rounded-lg border border-gray-200 dark:border-zinc-700 text-sm font-black text-gray-700 dark:text-gray-200 disabled:opacity-40 hover:border-[#FEBF01] transition-all"
+                  :disabled="voteModal.quantity >= 100"
+                  @click="voteModal.quantity = Math.min(100, voteModal.quantity + 1)"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div
+              v-if="votePackages.length"
+              class="flex items-center justify-between bg-gray-50 dark:bg-zinc-800 rounded-xl px-4 py-3 mb-4"
             >
-              {{ n }}
+              <span class="text-xs font-bold text-gray-500">{{ t('taifa.home.totalToPay') }}</span>
+              <span class="text-lg font-black text-gray-900 dark:text-white tabular-nums">
+                {{ totalVotes.toLocaleString() }} {{ t('taifa.home.votes') }} · TSh
+                {{ totalAmount.toLocaleString() }}
+              </span>
+            </div>
+          </template>
+
+          <button
+            v-if="votePackages.length"
+            type="button"
+            class="w-full py-3 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] disabled:opacity-50 disabled:cursor-not-allowed text-gray-950 font-black text-sm flex items-center justify-center gap-2 shadow transition-all"
+            :disabled="!selectedPackage"
+            @click="voteModal.formStep = 'pay'"
+          >
+            <span>{{ t('taifa.home.continueBtn') }}</span>
+            <span class="material-icons text-base">arrow_forward</span>
+          </button>
+        </template>
+
+        <!-- Step 2: payment — bundle summary + payer phone -->
+        <template v-else-if="voteModal.step === 'form'">
+          <div class="flex items-center justify-between gap-2 bg-gray-50 dark:bg-zinc-800 rounded-xl px-4 py-3 mb-4">
+            <span class="text-sm font-bold text-gray-900 dark:text-white tabular-nums">
+              <template v-if="selectedPackage">
+                {{
+                  t('taifa.home.bundleSummary', {
+                    qty: voteModal.quantity,
+                    name: selectedPackage.name,
+                    votes: totalVotes.toLocaleString(),
+                    price: totalAmount.toLocaleString(),
+                  })
+                }}
+              </template>
+              <template v-else>{{ t('taifa.home.packagesUnavailable') }}</template>
+            </span>
+            <button
+              type="button"
+              class="text-xs font-bold text-[#8A6800] dark:text-[#FEBF01] hover:underline shrink-0"
+              @click="voteModal.formStep = 'bundle'"
+            >
+              {{ t('taifa.home.changeBundle') }}
             </button>
           </div>
 
@@ -235,13 +341,6 @@
             placeholder="0712 345 678"
             class="w-full mb-4 px-3 py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 text-sm font-mono text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FEBF01]"
           />
-
-          <div class="flex items-center justify-between bg-gray-50 dark:bg-zinc-800 rounded-xl px-4 py-3 mb-4">
-            <span class="text-xs font-bold text-gray-500">{{ t('taifa.home.totalToPay') }}</span>
-            <span class="text-lg font-black text-gray-900 dark:text-white tabular-nums">
-              TSh {{ totalAmount.toLocaleString() }}
-            </span>
-          </div>
 
           <p v-if="voteModal.error" class="text-xs text-red-600 font-bold mb-3">{{ voteModal.error }}</p>
 
@@ -311,11 +410,19 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useComedianApplicationsStore } from '../../stores/comedian-applications'
 import type { VoteListApplicant } from '../../stores/comedian-applications'
+import { useVotePackagesStore } from '../../stores/vote-packages'
+import type { VotePackage } from '../../stores/vote-packages'
 import { findPendingPayment, savePendingPayment } from '../../lib/pending-payments'
 import PaymentWaitingPanel from '../../components/PaymentWaitingPanel.vue'
 
 const { t } = useI18n()
 const applicationsStore = useComedianApplicationsStore()
+const packagesStore = useVotePackagesStore()
+
+const votePackages = computed(() => packagesStore.forPurpose('comedian'))
+const cheapestPackage = computed<VotePackage | null>(() =>
+  votePackages.value.reduce<VotePackage | null>((min, p) => (!min || p.price < min.price ? p : min), null),
+)
 
 const isLoading = ref(true)
 
@@ -334,7 +441,9 @@ type Step = 'form' | 'waiting' | 'done' | 'failed' | 'pending'
 const voteModal = reactive({
   applicant: null as VoteListApplicant | null,
   step: 'form' as Step,
-  votesCount: 1,
+  formStep: 'bundle' as 'bundle' | 'pay',
+  packageId: '',
+  quantity: 1,
   phone: '',
   submitting: false,
   error: '',
@@ -347,8 +456,8 @@ const currentShare = computed(() => {
   return sharePercent(a?.votes ?? 0, batch?.applicants ?? [])
 })
 
-// Payer picks how many votes — backend charges votesCount x voteFee (max 1000).
-const VOTE_COUNT_CHOICES = [1, 5, 10, 25, 50, 100]
+// Payer picks an admin-defined vote bundle — backend charges
+// package.price x quantity and credits package.votes x quantity.
 const VOTE_DRAFT_KEY = 'kicheko_vote_draft'
 
 // Restore the in-progress vote form so a refresh/back doesn't wipe it.
@@ -356,25 +465,41 @@ try {
   const draft = JSON.parse(sessionStorage.getItem(VOTE_DRAFT_KEY) || 'null')
   if (draft) {
     voteModal.phone = draft.phone || ''
-    if (VOTE_COUNT_CHOICES.includes(draft.votesCount)) voteModal.votesCount = draft.votesCount
+    voteModal.packageId = draft.packageId || ''
+    const qty = Number(draft.quantity)
+    if (qty >= 1 && qty <= 100) voteModal.quantity = qty
   }
 } catch {
   /* ignore storage access error */
 }
 
+// Preselect the first package once the list loads; also repairs a stale
+// draft/pending packageId that no longer exists.
 watch(
-  () => [voteModal.phone, voteModal.votesCount],
-  ([phone, votesCount]) => {
+  votePackages,
+  (list) => {
+    if (!list.some((p) => p.id === voteModal.packageId)) {
+      voteModal.packageId = list[0]?.id || ''
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => [voteModal.phone, voteModal.packageId, voteModal.quantity],
+  ([phone, packageId, quantity]) => {
     try {
-      sessionStorage.setItem(VOTE_DRAFT_KEY, JSON.stringify({ phone, votesCount }))
+      sessionStorage.setItem(VOTE_DRAFT_KEY, JSON.stringify({ phone, packageId, quantity }))
     } catch {
       /* ignore storage access error */
     }
   },
 )
 
-const totalAmount = computed(() => voteModal.votesCount * applicationsStore.voteFee)
-const canPay = computed(() => voteModal.phone.replace(/\D/g, '').length >= 9)
+const selectedPackage = computed(() => votePackages.value.find((p) => p.id === voteModal.packageId) || null)
+const totalVotes = computed(() => (selectedPackage.value?.votes || 0) * voteModal.quantity)
+const totalAmount = computed(() => (selectedPackage.value?.price || 0) * voteModal.quantity)
+const canPay = computed(() => !!selectedPackage.value && voteModal.phone.replace(/\D/g, '').length >= 9)
 
 const checkingVote = ref(false)
 const votePaymentId = ref('')
@@ -386,6 +511,7 @@ const stopPolling = () => {
 }
 
 const openVoteModal = (applicant: VoteListApplicant) => {
+  packagesStore.fetchPackages('comedian')
   // A cancelled payment stays in pending-payments — reopen the waiting step
   // instead of initiating (and charging) a second payment for the same applicant.
   const pending = findPendingPayment('comedian_vote', applicant.id)
@@ -393,7 +519,9 @@ const openVoteModal = (applicant: VoteListApplicant) => {
     Object.assign(voteModal, {
       applicant,
       step: 'waiting',
-      votesCount: pending.votesCount || 1,
+      formStep: pending.packageId ? 'pay' : 'bundle',
+      packageId: pending.packageId || '',
+      quantity: pending.quantity || 1,
       phone: pending.phone || '',
       submitting: false,
       error: '',
@@ -403,7 +531,13 @@ const openVoteModal = (applicant: VoteListApplicant) => {
     checkVoteNow()
     return
   }
-  Object.assign(voteModal, { applicant, step: 'form', submitting: false, error: '' })
+  Object.assign(voteModal, {
+    applicant,
+    step: 'form',
+    formStep: 'bundle',
+    submitting: false,
+    error: '',
+  })
   votePaymentId.value = ''
 }
 
@@ -468,7 +602,9 @@ const resumePendingVote = async () => {
   Object.assign(voteModal, {
     applicant,
     step: settled ? 'done' : 'form',
-    votesCount: pending.votesCount || 1,
+    formStep: pending.packageId ? 'pay' : 'bundle',
+    packageId: pending.packageId || '',
+    quantity: pending.quantity || 1,
     phone: pending.phone || '',
     submitting: false,
     error: '',
@@ -480,7 +616,13 @@ const submitVote = async () => {
   voteModal.submitting = true
   voteModal.error = ''
   try {
-    const res = await applicationsStore.buyVotes(voteModal.applicant.id, voteModal.votesCount, voteModal.phone)
+    const res = await applicationsStore.buyVotes(
+      voteModal.applicant.id,
+      voteModal.packageId,
+      voteModal.quantity,
+      totalAmount.value,
+      voteModal.phone,
+    )
     votePaymentId.value = res.payment_id
     savePendingPayment({
       paymentId: res.payment_id,
@@ -488,7 +630,9 @@ const submitVote = async () => {
       referenceId: voteModal.applicant.id,
       label: voteModal.applicant.name,
       amount: res.amount,
-      votesCount: voteModal.votesCount,
+      votesCount: res.votes_count,
+      packageId: voteModal.packageId,
+      quantity: voteModal.quantity,
       phone: voteModal.phone,
     })
     voteModal.step = 'waiting'
@@ -503,6 +647,7 @@ const submitVote = async () => {
 onMounted(async () => {
   try {
     applicationsStore.fetchConfig()
+    packagesStore.fetchPackages('comedian')
     await applicationsStore.fetchVoteList()
     resumePendingVote()
   } finally {

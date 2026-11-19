@@ -61,6 +61,13 @@ export default {
       },
     },
     {
+      name: 'admin-vote-packages',
+      displayName: 'taifa.admin.votePackagesNav',
+      meta: {
+        icon: 'inventory_2',
+      },
+    },
+    {
       name: 'admin-nani-ni-nani',
       displayName: 'taifa.layout.naniNiNani',
       meta: {

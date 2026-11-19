@@ -23,7 +23,14 @@
           class="mt-2.5 inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 px-3 py-1 text-[11px] font-bold text-amber-800 dark:text-amber-300"
         >
           <span class="material-icons text-sm">payments</span>
-          {{ t('taifa.nani.feeNote', { fee: VOTE_FEE.toLocaleString() }) }}
+          <template v-if="cheapestPackage">
+            {{
+              t('taifa.nani.feeNote', {
+                votes: cheapestPackage.votes.toLocaleString(),
+                price: cheapestPackage.price.toLocaleString(),
+              })
+            }}
+          </template>
         </p>
 
         <!-- Live Battle Status Pill — follows the battle on the visible slide -->
@@ -224,39 +231,135 @@
             {{ t('taifa.nani.completeVote') }}
           </h3>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-4">
-            {{ t('taifa.nani.payVoteDesc', { name: selectedContestant.name, fee: VOTE_FEE.toLocaleString() }) }}
+            {{
+              cheapestPackage
+                ? t('taifa.nani.payVoteDesc', {
+                    name: selectedContestant.name,
+                    votes: cheapestPackage.votes.toLocaleString(),
+                    price: cheapestPackage.price.toLocaleString(),
+                  })
+                : t('taifa.nani.payVoteDescNoPackages', { name: selectedContestant.name })
+            }}
           </p>
 
-          <!-- Step 1: vote count + payer phone -->
-          <template v-if="voteStep === 'form'">
-            <!-- Votes count picker -->
-            <div class="flex flex-wrap justify-center gap-2 mb-4">
-              <button
-                v-for="n in VOTE_COUNT_CHOICES"
-                :key="n"
-                type="button"
-                class="px-3.5 py-2 rounded-xl text-sm font-bold border transition-all"
-                :class="
-                  votesCount === n
-                    ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
-                    : 'border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:border-[#FEBF01]'
-                "
-                @click="votesCount = n"
+          <!-- Step 1: choose a bundle -->
+          <template v-if="voteStep === 'form' && voteFormStep === 'bundle'">
+            <p class="text-[11px] font-bold uppercase tracking-wide text-gray-500 mb-2">
+              {{ t('taifa.nani.chooseBundle') }}
+            </p>
+            <div v-if="packagesStore.isLoading" class="flex items-center justify-center py-8 text-gray-400">
+              <span class="material-icons animate-spin text-2xl">sync</span>
+            </div>
+            <template v-else>
+              <!-- Vote package picker -->
+              <div v-if="votePackages.length" class="flex flex-col gap-2 mb-3">
+                <button
+                  v-for="pkg in votePackages"
+                  :key="pkg.id"
+                  type="button"
+                  class="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl text-left border transition-all"
+                  :class="
+                    selectedPackageId === pkg.id
+                      ? 'bg-[#FEBF01] border-[#FEBF01] text-gray-950'
+                      : 'border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-gray-300 hover:border-[#FEBF01]'
+                  "
+                  @click="selectedPackageId = pkg.id"
+                >
+                  <span class="text-sm font-bold">{{ pkg.name }}</span>
+                  <span class="text-xs font-bold tabular-nums whitespace-nowrap">
+                    {{ pkg.votes.toLocaleString() }} {{ t('taifa.nani.votes') }} · TSh
+                    {{ pkg.price.toLocaleString() }}
+                  </span>
+                </button>
+              </div>
+              <p v-else class="text-xs font-bold text-amber-600 dark:text-amber-400 mb-4">
+                {{ t('taifa.nani.packagesUnavailable') }}
+              </p>
+
+              <!-- Quantity stepper -->
+              <div v-if="votePackages.length" class="flex items-center justify-center gap-3 mb-4">
+                <button
+                  type="button"
+                  class="w-8 h-8 rounded-lg border border-gray-200 dark:border-zinc-700 text-sm font-black text-gray-700 dark:text-gray-200 disabled:opacity-40 hover:border-[#FEBF01] transition-all"
+                  :disabled="voteQuantity <= 1"
+                  @click="voteQuantity = Math.max(1, voteQuantity - 1)"
+                >
+                  −
+                </button>
+                <span class="w-10 text-center text-sm font-black tabular-nums text-gray-900 dark:text-white">
+                  {{ voteQuantity }}
+                </span>
+                <button
+                  type="button"
+                  class="w-8 h-8 rounded-lg border border-gray-200 dark:border-zinc-700 text-sm font-black text-gray-700 dark:text-gray-200 disabled:opacity-40 hover:border-[#FEBF01] transition-all"
+                  :disabled="voteQuantity >= 100"
+                  @click="voteQuantity = Math.min(100, voteQuantity + 1)"
+                >
+                  +
+                </button>
+              </div>
+
+              <!-- Amount Box -->
+              <div
+                v-if="votePackages.length"
+                class="p-4 rounded-2xl bg-[#EBF4FE] dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 mb-4 text-center"
               >
-                {{ n }}
+                <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{{
+                  t('taifa.nani.amount')
+                }}</span>
+                <span class="text-2xl sm:text-3xl font-black text-[#183153] dark:text-blue-300 tabular-nums">
+                  {{ totalVotes.toLocaleString() }} {{ t('taifa.nani.votes') }} · TSh
+                  {{ voteTotal.toLocaleString() }}
+                </span>
+              </div>
+            </template>
+
+            <div class="space-y-2">
+              <button
+                v-if="votePackages.length"
+                type="button"
+                :disabled="!selectedPackage"
+                class="w-full py-3.5 rounded-xl bg-[#FEBF01] hover:bg-[#E5AC00] text-gray-950 font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                @click="voteFormStep = 'pay'"
+              >
+                <span>{{ t('taifa.nani.continueBtn') }}</span>
+                <span class="material-icons text-base">arrow_forward</span>
+              </button>
+              <button
+                type="button"
+                class="w-full py-2.5 rounded-xl border border-gray-200 dark:border-zinc-700 text-xs font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+                @click="closeVoteModal"
+              >
+                {{ t('taifa.nani.cancel') }}
               </button>
             </div>
+          </template>
 
-            <!-- Amount Box -->
+          <!-- Step 2: payment — bundle summary + payer phone -->
+          <template v-else-if="voteStep === 'form'">
             <div
-              class="p-4 rounded-2xl bg-[#EBF4FE] dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 mb-4 text-center"
+              class="flex items-center justify-between gap-2 bg-gray-50 dark:bg-zinc-800 rounded-xl px-4 py-3 mb-4 text-left"
             >
-              <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{{
-                t('taifa.nani.amount')
-              }}</span>
-              <span class="text-2xl sm:text-3xl font-black text-[#183153] dark:text-blue-300 tabular-nums">
-                TSh {{ voteTotal.toLocaleString() }}
+              <span class="text-sm font-bold text-gray-900 dark:text-white tabular-nums">
+                <template v-if="selectedPackage">
+                  {{
+                    t('taifa.nani.bundleSummary', {
+                      qty: voteQuantity,
+                      name: selectedPackage.name,
+                      votes: totalVotes.toLocaleString(),
+                      price: voteTotal.toLocaleString(),
+                    })
+                  }}
+                </template>
+                <template v-else>{{ t('taifa.nani.packagesUnavailable') }}</template>
               </span>
+              <button
+                type="button"
+                class="text-xs font-bold text-[#8A6800] dark:text-[#FEBF01] hover:underline shrink-0"
+                @click="voteFormStep = 'bundle'"
+              >
+                {{ t('taifa.nani.changeBundle') }}
+              </button>
             </div>
 
             <input
@@ -416,6 +519,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useNaniNiNaniStore, type Contestant, type BattleRound } from '../../stores/nani-ni-nani'
 import { useUniversitiesStore } from '../../stores/universities'
+import { useVotePackagesStore } from '../../stores/vote-packages'
+import type { VotePackage } from '../../stores/vote-packages'
 import { savePendingPayment } from '../../lib/pending-payments'
 import ContestantCard from '../../components/nani/ContestantCard.vue'
 import PaymentWaitingPanel from '../../components/PaymentWaitingPanel.vue'
@@ -424,16 +529,27 @@ import { resolveMediaUrl } from '../../services/api/config'
 const { t } = useI18n()
 const naniStore = useNaniNiNaniStore()
 const uniStore = useUniversitiesStore()
+const packagesStore = useVotePackagesStore()
+
+const votePackages = computed(() => packagesStore.forPurpose('nani'))
+const cheapestPackage = computed<VotePackage | null>(() =>
+  votePackages.value.reduce<VotePackage | null>((min, p) => (!min || p.price < min.price ? p : min), null),
+)
 
 onMounted(() => {
   // Restore the in-progress vote form so a refresh/back doesn't wipe it.
   try {
     voterPhone.value = sessionStorage.getItem(VOTE_PHONE_KEY) || ''
-    const savedCount = Number(sessionStorage.getItem(VOTE_COUNT_KEY))
-    if (VOTE_COUNT_CHOICES.includes(savedCount)) votesCount.value = savedCount
+    const draft = JSON.parse(sessionStorage.getItem(VOTE_DRAFT_KEY) || 'null')
+    if (draft) {
+      selectedPackageId.value = draft.packageId || ''
+      const qty = Number(draft.quantity)
+      if (qty >= 1 && qty <= 100) voteQuantity.value = qty
+    }
   } catch {
     /* ignore storage access error */
   }
+  packagesStore.fetchPackages('nani')
   naniStore.fetchActiveBattle()
   naniStore.fetchBattles()
   uniStore.fetchUniversities()
@@ -633,9 +749,7 @@ const embedUrl = (url: string): string => {
   return m ? `https://www.youtube.com/embed/${m[1]}?autoplay=1&rel=0` : ''
 }
 
-// ── Paid voting (Pay-IT) — fixed TSh 1,000 per vote ───────────
-const VOTE_FEE = 1000
-
+// ── Paid voting (Pay-IT) — votes are sold in admin-defined bundles ────
 const showVoteModal = ref(false)
 const selectedContestant = ref<Contestant | null>(null)
 const votingBattle = ref<BattleRound | null>(null)
@@ -643,18 +757,34 @@ const voteStep = ref<'form' | 'waiting' | 'done' | 'failed' | 'pending'>('form')
 const voterPhone = ref('')
 const voteError = ref('')
 const VOTE_PHONE_KEY = 'kicheko_nani_vote_phone'
-const VOTE_COUNT_KEY = 'kicheko_nani_vote_count'
+const VOTE_DRAFT_KEY = 'kicheko_nani_vote_draft'
 const isVoting = ref(false)
 const checkingVote = ref(false)
 const votePaymentId = ref('')
 const voteSuccessMessage = ref('')
 const voteDoneText = ref('')
 
-// Payer picks how many votes — backend charges votesCount x VOTE_FEE (max 1000).
-const VOTE_COUNT_CHOICES = [1, 5, 10, 25, 50, 100]
-const votesCount = ref(1)
-const voteTotal = computed(() => votesCount.value * VOTE_FEE)
-const canPayVote = computed(() => voterPhone.value.replace(/\D/g, '').length >= 9)
+// Payer picks a vote bundle — backend charges package.price x quantity
+// and credits package.votes x quantity.
+const selectedPackageId = ref('')
+const voteQuantity = ref(1)
+const voteFormStep = ref<'bundle' | 'pay'>('bundle')
+const selectedPackage = computed(() => votePackages.value.find((p) => p.id === selectedPackageId.value) || null)
+const totalVotes = computed(() => (selectedPackage.value?.votes || 0) * voteQuantity.value)
+const voteTotal = computed(() => (selectedPackage.value?.price || 0) * voteQuantity.value)
+const canPayVote = computed(() => !!selectedPackage.value && voterPhone.value.replace(/\D/g, '').length >= 9)
+
+// Preselect the first package once the list loads; also repairs a stale
+// draft packageId that no longer exists.
+watch(
+  votePackages,
+  (list) => {
+    if (!list.some((p) => p.id === selectedPackageId.value)) {
+      selectedPackageId.value = list[0]?.id || ''
+    }
+  },
+  { immediate: true },
+)
 
 // Persist the vote form draft so refresh/back keeps the progress.
 watch(voterPhone, (v) => {
@@ -664,9 +794,9 @@ watch(voterPhone, (v) => {
     /* ignore storage access error */
   }
 })
-watch(votesCount, (v) => {
+watch([selectedPackageId, voteQuantity], ([packageId, quantity]) => {
   try {
-    sessionStorage.setItem(VOTE_COUNT_KEY, String(v))
+    sessionStorage.setItem(VOTE_DRAFT_KEY, JSON.stringify({ packageId, quantity }))
   } catch {
     /* ignore storage access error */
   }
@@ -679,9 +809,11 @@ const stopVotePoll = () => {
 }
 
 const openVoteModal = (contestant: Contestant, b: BattleRound) => {
+  packagesStore.fetchPackages('nani')
   selectedContestant.value = contestant
   votingBattle.value = b
   voteStep.value = 'form'
+  voteFormStep.value = 'bundle'
   voteError.value = ''
   voteDoneText.value = ''
   votePaymentId.value = ''
@@ -760,7 +892,8 @@ const submitVote = async () => {
     const res = await naniStore.buyVotes({
       battleId: votingBattle.value.id,
       contestantId: selectedContestant.value.id,
-      votesCount: votesCount.value,
+      packageId: selectedPackageId.value,
+      quantity: voteQuantity.value,
       mobileNumber: voterPhone.value,
       amount: voteTotal.value,
     })
@@ -771,7 +904,9 @@ const submitVote = async () => {
       referenceId: `${votingBattle.value.id}:${selectedContestant.value.id}`,
       label: selectedContestant.value.name,
       amount: res.amount,
-      votesCount: votesCount.value,
+      votesCount: res.votes_count,
+      packageId: selectedPackageId.value,
+      quantity: voteQuantity.value,
       phone: voterPhone.value,
     })
     voteStep.value = 'waiting'

@@ -16,7 +16,7 @@ declare module 'vue-router' {
 }
 
 const routes: Array<RouteRecordRaw> = [
-  // 1. Public Kicheko Pro Platform (Taifa House PDF Design Experience)
+  // 1. Public Talent Search Platform (Taifa House PDF Design Experience)
   {
     path: '/',
     component: TaifaLayout,
@@ -138,6 +138,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'admin-categories',
         path: 'categories',
         component: () => import('../pages/admin/categories/CategoriesPage.vue'),
+      },
+      {
+        name: 'admin-vote-packages',
+        path: 'vote-packages',
+        component: () => import('../pages/admin/vote-packages/VotePackagesPage.vue'),
       },
       {
         name: 'admin-videos',

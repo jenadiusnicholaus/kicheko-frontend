@@ -65,7 +65,7 @@
     <!-- Footer -->
     <template #bottom>
       <div v-if="!minimized" class="p-3 border-t border-gray-100 dark:border-gray-800 text-[11px] text-gray-400">
-        <p class="font-medium text-gray-500 dark:text-gray-400">Kicheko Studio v1.0</p>
+        <p class="font-medium text-gray-500 dark:text-gray-400">Taifa House Studio v1.0</p>
         <p class="text-[10px] mt-0.5">{{ t('kicheko.tagline') }}</p>
       </div>
     </template>

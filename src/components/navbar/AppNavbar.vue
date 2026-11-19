@@ -16,8 +16,8 @@
           </span>
         </button>
 
-        <!-- Kicheko Logo -->
-        <RouterLink to="/" aria-label="Kicheko - Nyumbani" class="flex items-center">
+        <!-- Taifa House Logo -->
+        <RouterLink to="/" aria-label="Taifa House - Nyumbani" class="flex items-center">
           <KichekoLogo size="md" />
         </RouterLink>
       </div>

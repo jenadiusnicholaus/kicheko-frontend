@@ -825,7 +825,7 @@ const shareUrl = (article: WallOfFameArticle) => `${window.location.origin}/wall
 
 const shareTargets = (article: WallOfFameArticle) => {
   const url = encodeURIComponent(shareUrl(article))
-  const text = encodeURIComponent(`${article.title} — ${t('taifa.wall.title')}`)
+  const text = encodeURIComponent(`${article.title} — ${t('taifa.layout.wallOfFame')}`)
   return [
     { name: 'WhatsApp', icon: 'phone', color: 'bg-[#25D366]', url: `https://wa.me/?text=${text}%20${url}` },
     {

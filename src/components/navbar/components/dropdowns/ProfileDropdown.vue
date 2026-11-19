@@ -28,7 +28,7 @@
           </div>
           <div class="overflow-hidden">
             <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">
-              {{ user?.display_name || 'Mtumiaji wa Kicheko' }}
+              {{ user?.display_name || 'Mtumiaji wa Taifa House' }}
             </p>
             <p class="text-xs text-gray-500 truncate">
               {{ user?.email || user?.username }}
@@ -53,7 +53,7 @@
             @click="isShown = false"
           >
             <span class="material-icons text-base text-gray-500 dark:text-gray-400">dashboard</span>
-            <span>Studio ya Kicheko</span>
+            <span>Studio ya Taifa House</span>
           </RouterLink>
 
           <RouterLink

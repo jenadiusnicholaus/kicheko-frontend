@@ -215,12 +215,13 @@ export const useNaniNiNaniStore = defineStore('naniNiNani', {
     },
 
     /** Buy votes: the backend pushes a Pay-IT mobile-money prompt for
-     * votesCount x TSh 1,000. Votes are only counted once the webhook
+     * quantity x package. Votes are only counted once the webhook
      * confirms the payment — poll with fetchVoteStatus using payment_id. */
     async buyVotes(payload: {
       battleId: string
       contestantId: string
-      votesCount: number
+      packageId: string
+      quantity: number
       mobileNumber: string
       amount: number
     }): Promise<{
@@ -234,7 +235,8 @@ export const useNaniNiNaniStore = defineStore('naniNiNani', {
         purpose: 'nani_vote',
         battle_id: payload.battleId,
         contestant_id: payload.contestantId,
-        votes_count: payload.votesCount,
+        package_id: payload.packageId,
+        quantity: payload.quantity,
         amount: payload.amount,
         mobile_number: payload.mobileNumber,
       })

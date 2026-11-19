@@ -1,4 +1,4 @@
-/** Shapes returned by the Kicheko API (see docs/frontend_api.md). */
+/** Shapes returned by the Taifa House API (see docs/frontend_api.md). */
 
 export interface UserProfile {
   avatar: string | null

@@ -17,6 +17,9 @@ export interface PendingPayment {
   amount?: number
   phone?: string
   votesCount?: number
+  /** Vote package id + quantity bought (bundle voting). */
+  packageId?: string
+  quantity?: number
   createdAt: number
 }
 

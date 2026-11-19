@@ -12,7 +12,7 @@
         <RouterLink
           to="/"
           class="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow hover:scale-105 transition-transform shrink-0 overflow-hidden"
-          title="Kicheko Pro - Taifa House"
+          title="Talent Search - Taifa House"
         >
           <img src="/taifa/taifa_logo.png" alt="Taifa House" class="w-full h-full object-cover rounded-full" />
         </RouterLink>

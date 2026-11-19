@@ -21,7 +21,7 @@
       "backToVideos": "Rudi kwenye video (Back to Videos)"
     },
     "loginPage": {
-      "title": "Ingia Kicheko",
+      "title": "Ingia Taifa House",
       "noAccount": "Huna akaunti bado?",
       "signUpLink": "Jisajili",
       "usernameLabel": "Barua pepe au Namba ya simu",
@@ -30,11 +30,11 @@
       "rememberDevice": "Nikumbuke kifaa hiki",
       "forgotPassword": "Umesahau nenosiri?",
       "submit": "Ingia",
-      "welcomeToast": "Karibu tena Kicheko!",
+      "welcomeToast": "Karibu tena Taifa House!",
       "failed": "Kuingia kumeshindikana. Tafadhali angalia taarifa zako."
     },
     "signupPage": {
-      "title": "Jisajili Kicheko",
+      "title": "Jisajili Taifa House",
       "haveAccount": "Tayari una akaunti?",
       "loginLink": "Ingia hapa",
       "nameLabel": "Jina lako kamili au la Sanaa",
@@ -49,7 +49,7 @@
       "acceptTerms": "Ninakubali Vigezo vya Huduma na Sera ya Faragha",
       "acceptTermsRequired": "Lazima ukubali vigezo na masharti",
       "submit": "Jisajili",
-      "welcomeToast": "Karibu Kicheko! Akaunti yako iko tayari.",
+      "welcomeToast": "Karibu Taifa House! Akaunti yako iko tayari.",
       "failed": "Kujisajili kumeshindikana. Tafadhali angalia taarifa zako.",
       "passwordRequired": "Tafadhali ingiza nenosiri",
       "passwordMinLength": "Nenosiri liwe na angalau herufi 8",
@@ -82,7 +82,7 @@
     },
     "orContinueWith": "Au endelea kwa",
     "google": {
-      "welcomeToast": "Karibu Kicheko!",
+      "welcomeToast": "Karibu Taifa House!",
       "failed": "Kuingia kwa Google kimeshindwa. Jaribu tena."
     }
   },
@@ -224,7 +224,7 @@
     "sidebar": {
       "creatorPromo": {
         "question": "Je, wewe ni Mchekeshaji?",
-        "pitch": "Jiunge na Kicheko, pakia vichekesho vyako na upate mapato ya kazi zako.",
+        "pitch": "Jiunge na Taifa House, pakia vichekesho vyako na upate mapato ya kazi zako.",
         "cta": "Anza Leo"
       },
       "footer": {
@@ -237,7 +237,7 @@
       "title": "Mipangilio ya Mfumo",
       "theme": {
         "label": "Muonekano",
-        "description": "Chagua muonekano wa giza au mwanga unaopendelea kutumia kwenye jukwaa la Kicheko."
+        "description": "Chagua muonekano wa giza au mwanga unaopendelea kutumia kwenye jukwaa la Taifa House."
       },
       "preferences": {
         "label": "Lugha na Mapendeleo",
@@ -261,7 +261,7 @@
       "premiumVideos": "Video Maalum za Kulipia",
       "trending": "Zinazotazamwa Zaidi Tanzania",
       "comedy": "Vichekesho: {cat}",
-      "shortsShelf": "Shorts za Kicheko",
+      "shortsShelf": "Shorts za Taifa House",
       "seeAll": "Tazama zote",
       "moreVideos": "Video Nyingine"
     },
@@ -273,7 +273,7 @@
     "admin": {
       "nav": {
         "public": "Jukwaa la Umma",
-        "studio": "Studio ya Kicheko",
+        "studio": "Studio ya Taifa House",
         "videos": "Pakia & Simamia Video",
         "users": "Wasanii & Watumiaji",
         "payments": "Malipo & Mauzo",
@@ -307,12 +307,20 @@
       "step2Desc": "Tazama mapambano ya wachekeshaji wa vyuo na piga kura kwa TSh 1,000 kumuinua unayempenda.",
       "step3Title": "3. Wall of Fame",
       "step3Desc": "Kutana na mabingwa wa vichekesho waliowahi kutikisa majukwaa ya vyuo Tanzania.",
-      "voteTitle": "Kicheko Pro: Mwenendo wa Kura",
+      "voteTitle": "Talent Search: Mwenendo wa Kura",
       "votes": "kura",
       "vote": "Piga Kura",
       "voteEmpty": "Hakuna washindani kwenye orodha ya kura bado.",
       "voteFor": "Mpigie kura {name}",
       "feePerVote": "TSh {fee} kwa kila kura",
+      "packagesFrom": "Kuanzia kura {votes} / TSh {price}",
+      "packagesUnavailable": "Vifurushi vya kura havijapatikana bado.",
+      "quantity": "Vifurushi",
+      "chooseBundle": "Chagua kifurushi",
+      "continueBtn": "Endelea",
+      "paymentStep": "Malipo",
+      "changeBundle": "Badilisha",
+      "bundleSummary": "{qty} × {name} · kura {votes} · TSh {price}",
       "payerPhone": "Namba ya simu ya malipo",
       "totalToPay": "Jumla ya kulipa",
       "payAndVote": "Lipa TSh {amount} & piga kura",
@@ -330,11 +338,12 @@
       "colUniversity": "Chuo",
       "colShare": "Asilimia",
       "colVotes": "Kura",
-      "voteFooter": "Asilimia ya kura zote zilizolipiwa · TSh {fee} kwa kura kupitia Pay-IT"
+      "voteFooter": "Asilimia ya kura zote zilizolipiwa · kuanzia kura {votes} / TSh {price} kupitia Pay-IT",
+      "voteFooterNoPackages": "Asilimia ya kura zote zilizolipiwa · kupitia Pay-IT"
     },
     "register": {
       "createAccount": "Tuma Maombi Sasa",
-      "fillDetails": "Jaza taarifa zako kuanza safari yako ya Kicheko Pro.",
+      "fillDetails": "Jaza taarifa zako kuanza safari yako ya Talent Search.",
       "firstName": "Jina la Kwanza",
       "firstNamePlaceholder": "Weka jina lako la kwanza",
       "lastName": "Jina la Ukoo",
@@ -350,7 +359,7 @@
       "phone": "Namba ya Simu",
       "phoneNote": "Tutatumia namba hii kuwasiliana nawe kuhusu ombi lako.",
       "alreadyRegisteredTitle": "Tayari Umejisajili",
-      "alreadyRegisteredDesc": "Namba hii ya simu au barua hii pepe tayari ina ombi la Kicheko Pro lililolipwa — huna haja ya kujisajili tena.",
+      "alreadyRegisteredDesc": "Namba hii ya simu au barua hii pepe tayari ina ombi la Talent Search lililolipwa — huna haja ya kujisajili tena.",
       "back": "Nyuma",
       "submit": "Wasilisha",
       "confirmTitle": "Thibitisha Maombi & Lipa Ada",
@@ -374,7 +383,7 @@
       "payerPhone": "Namba ya Simu ya Malipo",
       "payerName": "Jina Kamili",
       "purpose": "Kusudi la Malipo (hiari)",
-      "purposeDefault": "Kicheko Application fees",
+      "purposeDefault": "Taifa House Application fees",
       "payNow": "Lipa {amount}",
       "changeDetails": "Badilisha namba au taarifa",
       "promptSentTitle": "Ombi la malipo limetumwa kwenye simu yako!",
@@ -402,7 +411,14 @@
       "votes": "Kura",
       "vote": "Piga Kura",
       "completeVote": "Kamilisha Kura Yako",
-      "payVoteDesc": "TSh {fee} kwa kila kura kwa {name} — malipo salama kupitia Pay-IT.",
+      "payVoteDesc": "Mpigie kura {name} — kuanzia kura {votes} / TSh {price}, malipo salama kupitia Pay-IT.",
+      "payVoteDescNoPackages": "Mpigie kura {name} — malipo salama kupitia Pay-IT.",
+      "packagesUnavailable": "Vifurushi vya kura havijapatikana bado.",
+      "chooseBundle": "Chagua kifurushi",
+      "continueBtn": "Endelea",
+      "paymentStep": "Malipo",
+      "changeBundle": "Badilisha",
+      "bundleSummary": "{qty} × {name} · kura {votes} · TSh {price}",
       "amount": "Kiasi",
       "payVoteBtn": "Lipa TSh {fee}",
       "verifyingVote": "Inathibitisha Kura...",
@@ -424,7 +440,7 @@
       "voteFailed": "Malipo yameshindikana — hakuna kura iliyoongezwa.",
       "votePending": "Malipo bado yanathibitishwa. Kura zako zitaonekana yakikamilika.",
       "voteShare": "Asilimia ya kura",
-      "feeNote": "TSh {fee} kwa kila kura — malipo kupitia mobile money",
+      "feeNote": "Kuanzia kura {votes} / TSh {price} — malipo kupitia mobile money",
       "emptyTitle": "Hakuna mashindano kwa sasa",
       "emptyDesc": "Mashindano mapya yanakuja hivi karibuni — rudi tena kupiga kura."
     },
@@ -540,7 +556,7 @@
         "filterNone": "Hakuna kundi",
         "filterLabel": "Chuja kwa kundi",
         "openSuffix": "● Wazi",
-        "openVotingNowConfirm": "Ungependa kufungua kura kwa kundi “{title}” sasa? Kundi hili litaonekana kwenye Kicheko Pro.",
+        "openVotingNowConfirm": "Ungependa kufungua kura kwa kundi “{title}” sasa? Kundi hili litaonekana kwenye Talent Search.",
         "noBatchVoteList": "Hakuna kundi – hayupo kwenye orodha ya kura",
         "levelChangeConfirm": "Kubadilisha kiwango kutamwondoa mwombaji huyu kwenye kundi “{title}”. Unaendelea?",
         "empty": "Bado hakuna vikundi vya kura. Tengeneza kundi la kwanza hapo juu.",
@@ -568,6 +584,7 @@
       },
       "universitiesNav": "Vyuo Vikuu",
       "categoriesNav": "Aina za Burudani",
+      "votePackagesNav": "Vifurushi vya Kura",
       "totalApps": "Jumla ya Maombi",
       "pendingApproval": "Yanasubiri Idhini",
       "confirmedApps": "Yaliyothibitishwa",
@@ -614,7 +631,7 @@
       "universities": {
         "title": "Usimamizi wa Vyuo Vikuu",
         "count": "Vyuo {count}",
-        "subtitle": "Dhibiti orodha ya vyuo vikuu vinavyoshiriki mashindano na kuonekana kwenye fomu ya kujiunga ya Kicheko Pro.",
+        "subtitle": "Dhibiti orodha ya vyuo vikuu vinavyoshiriki mashindano na kuonekana kwenye fomu ya kujiunga ya Talent Search.",
         "addBtn": "Ongeza Chuo Kipya",
         "statusActive": "Inatumika",
         "statusInactive": "Imezimwa",
@@ -697,7 +714,7 @@
         "colContestantB": "Mshiriki B"
       },
       "videos": {
-        "title": "Usimamizi na Upakiaji wa Video za Kicheko",
+        "title": "Usimamizi na Upakiaji wa Video za Taifa House",
         "subtitle": "Pakia video mpya za vichekesho, tengeneza preview fupi za Shorts, weka bei na dhibiti maudhui.",
         "uploadBtn": "Pakia Video Mpya",
         "statTotal": "Jumla ya Video",
@@ -714,7 +731,7 @@
         "durationLabel": "Muda: {duration}",
         "paidBadge": "Kulipia: Tsh {price}",
         "viewLink": "Tazama",
-        "modalTitle": "Pakia Video Mpya ya Kicheko",
+        "modalTitle": "Pakia Video Mpya ya Taifa House",
         "titleLabel": "Kichwa cha Video (Title) *",
         "titlePlaceholder": "Mfano: Cheka Tu Live: Vituko vya Dar es Salaam...",
         "descLabel": "Maelezo ya Video (Description)",
@@ -739,7 +756,7 @@
       "levelLabel": "Kiwango {n}",
       "onVoteList": "Anaonekana kwenye orodha ya kura",
       "notOnVoteList": "Bado hayupo kwenye orodha ya kura",
-      "flowHint": "Mtiririko: mwombaji analipa (au unaweka malipo kuwa yamelipwa) → Idhinisha → funga maombi → chagua waombaji walioidhinishwa na ubonyeze “Ongeza kwenye kundi” (jina la shindano + kiwango cha 2–4) → fungua kura kwa kundi hilo kwenye ukurasa wa Vikundi vya Kura ili lionekane Kicheko Pro.",
+      "flowHint": "Mtiririko: mwombaji analipa (au unaweka malipo kuwa yamelipwa) → Idhinisha → funga maombi → chagua waombaji walioidhinishwa na ubonyeze “Ongeza kwenye kundi” (jina la shindano + kiwango cha 2–4) → fungua kura kwa kundi hilo kwenye ukurasa wa Vikundi vya Kura ili lionekane Talent Search.",
       "bulkSelected": "{n} wamechaguliwa",
       "bulkHint": "Walioidhinishwa tu — wengine wanarukwa.",
       "bulkApply": "Weka kiwango",
@@ -769,13 +786,34 @@
         "statusInactive": "Haitumiki",
         "deleteConfirm": "Futa aina hii? Mapambano na maombi yatabaki lakini yatapoteza uhusiano.",
         "cannotEdit": "Haiwezi kuhaririwa — haina ID"
+      },
+      "votePackages": {
+        "title": "Vifurushi vya Kura",
+        "subtitle": "Vifurushi vya kura vinavyouzwa kwa Talent Search na Nani ni Nani — bei na idadi ya kura kwa kifurushi.",
+        "count": "vifurushi {count}",
+        "addBtn": "Ongeza Kifurushi",
+        "empty": "Bado hakuna vifurushi vya kura — tengeneza kimoja ili mashabiki wanunue kura.",
+        "addTitle": "Kifurushi Kipya cha Kura",
+        "editTitle": "Hariri Kifurushi cha Kura",
+        "nameLabel": "Jina",
+        "namePlaceholder": "mf. Kura Dazeni",
+        "votesLabel": "Kura",
+        "priceLabel": "Bei (TSh)",
+        "appliesToLabel": "Kinatumika kwa",
+        "appliesAll": "Vyote",
+        "appliesComedian": "Kura za mchekeshaji",
+        "appliesNani": "Nani ni Nani",
+        "sortLabel": "Mpangilio",
+        "statusLabel": "Hali",
+        "activeLabel": "Kinatumika (kinaonekana kwa wapiga kura)",
+        "deleteConfirm": "Futa kifurushi hiki cha kura? Manunuzi yaliyopita yatabaki."
       }
     },
     "voteStats": {
       "nav": "Takwimu za Kura",
       "title": "Takwimu za Kura",
-      "subtitle": "Ununuzi wote wa kura — Kicheko Pro na Nani ni Nani",
-      "tabKicheko": "Kicheko Pro",
+      "subtitle": "Ununuzi wote wa kura — Talent Search na Nani ni Nani",
+      "tabKicheko": "Talent Search",
       "tabNani": "Nani ni Nani",
       "purchases": "Manunuzi",
       "purchasesDesc": "Jaribio zote za kulipa",
@@ -843,7 +881,7 @@
         "unfollowedToast": "Umeacha kumfuata {name}."
       },
       "comedians": {
-        "title": "Wasanii wa Kicheko Tanzania",
+        "title": "Wasanii wa Taifa House Tanzania",
         "subtitle": "Gundua wachekeshaji maarufu na wanaochipukia, tazama kazi zao na uwafuate.",
         "verified": "Imethibitishwa",
         "viewWork": "Tazama kazi"
@@ -878,7 +916,7 @@
         "paid": "Ya Kulipia",
         "showMore": "Soma zaidi (Show more)",
         "showLess": "Funga (Show less)",
-        "paymentTitle": "Malipo ya Video ya Kicheko",
+        "paymentTitle": "Malipo ya Video ya Taifa House",
         "buyAccess": "Nunua haki ya kutazama:",
         "amountDue": "Kiasi cha Kulipa:",
         "phoneLabel": "Namba ya Simu ya Kutoa Pesa:",
@@ -890,7 +928,7 @@
         "linkCopied": "Kiungo cha video kimewekwa kwenye clipboard!"
       },
       "library": {
-        "title": "Maktaba Yangu ya Kicheko",
+        "title": "Maktaba Yangu ya Taifa House",
         "subtitle": "Hapa unakuta video ulizonunua na zile ulizoweka alama ya kupenda.",
         "purchasedTab": "Video Zilizolipwa ({count})",
         "likedTab": "Zilizopendwa ({count})",
@@ -898,15 +936,15 @@
         "noPurchasedDesc": "Unaponunua video za kulipia za wasanii wako pendwa, zitaonekana hapa moja kwa moja bila kikomo cha kuzitazama.",
         "browseCta": "Tazama Video za Sasa",
         "noLiked": "Bado huna video ulizozipenda",
-        "noLikedDesc": "Bonyeza kitufe cha 'Like' kwenye video yoyote ya Kicheko ili kuihifadhi hapa."
+        "noLikedDesc": "Bonyeza kitufe cha 'Like' kwenye video yoyote ya Taifa House ili kuihifadhi hapa."
       },
       "fame": {
         "loading": "Inapakia Wall of Fame...",
         "emptyTitle": "Hakuna Mabingwa Bado",
-        "emptyDesc": "Mabingwa wa Kicheko Pro wataorodheshwa hapa hivi karibuni."
+        "emptyDesc": "Mabingwa wa Talent Search wataorodheshwa hapa hivi karibuni."
       },
       "pro": {
-        "logoAlt": "Kicheko Pro - Jiandae Kucheka"
+        "logoAlt": "Talent Search - Jiandae Kucheka"
       },
       "register": {
         "paymentAlt": "Malipo"
@@ -1047,7 +1085,7 @@
       },
       "activity": {
         "title": "Shughuli za Jukwaa (Live Activity)",
-        "subtitle": "Matukio na miamala ya hivi punde kwenye Kicheko",
+        "subtitle": "Matukio na miamala ya hivi punde kwenye Taifa House",
         "live": "Moja kwa Moja",
         "cdnStatus": "Hali ya Seva ya Video (Streaming CDN):",
         "cdnHealthy": "100% Imara (Kawaida)",
@@ -1064,7 +1102,7 @@
         "act4Desc": "Mtumiaji +255 713 *** amekamilisha Tsh 1,500 kwa video \"Harusi ya Shoki\".",
         "act4Time": "Saa 2 zilizopita",
         "act5Title": "Mchekeshaji Mpya Amejiunga",
-        "act5Desc": "Mau Fundi amethibitishwa rasmi na akaunti yake imewashwa kwenye Kicheko.",
+        "act5Desc": "Mau Fundi amethibitishwa rasmi na akaunti yake imewashwa kwenye Taifa House.",
         "act5Time": "Saa 4 zilizopita"
       },
       "revenue": {
@@ -1100,7 +1138,7 @@
       },
       "analytics": {
         "title": "Mwenendo wa Utazamaji & Ushiriki",
-        "subtitle": "Takwimu halisi za watazamaji na mwingiliano wa video za Kicheko",
+        "subtitle": "Takwimu halisi za watazamaji na mwingiliano wa video za Taifa House",
         "viewsTab": "Watazamaji (Views)",
         "revenueTab": "Mapato (TZS)",
         "likesTab": "Vipendwa (Likes)",
@@ -1159,7 +1197,7 @@
         "searchPlaceholder": "Tafuta video za vichekesho, wasanii, skits...",
         "searchPlaceholderMobile": "Tafuta video za vichekesho...",
         "uploadVideo": "Pakia Video",
-        "defaultUser": "Mtumiaji wa Kicheko",
+        "defaultUser": "Mtumiaji wa Taifa House",
         "avatarAlt": "Picha ya mtumiaji",
         "loggedOut": "Umetoka kwenye akaunti yako salama."
       }
