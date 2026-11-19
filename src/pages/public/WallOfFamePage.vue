@@ -821,7 +821,8 @@ const relativeTime = (iso: string) => {
 
 const shareMenuFor = ref<string | null>(null)
 
-const shareUrl = (article: WallOfFameArticle) => `${window.location.origin}/wall-of-fame?article=${article.id}`
+const shareUrl = (article: WallOfFameArticle) =>
+  `${window.location.origin}${import.meta.env.VITE_API_BASE_URL}/wall-of-fame/${article.id}/share/`
 
 const shareTargets = (article: WallOfFameArticle) => {
   const url = encodeURIComponent(shareUrl(article))
