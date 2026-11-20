@@ -732,7 +732,7 @@ const badgeFor = (c: Contestant): string => {
   const u = uniStore.universities.find(
     (u) => u.code.toLowerCase() === c.universityCode.toLowerCase() || u.name === c.university,
   )
-  return resolveMediaUrl(u?.badge) || c.badgeImage || '/image/Kicheko.png'
+  return resolveMediaUrl(u?.badge) || c.badgeImage || '/taifa/taifa_icon.png'
 }
 
 const showVideoModal = ref(false)

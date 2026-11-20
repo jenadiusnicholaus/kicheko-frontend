@@ -7,13 +7,13 @@
     >
       <!-- Light mode emblem -->
       <img
-        src="/image/kicheko-icon.png"
+        src="/taifa/taifa_icon.png"
         alt="Taifa House"
         class="w-full h-full object-contain block dark:hidden drop-shadow-sm"
       />
       <!-- Dark mode emblem -->
       <img
-        src="/image/kicheko-icon-dark.png"
+        src="/taifa/taifa_icon.png"
         alt="Taifa House"
         class="w-full h-full object-contain hidden dark:block drop-shadow-sm"
       />

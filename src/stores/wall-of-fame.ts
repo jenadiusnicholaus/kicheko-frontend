@@ -38,7 +38,7 @@ function normalizeBackendArticle(raw: any): WallOfFameArticle {
     category: raw.category || 'campus-life',
     excerpt: raw.excerpt || raw.bio || '',
     body: raw.body || raw.content || raw.bio || '',
-    image: resolveMediaUrl(raw.image || raw.photo) || '/image/Kicheko.png',
+    image: resolveMediaUrl(raw.image || raw.photo) || '/taifa/taifa_icon.png',
     author: raw.author || 'Wall of Fame',
     publishedAt: raw.published_at || raw.created_at || '',
     readMinutes: raw.read_minutes ?? raw.read_time ?? 5,

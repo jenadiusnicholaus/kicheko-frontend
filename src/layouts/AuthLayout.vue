@@ -18,7 +18,7 @@
         class="inline-flex items-center justify-center mb-4 transition-transform hover:scale-105"
         aria-label="Taifa House Home"
       >
-        <KichekoLogo size="lg" :with-tagline="true" />
+        <img src="/image/WALL OF FAME LOGO.png" alt="Wall of Fame" class="h-40 w-auto" />
       </RouterLink>
       <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ t('auth.layout.tagline') }}</p>
     </div>
@@ -47,7 +47,6 @@
 
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import KichekoLogo from '../components/KichekoLogo.vue'
 
 const { t, locale } = useI18n()
 

@@ -107,13 +107,13 @@
         :class="route.path === '/' ? 'opacity-[0.14] dark:opacity-[0.12]' : 'opacity-[0.06] dark:opacity-[0.07]'"
       >
         <img
-          src="/image/kicheko-transparent.png"
+          src="/taifa/taifa_icon.png"
           alt=""
           class="absolute -top-6 -left-10 w-64 h-64 sm:w-80 sm:h-80 object-contain rotate-[-15deg]"
         />
         <img src="/taifa/taifa_icon.png" alt="" class="absolute top-1/4 -right-12 w-64 h-64 object-contain" />
         <img
-          src="/image/kicheko-transparent.png"
+          src="/taifa/taifa_icon.png"
           alt=""
           class="absolute -bottom-6 right-1/4 w-72 h-72 sm:w-96 sm:h-96 object-contain rotate-[15deg]"
         />
