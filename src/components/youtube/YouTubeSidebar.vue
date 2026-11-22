@@ -165,7 +165,7 @@
           {{ $t('kicheko.sidebar.creatorPromo.pitch') }}
         </p>
         <RouterLink
-          :to="{ name: 'signup' }"
+          :to="{ name: 'register-comedian' }"
           class="inline-block px-3 py-1.5 bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-100 text-white dark:text-zinc-900 font-semibold rounded-lg text-xs transition-colors"
           @click="handleNavClick"
         >

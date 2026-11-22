@@ -3,7 +3,7 @@
     <h1 class="font-bold text-2xl mb-1 text-slate-900 dark:text-white">{{ t('auth.loginPage.title') }}</h1>
     <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-5">
       {{ t('auth.loginPage.noAccount') }}
-      <RouterLink :to="{ name: 'signup' }" class="font-semibold text-primary hover:underline">{{
+      <RouterLink :to="{ name: 'register-comedian' }" class="font-semibold text-primary hover:underline">{{
         t('auth.loginPage.signUpLink')
       }}</RouterLink>
     </p>

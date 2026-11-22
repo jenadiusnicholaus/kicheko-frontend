@@ -12,7 +12,7 @@
     "login": "Login",
     "password": "Password",
     "recover_password": "Recover password",
-    "sign_up": "Sign Up",
+    "sign_up": "Apply Now",
     "keep_logged_in": "Keep me logged in",
     "termsOfUse": "Terms of Use.",
     "reset_password": "Reset password",
@@ -22,8 +22,8 @@
     },
     "loginPage": {
       "title": "Log in to Taifa House",
-      "noAccount": "Don't have an account yet?",
-      "signUpLink": "Sign up",
+      "noAccount": "Want to join the Talent Search?",
+      "signUpLink": "Apply now",
       "usernameLabel": "Email or phone number",
       "usernamePlaceholder": "email{'@'}example.com or +255...",
       "passwordLabel": "Password",
@@ -333,7 +333,7 @@
       "creatorPromo": {
         "question": "Are you a Comedian?",
         "pitch": "Join Taifa House, upload your comedy and earn from your work.",
-        "cta": "Start Today"
+        "cta": "Apply Now"
       },
       "footer": {
         "about": "About Us",
@@ -572,6 +572,10 @@
       "pageSuccessDesc": "Thank you! Your payment was received and your application awaits admin review.",
       "pageFailedTitle": "Payment Not Completed",
       "pageFailedDesc": "The payment did not complete. You can try again from the application form.",
+      "appSuccessTitle": "Payment Successful!",
+      "appSuccessDesc": "Congratulations! Your login details — username and password — have been sent to your email. Please check your inbox and log in to your account.",
+      "appEmailNote": "Your username and password are in the email you used to register.",
+      "appLoginCta": "Log In to Your Account",
       "secureFooter": "Payments are processed securely by PayIt. Amounts are in TSh.",
       "payerPhoneLabel": "Mobile Money Number",
       "payerPhonePlaceholder": "712 345 678",
@@ -915,7 +919,16 @@
         "statusLabel": "Status",
         "activeLabel": "Active (visible to voters)",
         "deleteConfirm": "Delete this vote package? Past purchases keep their record."
-      }
+      },
+      "sendCredentialsBtn": "Send Login Details",
+      "sendCredentialsConfirm": "Send login details to {name}? A new temporary password will be generated and emailed.",
+      "credentialsResultTitle": "Login details ready:",
+      "credentialsUsername": "Username",
+      "credentialsPassword": "Temporary password",
+      "credentialsEmail": "Email",
+      "credentialsEmailSent": "Email sent to the applicant.",
+      "credentialsEmailFailed": "WARNING: email could not be sent — share these details with the applicant manually.",
+      "credentialsSendFailed": "Failed to send credentials. Please try again."
     },
     "voteStats": {
       "nav": "Vote Stats",
@@ -1309,6 +1322,30 @@
         "avatarAlt": "Avatar",
         "loggedOut": "You have been logged out safely."
       }
+    },
+    "profile": {
+      "menuItem": "My Profile",
+      "applicationTitle": "My Application",
+      "noAppTitle": "No application yet",
+      "noAppDesc": "You haven't applied for the Talent Search yet.",
+      "applyNow": "Apply Now",
+      "stepSubmitted": "Application submitted",
+      "stepPayment": "Payment confirmed",
+      "paidAmount": "Paid TZS {n}",
+      "stepReview": "Application review",
+      "reviewingNow": "Your application is being reviewed",
+      "stepDecision": "Decision",
+      "statusApproved": "Approved",
+      "statusRejected": "Not approved",
+      "rejectedTitle": "Reason",
+      "rejectedDefault": "Your application was not approved this time.",
+      "auditionTitle": "Audition Details",
+      "auditionLevel": "Level",
+      "auditionVenue": "Venue",
+      "auditionDate": "Date",
+      "tba": "To be announced",
+      "paymentPending": "Complete your application by paying the application fee.",
+      "payNow": "Pay Now"
     }
   }
 }

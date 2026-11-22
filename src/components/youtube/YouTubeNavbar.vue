@@ -190,7 +190,7 @@
         </RouterLink>
 
         <RouterLink
-          :to="{ name: 'signup' }"
+          :to="{ name: 'register-comedian' }"
           class="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gray-900 hover:bg-gray-700 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 transition-colors"
         >
           <span>{{ t('auth.sign_up') }}</span>

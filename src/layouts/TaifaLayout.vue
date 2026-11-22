@@ -75,6 +75,15 @@
                   {{ authStore.user.email }}
                 </p>
               </div>
+              <RouterLink
+                to="/profile"
+                role="menuitem"
+                class="w-full px-4 py-2.5 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                @click="userMenuOpen = false"
+              >
+                <span class="material-icons text-base">account_circle</span>
+                {{ t('taifa.profile.menuItem') }}
+              </RouterLink>
               <button
                 type="button"
                 role="menuitem"

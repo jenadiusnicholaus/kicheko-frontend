@@ -42,6 +42,12 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../pages/public/NaniNiNaniPage.vue'),
       },
       {
+        name: 'profile',
+        path: 'profile',
+        component: () => import('../pages/public/MyProfilePage.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
         name: 'wall-of-fame',
         path: 'wall-of-fame',
         component: () => import('../pages/public/WallOfFamePage.vue'),
@@ -83,7 +89,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         name: 'signup',
         path: 'signup',
-        component: () => import('../pages/auth/Signup.vue'),
+        redirect: { name: 'login' },
       },
       {
         name: 'recover-password',

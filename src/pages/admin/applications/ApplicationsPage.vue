@@ -533,6 +533,19 @@
                 {{ t('taifa.admin.rejectBtn') }}
               </button>
 
+              <!-- Send Login Details -->
+              <button
+                v-if="app.userId && app.paymentStatus === 'paid' && app.status !== 'rejected'"
+                type="button"
+                class="px-2.5 py-1.5 rounded-xl border border-sky-200 dark:border-sky-900/60 text-sky-600 hover:bg-sky-50 dark:hover:bg-sky-950/30 text-xs font-bold transition-all flex items-center gap-1"
+                :title="t('taifa.admin.sendCredentialsBtn')"
+                :disabled="sendingCredentials === app.id"
+                @click="sendCredentials(app)"
+              >
+                <span class="material-icons text-sm">send</span>
+                <span>{{ t('taifa.admin.sendCredentialsBtn') }}</span>
+              </button>
+
               <!-- Delete -->
               <button
                 type="button"
@@ -854,6 +867,32 @@ const confirmApp = (id: string) => {
 
 const rejectApp = (id: string) => {
   applicationsStore.rejectApplication(id)
+}
+
+const sendingCredentials = ref<string | null>(null)
+
+const sendCredentials = async (app: ComedianApplication) => {
+  if (!confirm(t('taifa.admin.sendCredentialsConfirm', { name: app.displayName || app.username }))) return
+  sendingCredentials.value = app.id
+  try {
+    const res = await applicationsStore.sendCredentials(app.id)
+    if (res) {
+      const lines = [
+        t('taifa.admin.credentialsResultTitle'),
+        '',
+        `${t('taifa.admin.credentialsUsername')}: ${res.username || app.username}`,
+        `${t('taifa.admin.credentialsPassword')}: ${res.temp_password || '—'}`,
+        `${t('taifa.admin.credentialsEmail')}: ${res.email || app.email || '—'}`,
+        '',
+        res.email_sent ? t('taifa.admin.credentialsEmailSent') : t('taifa.admin.credentialsEmailFailed'),
+      ]
+      alert(lines.join('\n'))
+    }
+  } catch {
+    alert(t('taifa.admin.credentialsSendFailed'))
+  } finally {
+    sendingCredentials.value = null
+  }
 }
 
 const deleteApp = async (id: string) => {

@@ -31,6 +31,9 @@ export interface ComedianApplication {
   voteCount: number
   batchId: number | null
   batchTitle: string | null
+  tempPassword?: string
+  credentialsSentAt?: string
+  credentialsSentVia?: string
 }
 
 export interface VoteListApplicant {
@@ -83,6 +86,9 @@ function normalizeBackendApplication(raw: any): ComedianApplication {
     voteCount: raw.vote_count ?? 0,
     batchId: raw.batch ?? null,
     batchTitle: raw.batch_title ?? null,
+    tempPassword: raw.temp_password || undefined,
+    credentialsSentAt: raw.credentials_sent_at || undefined,
+    credentialsSentVia: raw.credentials_sent_via || undefined,
   }
 }
 
@@ -108,6 +114,8 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
     configLoaded: false,
     voteList: [] as VoteListApplicant[],
     voteBatches: [] as VoteBatch[],
+    myApplication: null as ComedianApplication | null,
+    myApplicationLoaded: false,
     isLoading: false,
     error: null as string | null,
   }),
@@ -357,6 +365,30 @@ export const useComedianApplicationsStore = defineStore('comedianApplications', 
         app.rejectedReason = reason
       }
       return true
+    },
+
+    async fetchMyApplication() {
+      try {
+        const { data } = await http.get('/applications/my/')
+        this.myApplication = normalizeBackendApplication(data)
+      } catch (e: any) {
+        if (e?.response?.status !== 404) throw e
+        this.myApplication = null
+      } finally {
+        this.myApplicationLoaded = true
+      }
+    },
+
+    async sendCredentials(id: string): Promise<any | null> {
+      const { data } = await http.post(`/applications/${id}/send_credentials/`)
+      if (data?.application) {
+        const updated = normalizeBackendApplication(data.application)
+        const idx = this.applications.findIndex((a) => a.id === id)
+        if (idx !== -1) {
+          this.applications[idx] = updated
+        }
+      }
+      return data
     },
 
     async deleteApplication(id: string): Promise<boolean> {

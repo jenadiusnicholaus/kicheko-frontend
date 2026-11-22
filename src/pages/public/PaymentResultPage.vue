@@ -12,12 +12,28 @@
         <span class="material-icons text-4xl">{{ isSuccess ? 'check_circle' : 'cancel' }}</span>
       </div>
 
-      <h2 class="text-2xl font-black text-gray-900 dark:text-white mb-2">
-        {{ isSuccess ? t('taifa.payment.pageSuccessTitle') : t('taifa.payment.pageFailedTitle') }}
-      </h2>
-      <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-        {{ isSuccess ? t('taifa.payment.pageSuccessDesc') : t('taifa.payment.pageFailedDesc') }}
-      </p>
+      <template v-if="isSuccess && isApplicationPayment">
+        <h2 class="text-3xl font-black text-gray-900 dark:text-white mb-3">
+          {{ t('taifa.payment.appSuccessTitle') }}
+        </h2>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-5">
+          {{ t('taifa.payment.appSuccessDesc') }}
+        </p>
+        <div
+          class="flex items-center justify-center gap-2 p-3.5 mb-6 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-300 text-xs font-bold"
+        >
+          <span class="material-icons text-lg">mail</span>
+          {{ t('taifa.payment.appEmailNote') }}
+        </div>
+      </template>
+      <template v-else>
+        <h2 class="text-2xl font-black text-gray-900 dark:text-white mb-2">
+          {{ isSuccess ? t('taifa.payment.pageSuccessTitle') : t('taifa.payment.pageFailedTitle') }}
+        </h2>
+        <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+          {{ isSuccess ? t('taifa.payment.pageSuccessDesc') : t('taifa.payment.pageFailedDesc') }}
+        </p>
+      </template>
 
       <div
         v-if="paymentId"
@@ -28,6 +44,13 @@
       </div>
 
       <div class="space-y-2.5">
+        <RouterLink
+          v-if="isSuccess && isApplicationPayment"
+          to="/auth/login"
+          class="block w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-base shadow-lg transition-all"
+        >
+          {{ t('taifa.payment.appLoginCta') }}
+        </RouterLink>
         <RouterLink
           v-if="!isSuccess"
           to="/register-comedian"
@@ -47,10 +70,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { removePendingPayment } from '../../lib/pending-payments'
+import { findPendingPayment, getPendingPayment, removePendingPayment } from '../../lib/pending-payments'
 
 const route = useRoute()
 const { t } = useI18n()
@@ -63,8 +86,17 @@ const isSuccess = computed(() => {
 })
 
 const paymentId = computed(() => String(route.query.payit_payment_id || ''))
+const isApplicationPayment = ref(false)
 
 onMounted(() => {
+  // Read the pending record before removing it — its purpose tells us this
+  // was the application fee (credentials emailed) vs a vote purchase. The
+  // redirect's payment id can be the reference rather than the cs_ id, so
+  // also try matching on the stored application id.
+  const appId = sessionStorage.getItem('pending_application_id') || undefined
+  const pending =
+    (paymentId.value ? getPendingPayment(paymentId.value) : undefined) ?? findPendingPayment('application_fee', appId)
+  isApplicationPayment.value = pending?.purpose === 'application_fee'
   // The signed webhook links the payment to the application via metadata —
   // nothing to record client-side.
   sessionStorage.removeItem('pending_application_id')

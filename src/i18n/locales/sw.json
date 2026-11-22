@@ -12,7 +12,7 @@
     "login": "Ingia",
     "password": "Neno la siri",
     "recover_password": "Rudisha neno la siri",
-    "sign_up": "Jiandikishe",
+    "sign_up": "Omba Sasa",
     "keep_logged_in": "Niendelee kuwa nimeingia",
     "termsOfUse": "Masharti ya Matumizi.",
     "reset_password": "Weka upya neno la siri",
@@ -22,8 +22,8 @@
     },
     "loginPage": {
       "title": "Ingia Taifa House",
-      "noAccount": "Huna akaunti bado?",
-      "signUpLink": "Jisajili",
+      "noAccount": "Unataka kujiunga na Talent Search?",
+      "signUpLink": "Omba Sasa",
       "usernameLabel": "Barua pepe au Namba ya simu",
       "usernamePlaceholder": "email{'@'}example.com au +255...",
       "passwordLabel": "Nenosiri",
@@ -225,7 +225,7 @@
       "creatorPromo": {
         "question": "Je, wewe ni Mchekeshaji?",
         "pitch": "Jiunge na Taifa House, pakia vichekesho vyako na upate mapato ya kazi zako.",
-        "cta": "Anza Leo"
+        "cta": "Omba Sasa"
       },
       "footer": {
         "about": "Kuhusu Sisi",
@@ -464,6 +464,10 @@
       "pageSuccessDesc": "Asante! Malipo yako yamepokelewa na ombi lako linasubiri uhakiki wa Usimamizi.",
       "pageFailedTitle": "Malipo Hayakukamilika",
       "pageFailedDesc": "Malipo hayakukamilika. Unaweza kujaribu tena kupitia fomu ya maombi.",
+      "appSuccessTitle": "Malipo Yamefanikiwa!",
+      "appSuccessDesc": "Hongera! Taarifa za kuingia — jina la mtumiaji na nenosiri lako — zimetumwa kwenye barua pepe yako. Tafadhali angalia barua pepe na uingie kwenye akaunti yako.",
+      "appEmailNote": "Jina la mtumiaji na nenosiri vipo katika barua pepe uliyotumia kujisajili.",
+      "appLoginCta": "Ingia kwenye Akaunti Yako",
       "secureFooter": "Malipo yanashughulikiwa kwa usalama na PayIt. Kiasi ni kwa TSh.",
       "payerPhoneLabel": "Namba ya Mobile Money",
       "payerPhonePlaceholder": "712 345 678",
@@ -807,7 +811,16 @@
         "statusLabel": "Hali",
         "activeLabel": "Kinatumika (kinaonekana kwa wapiga kura)",
         "deleteConfirm": "Futa kifurushi hiki cha kura? Manunuzi yaliyopita yatabaki."
-      }
+      },
+      "sendCredentialsBtn": "Tuma Taarifa za Kuingia",
+      "sendCredentialsConfirm": "Tuma taarifa za kuingia kwa {name}? Nenosiri jipya la muda litatengenezwa na kutumwa kwa barua pepe.",
+      "credentialsResultTitle": "Taarifa za kuingia ziko tayari:",
+      "credentialsUsername": "Jina la mtumiaji",
+      "credentialsPassword": "Nenosiri la muda",
+      "credentialsEmail": "Barua pepe",
+      "credentialsEmailSent": "Barua pepe imetumwa kwa mwombaji.",
+      "credentialsEmailFailed": "ONYO: barua pepe haikutumwa — shiriki taarifa hizi na mwombaji mwenyewe.",
+      "credentialsSendFailed": "Imeshindwa kutuma taarifa. Jaribu tena."
     },
     "voteStats": {
       "nav": "Takwimu za Kura",
@@ -1201,6 +1214,30 @@
         "avatarAlt": "Picha ya mtumiaji",
         "loggedOut": "Umetoka kwenye akaunti yako salama."
       }
+    },
+    "profile": {
+      "menuItem": "Wasifu Wangu",
+      "applicationTitle": "Ombi Langu",
+      "noAppTitle": "Huna ombi bado",
+      "noAppDesc": "Bado hujawasilisha ombi la Talent Search.",
+      "applyNow": "Omba Sasa",
+      "stepSubmitted": "Ombi limewasilishwa",
+      "stepPayment": "Malipo yamethibitishwa",
+      "paidAmount": "Umefanya malipo TZS {n}",
+      "stepReview": "Mapitio ya ombi",
+      "reviewingNow": "Ombi lako linapitiwa na timu yetu",
+      "stepDecision": "Uamuzi",
+      "statusApproved": "Umekubaliwa",
+      "statusRejected": "Hukukubaliwa",
+      "rejectedTitle": "Sababu",
+      "rejectedDefault": "Ombi lako halikukubaliwa kwa sasa.",
+      "auditionTitle": "Maelezo ya Usaili",
+      "auditionLevel": "Kiwango",
+      "auditionVenue": "Mahali",
+      "auditionDate": "Tarehe",
+      "tba": "Itatangazwa",
+      "paymentPending": "Kamilisha ombi lako kwa kufanya malipo ya usajili.",
+      "payNow": "Lipa Sasa"
     }
   }
 }
