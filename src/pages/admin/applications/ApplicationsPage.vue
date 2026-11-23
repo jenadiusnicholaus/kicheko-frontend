@@ -882,7 +882,7 @@ const sendCredentials = async (app: ComedianApplication) => {
         '',
         `${t('taifa.admin.credentialsUsername')}: ${res.username || app.username}`,
         `${t('taifa.admin.credentialsPassword')}: ${res.temp_password || '—'}`,
-        `${t('taifa.admin.credentialsEmail')}: ${res.email || app.email || '—'}`,
+        `${t('taifa.admin.credentialsEmail')}: ${res.sent_to || res.email || app.email || '—'}`,
         '',
         res.email_sent ? t('taifa.admin.credentialsEmailSent') : t('taifa.admin.credentialsEmailFailed'),
       ]
